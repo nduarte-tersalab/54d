@@ -1,0 +1,9 @@
+# Copiar a .dev.vars (gitignored) y completar
+SUPABASE_URL=https://xxxx.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+META_PIXEL_ID=
+META_CAPI_ACCESS_TOKEN=
+GA4_MEASUREMENT_ID=G-XXXXXXX
+GA4_API_SECRET=

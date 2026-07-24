@@ -1,0 +1,113 @@
+/* ============================================================
+   54D — Design tokens v1
+   Paleta extraída del theme CSS real de 54d.com (jul 2026):
+   #FFD200 (amarillo marca), #0B0B0B/#111 (negros), #D20000 (rojo),
+   #F9F8F4 (off-white). Tipografías por brand book del cliente:
+   Allumi Std Extended + Helvetica Neue Condensed (comerciales —
+   colocar .woff2 licenciados en packages/design/fonts/).
+   ============================================================ */
+
+/* ---------- Fuentes ---------- */
+@font-face {
+  font-family: 'Allumi Std Extended';
+  src: url('./fonts/AllumiStdExt-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Allumi Std Extended';
+  src: url('./fonts/AllumiStdExt-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Helvetica Neue Condensed';
+  src: url('./fonts/HelveticaNeue-Condensed.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Helvetica Neue Condensed';
+  src: url('./fonts/HelveticaNeue-CondensedBold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* ---------- Color ---------- */
+  --c-yellow:      #FFD200;  /* marca — CTAs, highlights */
+  --c-yellow-deep: #F5CB06;  /* hover / pressed */
+  --c-black:       #0B0B0B;  /* fondos hero / footer */
+  --c-ink:         #111111;  /* texto sobre claro */
+  --c-gray-700:    #444444;
+  --c-gray-400:    #C4C4C4;
+  --c-gray-100:    #EEEEEE;
+  --c-offwhite:    #F9F8F4;  /* fondos de sección claros */
+  --c-white:       #FFFFFF;
+  --c-red:         #D20000;  /* errores, urgencia, "quedan X cupos" */
+
+  /* Semánticos (v2: lona oscura única, el amarillo es luz) */
+  --bg:            #070707;
+  --bg-alt:        #0D0D0D;
+  --bg-inverse:    var(--c-white);
+  --fg:            var(--c-white);
+  --fg-muted:      rgba(255, 255, 255, 0.65);
+  --fg-inverse:    var(--c-ink);
+  --accent:        var(--c-yellow);
+  --accent-hover:  var(--c-yellow-deep);
+  --danger:        var(--c-red);
+
+  /* ---------- Tipografía ---------- */
+  /* Display: titulares grandes, condensada, mayúsculas */
+  --font-display: 'Allumi Std Extended', 'Arial Narrow', Impact, sans-serif;
+  /* UI/body: */
+  --font-body: 'Helvetica Neue Condensed', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+
+  /* Escala (clamp = fluida mobile→desktop) */
+  --text-hero:  clamp(3rem, 8vw, 7rem);      /* H1 hero, uppercase */
+  --text-h1:    clamp(2.25rem, 5vw, 4rem);
+  --text-h2:    clamp(1.75rem, 3.5vw, 2.75rem);
+  --text-h3:    clamp(1.25rem, 2.5vw, 1.75rem);
+  --text-lg:    1.125rem;
+  --text-base:  1rem;
+  --text-sm:    0.875rem;
+  --text-xs:    0.75rem;
+
+  --leading-tight: 0.95;   /* titulares condensados van apretados */
+  --leading-body:  1.6;
+  --tracking-caps: 0.04em; /* uppercase display */
+
+  /* ---------- Espaciado / layout ---------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2.5rem;
+  --space-6: 4rem;
+  --space-7: 6rem;
+  --container: 80rem;      /* 1280px */
+  --container-narrow: 46rem; /* blog / lectura */
+
+  /* ---------- Misc (v2 "Glow": radios generosos, luz) ---------- */
+  --radius: 20px;
+  --radius-lg: 28px;
+  --radius-pill: 999px;
+  --grad-sun: linear-gradient(115deg, #FFE45C 0%, #FFD200 38%, #FFB800 72%, #E89B00 100%);
+  --grad-text: linear-gradient(100deg, #FFE45C 0%, #FFD200 45%, #FFA800 100%);
+  --glass: rgba(255, 255, 255, 0.035);
+  --hairline: rgba(255, 255, 255, 0.09);
+  --shadow-glow: 0 8px 36px rgb(255 200 0 / 0.35);
+  --transition: 220ms cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+/* Modo inverso (secciones negras, hero con video) */
+.theme-dark {
+  --bg:        var(--c-black);
+  --bg-alt:    #161616;
+  --fg:        var(--c-white);
+  --fg-muted:  var(--c-gray-400);
+}
