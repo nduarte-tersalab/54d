@@ -42,7 +42,9 @@ export default function AdminLogin() {
     void getSupabase()
       .auth.getSession()
       .then(({ data }) => {
-        if (data.session) window.location.href = "/admin";
+        if (data.session)
+          window.location.href =
+            import.meta.env.BASE_URL.replace(/\/$/, "") + "/admin";
       });
   }, []);
 
@@ -60,7 +62,7 @@ export default function AdminLogin() {
       setBusy(false);
       return;
     }
-    window.location.href = "/admin";
+    window.location.href = import.meta.env.BASE_URL.replace(/\/$/, "") + "/admin";
   }
 
   return (

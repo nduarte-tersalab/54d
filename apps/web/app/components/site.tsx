@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router";
 import { STUDIOS } from "../data/studios";
 
 /* ============================================================
@@ -51,17 +52,17 @@ export function Nav() {
   }, []);
   return (
     <nav className={`nav${scrolled ? " scrolled" : ""}`}>
-      <a href="/" className="nav-logo">
+      <Link to="/" className="nav-logo">
         54<em>D</em>
-      </a>
+      </Link>
       <div className="nav-links">
-        <a href="/method">Method</a>
-        <a href="/on">54D ON</a>
-        <a href="/studios">Studios</a>
-        <a href="/blog">Blog</a>
-        <a href="/pricing" className="btn btn-primary btn-nav">
+        <Link to="/method">Method</Link>
+        <Link to="/on">54D ON</Link>
+        <Link to="/studios">Studios</Link>
+        <Link to="/blog">Blog</Link>
+        <Link to="/pricing" className="btn btn-primary btn-nav">
           Start free
-        </a>
+        </Link>
       </div>
     </nav>
   );
@@ -82,23 +83,23 @@ export function Footer() {
           </div>
           <div>
             <h4>Programs</h4>
-            <a href="/method">Method</a>
-            <a href="/on">54D ON</a>
-            <a href="/studios">54D Studios</a>
-            <a href="/pricing">Pricing</a>
+            <Link to="/method">Method</Link>
+            <Link to="/on">54D ON</Link>
+            <Link to="/studios">54D Studios</Link>
+            <Link to="/pricing">Pricing</Link>
           </div>
           <div>
             <h4>Studios</h4>
             {STUDIOS.map((s) => (
-              <a key={s.slug} href={`/studios/${s.slug}`}>
+              <Link key={s.slug} to={`/studios/${s.slug}`}>
                 {s.city}
-              </a>
+              </Link>
             ))}
           </div>
           <div>
             <h4>More</h4>
-            <a href="/blog">Blog</a>
-            <a href="/contact">Contact</a>
+            <Link to="/blog">Blog</Link>
+            <Link to="/contact">Contact</Link>
             <a href="https://www.instagram.com/54d.online" rel="noreferrer" target="_blank">
               Instagram
             </a>
@@ -110,12 +111,12 @@ export function Footer() {
         <div className="footer-legal">
           <span>© {new Date().getFullYear()} 54D. All rights reserved.</span>
           <span>
-            <a href="/terms" style={{ display: "inline", marginRight: "1.5rem" }}>
+            <Link to="/terms" style={{ display: "inline", marginRight: "1.5rem" }}>
               Terms
-            </a>
-            <a href="/privacy" style={{ display: "inline" }}>
+            </Link>
+            <Link to="/privacy" style={{ display: "inline" }}>
               Privacy
-            </a>
+            </Link>
           </span>
         </div>
       </div>

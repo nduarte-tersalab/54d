@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import type { Route } from "./+types/pricing";
 import { Nav, Footer, useReveal } from "../components/site";
 import { startCheckout } from "../lib/attribution";
@@ -214,7 +215,7 @@ export default function Pricing() {
         <div className="hero-veil" />
         <div className="hero-content">
           <nav className="breadcrumb">
-            <a href="/">Home</a>
+            <Link to="/">Home</Link>
             <span>/</span>
             <span>Pricing</span>
           </nav>
@@ -446,12 +447,12 @@ export default function Pricing() {
                     {f.link && (
                       <>
                         {" "}
-                        <a
-                          href={f.link.href}
+                        <Link
+                          to={f.link.href}
                           style={{ color: "var(--c-yellow)", textDecoration: "none" }}
                         >
                           {f.link.label}
-                        </a>
+                        </Link>
                       </>
                     )}
                   </p>
@@ -473,9 +474,9 @@ export default function Pricing() {
               <a href="#plans" className="btn btn-primary">
                 Start free trial
               </a>
-              <a href="/studios" className="btn btn-ghost">
+              <Link to="/studios" className="btn btn-ghost">
                 Rather train in person? See the studios
-              </a>
+              </Link>
             </div>
             <p style={{ marginTop: "1.4rem", fontSize: "0.82rem", color: "var(--c-faint)" }}>
               {MICROCOPY}

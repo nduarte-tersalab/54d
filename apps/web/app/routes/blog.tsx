@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import type { Route } from "./+types/blog";
 import { Nav, Footer, useReveal } from "../components/site";
 
@@ -265,7 +266,7 @@ export default function Blog() {
         <div className="hero-veil" />
         <div className="hero-content">
           <nav className="breadcrumb">
-            <a href="/">Home</a>
+            <Link to="/">Home</Link>
             <span>/</span>
             <span>Blog</span>
           </nav>
@@ -505,9 +506,9 @@ export default function Blog() {
                   Start doing.
                 </span>
               </p>
-              <a href="/pricing" className="btn btn-primary">
+              <Link to="/pricing" className="btn btn-primary">
                 Start free — 7 days
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -611,12 +612,12 @@ export default function Blog() {
               You have the theory. <span className="accent">Now the method.</span>
             </h2>
             <div className="hero-ctas">
-              <a href="/pricing" className="btn btn-primary">
+              <Link to="/pricing" className="btn btn-primary">
                 Start free — 7 days
-              </a>
-              <a href="/method" className="btn btn-ghost">
+              </Link>
+              <Link to="/method" className="btn btn-ghost">
                 See the method
-              </a>
+              </Link>
             </div>
           </div>
         </div>

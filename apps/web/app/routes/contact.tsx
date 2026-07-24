@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
+import { Link } from "react-router";
 import type { Route } from "./+types/contact";
 import { Nav, Footer, useReveal } from "../components/site";
 import { STUDIOS } from "../data/studios";
@@ -73,7 +74,7 @@ export default function Contact() {
         <div className="hero-veil" />
         <div className="hero-content">
           <nav className="breadcrumb">
-            <a href="/">Home</a>
+            <Link to="/">Home</Link>
             <span>/</span>
             <span>Contact</span>
           </nav>
@@ -111,9 +112,9 @@ export default function Contact() {
             </p>
           </div>
           <div className="split-footer">
-            <a href="/pricing" className="btn btn-on">
+            <Link to="/pricing" className="btn btn-on">
               See plans
-            </a>
+            </Link>
             {/* PRECIO_PENDIENTE */}
             <span className="split-price">From $54/mo</span>
           </div>
@@ -145,11 +146,11 @@ export default function Contact() {
             </h2>
             <div className="studios-list">
               {STUDIOS.map((s) => (
-                <a key={s.slug} href={`/studios/${s.slug}`} className="studio-row">
+                <Link key={s.slug} to={`/studios/${s.slug}`} className="studio-row">
                   <span className="studio-city">{s.city}</span>
                   <span className="studio-country">{s.country}</span>
                   <span className="studio-cta">See studio →</span>
-                </a>
+                </Link>
               ))}
             </div>
             <p
@@ -162,12 +163,12 @@ export default function Contact() {
               }}
             >
               No studio in your city? The full method lives online too.{" "}
-              <a
-                href="/on"
+              <Link
+                to="/on"
                 style={{ color: "var(--c-yellow)", textDecoration: "none" }}
               >
                 Explore 54D ON →
-              </a>
+              </Link>
             </p>
           </div>
         </div>
@@ -309,9 +310,9 @@ export default function Contact() {
                         flexWrap: "wrap",
                       }}
                     >
-                      <a href="/method" className="btn btn-ghost">
+                      <Link to="/method" className="btn btn-ghost">
                         See the method
-                      </a>
+                      </Link>
                       <button
                         type="button"
                         className="btn btn-ghost"
@@ -421,12 +422,12 @@ export default function Contact() {
               Ask less. <span className="accent">Train more.</span>
             </h2>
             <div className="hero-ctas">
-              <a href="/pricing" className="btn btn-primary">
+              <Link to="/pricing" className="btn btn-primary">
                 Start free — 7 days
-              </a>
-              <a href="/method#faq" className="btn btn-ghost">
+              </Link>
+              <Link to="/method#faq" className="btn btn-ghost">
                 See the FAQ
-              </a>
+              </Link>
             </div>
           </div>
         </div>

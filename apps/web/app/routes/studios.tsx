@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import type { Route } from "./+types/studios";
 import { Nav, Footer, useReveal } from "../components/site";
 import { STUDIOS } from "../data/studios";
@@ -85,7 +86,7 @@ export default function Studios() {
         <div className="hero-veil" />
         <div className="hero-content">
           <nav className="breadcrumb">
-            <a href="/">Home</a>
+            <Link to="/">Home</Link>
             <span>/</span>
             <span>Studios</span>
           </nav>
@@ -103,9 +104,9 @@ export default function Studios() {
             <a href="#sedes" className="btn btn-primary">
               Find your studio
             </a>
-            <a href="/on" className="btn btn-ghost">
+            <Link to="/on" className="btn btn-ghost">
               Explore 54D ON
-            </a>
+            </Link>
           </div>
         </div>
       </header>
@@ -139,9 +140,9 @@ export default function Studios() {
               }}
             >
               {STUDIOS.map((s) => (
-                <a
+                <Link
                   key={s.slug}
-                  href={`/studios/${s.slug}`}
+                  to={`/studios/${s.slug}`}
                   className="method-card"
                   style={{
                     display: "flex",
@@ -171,7 +172,7 @@ export default function Studios() {
                   >
                     Book →
                   </span>
-                </a>
+                </Link>
               ))}
             </div>
           </div>
@@ -252,12 +253,12 @@ export default function Studios() {
               The full method lives <span className="accent">online.</span>
             </h2>
             <div className="hero-ctas">
-              <a href="/on" className="btn btn-primary">
+              <Link to="/on" className="btn btn-primary">
                 Explore 54D ON
-              </a>
-              <a href="/method" className="btn btn-ghost">
+              </Link>
+              <Link to="/method" className="btn btn-ghost">
                 See the method
-              </a>
+              </Link>
             </div>
           </div>
         </div>

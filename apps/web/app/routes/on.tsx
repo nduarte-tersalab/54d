@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { Link } from "react-router";
 import type { Route } from "./+types/on";
 import { Nav, Footer, useReveal } from "../components/site";
 
@@ -285,7 +286,7 @@ export default function On() {
         <div className="hero-veil" />
         <div className="hero-content">
           <nav className="breadcrumb">
-            <a href="/">Home</a>
+            <Link to="/">Home</Link>
             <span>/</span>
             <span>54D ON</span>
           </nav>
@@ -300,12 +301,12 @@ export default function On() {
             excuses.
           </p>
           <div className="hero-ctas">
-            <a href="/pricing" className="btn btn-primary">
+            <Link to="/pricing" className="btn btn-primary">
               Start free — 7 days
-            </a>
-            <a href="/studios" className="btn btn-ghost">
+            </Link>
+            <Link to="/studios" className="btn btn-ghost">
               Explore the studios
-            </a>
+            </Link>
           </div>
         </div>
       </header>
@@ -323,9 +324,9 @@ export default function On() {
                 54D ON is not a stripped-down version: it's the full 54-day
                 program — training, nutrition, and a real coach who follows
                 you.{" "}
-                <a href="/method" style={{ color: "var(--c-yellow)", textDecoration: "none" }}>
+                <Link to="/method" style={{ color: "var(--c-yellow)", textDecoration: "none" }}>
                   See the full method →
-                </a>
+                </Link>
               </p>
             </div>
             <div className="method-grid">
@@ -436,9 +437,9 @@ export default function On() {
               accentCol={1}
             />
             <div style={{ marginTop: "2rem" }}>
-              <a href="/studios" className="btn btn-ghost">
+              <Link to="/studios" className="btn btn-ghost">
                 Rather train in person? Explore the studios →
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -474,9 +475,9 @@ export default function On() {
               Your Day 1 doesn't need <span className="accent">a gym.</span>
             </h2>
             <div className="hero-ctas">
-              <a href="/pricing" className="btn btn-primary">
+              <Link to="/pricing" className="btn btn-primary">
                 Start free — 7 days
-              </a>
+              </Link>
             </div>
             <p style={{ marginTop: "1.2rem", fontSize: "0.85rem", color: "var(--c-faint)" }}>
               7 days free · cancel anytime

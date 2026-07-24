@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import type { Route } from "./+types/method";
 import { Nav, Footer, useReveal } from "../components/site";
 
@@ -139,7 +140,7 @@ export default function Method() {
         <div className="hero-veil" />
         <div className="hero-content">
           <nav className="breadcrumb">
-            <a href="/">Home</a>
+            <Link to="/">Home</Link>
             <span>/</span>
             <span>The Method</span>
           </nav>
@@ -154,12 +155,12 @@ export default function Method() {
             you drift.
           </p>
           <div className="hero-ctas">
-            <a href="/pricing" className="btn btn-primary">
+            <Link to="/pricing" className="btn btn-primary">
               Start free — 7 days
-            </a>
-            <a href="/studios" className="btn btn-ghost">
+            </Link>
+            <Link to="/studios" className="btn btn-ghost">
               Explore the studios
-            </a>
+            </Link>
           </div>
         </div>
       </header>
@@ -350,15 +351,15 @@ export default function Method() {
                       {f.links.map((l, i) => (
                         <span key={l.href}>
                           {i > 0 && " · "}
-                          <a
-                            href={l.href}
+                          <Link
+                            to={l.href}
                             style={{
                               color: "var(--c-yellow)",
                               textDecoration: "none",
                             }}
                           >
                             {l.label} →
-                          </a>
+                          </Link>
                         </span>
                       ))}
                     </p>
@@ -382,9 +383,9 @@ export default function Method() {
             </p>
           </div>
           <div className="split-footer">
-            <a href="/on" className="btn btn-on">
+            <Link to="/on" className="btn btn-on">
               Discover 54D ON
-            </a>
+            </Link>
             {/* PRECIO_PENDIENTE */}
             <span className="split-price">From $54/mo · 7 days free</span>
           </div>
@@ -400,9 +401,9 @@ export default function Method() {
             </p>
           </div>
           <div className="split-footer">
-            <a href="/studios" className="btn btn-primary">
+            <Link to="/studios" className="btn btn-primary">
               Explore the studios
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -415,12 +416,12 @@ export default function Method() {
               Now you know the method. <span className="accent">Use it.</span>
             </h2>
             <div className="hero-ctas">
-              <a href="/pricing" className="btn btn-primary">
+              <Link to="/pricing" className="btn btn-primary">
                 Start free — 7 days
-              </a>
-              <a href="/studios" className="btn btn-ghost">
+              </Link>
+              <Link to="/studios" className="btn btn-ghost">
                 Explore the studios
-              </a>
+              </Link>
             </div>
           </div>
         </div>

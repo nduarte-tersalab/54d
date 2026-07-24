@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import type { Route } from "./+types/studio-detail";
 import { Nav, Footer, useReveal } from "../components/site";
 import { STUDIOS } from "../data/studios";
@@ -261,9 +262,9 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
         <div className="hero-veil" />
         <div className="hero-content">
           <nav className="breadcrumb">
-            <a href="/">Home</a>
+            <Link to="/">Home</Link>
             <span>/</span>
-            <a href="/studios">Studios</a>
+            <Link to="/studios">Studios</Link>
             <span>/</span>
             <span>{studio.city}</span>
           </nav>
@@ -449,12 +450,12 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                     {siblings.map((s, i) => (
                       <span key={s.slug}>
                         {i > 0 && " · "}
-                        <a
-                          href={`/studios/${s.slug}`}
+                        <Link
+                          to={`/studios/${s.slug}`}
                           style={{ color: "var(--c-yellow)", textDecoration: "none" }}
                         >
                           {s.city}
-                        </a>
+                        </Link>
                       </span>
                     ))}
                   </p>
@@ -500,12 +501,12 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
               <span className="accent">online.</span>
             </h2>
             <div className="hero-ctas">
-              <a href="/on" className="btn btn-primary">
+              <Link to="/on" className="btn btn-primary">
                 Explore 54D ON
-              </a>
-              <a href="/method" className="btn btn-ghost">
+              </Link>
+              <Link to="/method" className="btn btn-ghost">
                 See the method
-              </a>
+              </Link>
             </div>
           </div>
         </div>

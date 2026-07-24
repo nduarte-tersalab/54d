@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import type { Route } from "./+types/home";
 import { Nav, Footer, useReveal } from "../components/site";
 import { STUDIOS } from "../data/studios";
@@ -104,9 +105,9 @@ export default function Home() {
             checks in every single day. Online, or in our studios.
           </p>
           <div className="hero-ctas" id="empezar">
-            <a href="/pricing" className="btn btn-primary">
+            <Link to="/pricing" className="btn btn-primary">
               Start free — 7 days
-            </a>
+            </Link>
             <a href="#studios" className="btn btn-ghost">
               Explore the studios
             </a>
@@ -158,9 +159,9 @@ export default function Home() {
             </p>
           </div>
           <div className="split-footer">
-            <a href="/pricing" className="btn btn-on">
+            <Link to="/pricing" className="btn btn-on">
               Start free — 7 days
-            </a>
+            </Link>
             <span className="split-price">Monthly, quarterly, or annual subscription</span>
           </div>
         </div>
@@ -192,11 +193,11 @@ export default function Home() {
             </h2>
             <div className="studios-list">
               {STUDIOS.map((s) => (
-                <a key={s.slug} href={`/studios/${s.slug}`} className="studio-row">
+                <Link key={s.slug} to={`/studios/${s.slug}`} className="studio-row">
                   <span className="studio-city">{s.city}</span>
                   <span className="studio-country">{s.country}</span>
                   <span className="studio-cta">Book →</span>
-                </a>
+                </Link>
               ))}
             </div>
           </div>
@@ -211,9 +212,9 @@ export default function Home() {
               Day 1 <span className="accent">is today.</span>
             </h2>
             <div className="hero-ctas">
-              <a href="/pricing" className="btn btn-primary">
+              <Link to="/pricing" className="btn btn-primary">
                 Start free — 7 days
-              </a>
+              </Link>
             </div>
           </div>
         </div>

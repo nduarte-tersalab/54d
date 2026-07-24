@@ -40,7 +40,7 @@ async function resolveGuard(): Promise<AdminUser | null> {
   const { data } = await supabase.auth.getSession();
   const session = data.session;
   if (!session) {
-    window.location.href = "/admin/login";
+    window.location.href = import.meta.env.BASE_URL.replace(/\/$/, "") + "/admin/login";
     return null;
   }
 
@@ -53,7 +53,7 @@ async function resolveGuard(): Promise<AdminUser | null> {
 
   if (!profile || (profile.role !== "admin" && profile.role !== "editor")) {
     await supabase.auth.signOut();
-    window.location.href = "/admin/login?m=denegado";
+    window.location.href = import.meta.env.BASE_URL.replace(/\/$/, "") + "/admin/login?m=denegado";
     return null;
   }
 
@@ -112,7 +112,7 @@ export function AdminShell({ active, children }: AdminShellProps) {
   async function handleSignOut() {
     guardPromise = null;
     await getSupabase().auth.signOut();
-    window.location.href = "/admin/login";
+    window.location.href = import.meta.env.BASE_URL.replace(/\/$/, "") + "/admin/login";
   }
 
   return (
