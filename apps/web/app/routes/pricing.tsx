@@ -3,10 +3,11 @@ import { Link } from "react-router";
 import type { Route } from "./+types/pricing";
 import { Nav, Footer, useReveal } from "../components/site";
 import { startCheckout } from "../lib/attribution";
+import { asset } from "../lib/asset";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "54D ON Pricing — Start With 7 Days Free" },
+    { title: "54D ON Pricing: Start With 7 Days Free" },
     {
       name: "description",
       content:
@@ -17,10 +18,21 @@ export function meta({}: Route.MetaArgs) {
 
 /* ============================================================
    Planes 54D ON.
-   priceId: PLACEHOLDER — reemplazar por los price ids reales
+   priceId: PLACEHOLDER. Reemplazar por los price ids reales
    de Stripe cuando el cliente los confirme.
    ============================================================ */
-const PLANS = [
+type Plan = {
+  priceId: string;
+  plan: string;
+  price: string;
+  period: string;
+  note: string;
+  features: string[];
+  featured: boolean;
+  badge?: string;
+};
+
+const PLANS: Plan[] = [
   {
     priceId: "PRICE_ID_MENSUAL",
     plan: "Monthly",
@@ -39,13 +51,14 @@ const PLANS = [
     plan: "Quarterly",
     price: "$156", // PRECIO_PENDIENTE
     period: "/ quarter",
-    note: "One full 54-day program fits inside.",
+    note: "Three months: the full 54 days plus time to lock in the habit.",
+    badge: "Most chosen: one full 54-day program fits inside",
     features: [
       "Everything in the monthly plan",
       "Works out to $52/mo", // PRECIO_PENDIENTE
       "Covers your full transformation",
     ],
-    featured: false,
+    featured: true,
   },
   {
     priceId: "PRICE_ID_ANUAL",
@@ -55,19 +68,19 @@ const PLANS = [
     note: "For those going for more than one transformation.",
     features: [
       "Everything in the monthly plan",
-      "Works out to $49/mo — the best price", // PRECIO_PENDIENTE
+      "Works out to $49/mo, the best price", // PRECIO_PENDIENTE
       "A full year of the method and your coach",
     ],
-    featured: true,
+    featured: false,
   },
 ];
 
-/* Qué incluye TODO plan — lista única, sin letra chica */
+/* Qué incluye TODO plan: lista única, sin letra chica */
 const INCLUDED = [
   {
     num: "01",
     name: "Daily training",
-    desc: "54 progressive video sessions, designed by coaches, not by an algorithm. With whatever you have at home.",
+    desc: "Progressive video sessions, designed by coaches, not by an algorithm. With whatever you have at home.",
   },
   {
     num: "02",
@@ -86,12 +99,12 @@ const INCLUDED = [
   },
 ];
 
-/* Bloque anti-objeción — matar riesgo percibido en tráfico frío */
+/* Bloque anti-objeción: matar riesgo percibido en tráfico frío */
 const NO_RISK = [
   {
     q: "What if I don't like it?",
     name: "7-day free trial",
-    desc: "Full access to the method from minute one. If it's not for you, cancel in one click before day 8 — the charge is zero.",
+    desc: "Full access to the method from minute one. If it's not for you, cancel in one click before day 8. The charge is zero.",
   },
   {
     q: "What if I start and it doesn't work?",
@@ -101,46 +114,51 @@ const NO_RISK = [
   {
     q: "Will you charge me without warning?",
     name: "No surprise charges",
-    desc: "We email you before your first charge. Cancel from your account — no calls, no retention tricks.",
+    desc: "We email you before your first charge. Cancel from your account: no calls, no retention tricks.",
   },
 ];
 
-/* SOCIAL_PROOF_PLACEHOLDER — reemplazar con testimonios reales
+/* SOCIAL_PROOF_PLACEHOLDER: reemplazar con testimonios reales
    del cliente (nombre, edad, ciudad, generación y foto). */
 const TESTIMONIALS = [
   {
     quote:
       "I thought it was another workout app. The difference was the coach: he wrote to me every day, even the days I wanted to disappear.",
     name: "Mariana R., 34",
-    tag: "Gen 41 — Mexico City",
+    tag: "Gen 41 · Mexico City",
   },
   {
     quote:
       "I did the full method from home, with two dumbbells and a band. On day 54 I didn't recognize myself in the day 1 photos.",
     name: "Camilo T., 29",
-    tag: "54D ON — Bogotá",
+    tag: "54D ON · Bogotá",
   },
   {
     quote:
       "What scared me most was paying and quitting, like always. This time, someone didn't let me let go. That's the difference.",
     name: "Andrea S., 41",
-    tag: "54D ON — Miami",
+    tag: "54D ON · Miami",
   },
 ];
 
-/* FAQ de objeciones — también alimenta el schema FAQPage */
-const FAQS = [
+/* FAQ de objeciones: también alimenta el schema FAQPage */
+const FAQS: { q: string; a: string; link?: { href: string; label: string } }[] = [
   {
     q: "Can I cancel anytime?",
-    a: "Yes. Cancel from your account in one click — no calls, no tricks. Cancel before day 8 and you pay nothing. And we email you before your first charge.",
+    a: "Yes. Cancel from your account in one click: no calls, no tricks. Cancel before day 8 and you pay nothing. And we email you before your first charge.",
   },
   {
     q: "Do I need equipment or experience?",
     a: "No. You start at your level, with what you have at home. Sessions are progressive: the program adapts to your starting point, not the other way around.",
   },
   {
+    q: "Do I need the app?",
+    a: "Yes. 54D ON is delivered through the 54D On app for iOS and Android: your daily training, your nutrition protocol, and the chat with your coach all live there. The app is free to download and rated 4.9 on the App Store. Your subscription unlocks everything.",
+    link: { href: "/on", label: "See how 54D ON works →" },
+  },
+  {
     q: "What's the coach like? Is it a real person?",
-    a: "A real person, not a bot. Your coach writes to you over chat, reviews your progress, corrects you, and demands more — every day. The app is just the vehicle: the method is the coach.",
+    a: "A real person, not a bot. Your coach writes to you over chat, reviews your progress, corrects you, and demands more. Every day. The app is just the vehicle: the method is the coach.",
   },
   {
     q: "How does billing work?",
@@ -210,7 +228,10 @@ export default function Pricing() {
       {/* ============ HERO INTERIOR (landing de ads: corto y al grano) ============ */}
       <header className="hero hero-inner">
         <div className="hero-media">
-          <div className="hero-poster" />
+          <img
+            src={asset("images/brand/studio-class-54d-mural-stairs.jpg")}
+            alt="A full 54D class training on mats under the 54D mural"
+          />
         </div>
         <div className="hero-veil" />
         <div className="hero-content">
@@ -219,7 +240,7 @@ export default function Pricing() {
             <span>/</span>
             <span>Pricing</span>
           </nav>
-          <span className="day-marker">54D ON — 7-day free trial</span>
+          <span className="day-marker">54D ON · 7-day free trial</span>
           <h1 className="hero-title">
             Start today.
             <br />
@@ -227,8 +248,8 @@ export default function Pricing() {
           </h1>
           <p className="hero-sub">
             Full access to the method: training, nutrition, and a real coach
-            every day. No commitment — if it's not for you, cancel before day
-            8 and pay nothing.
+            every day. No commitment. If it's not for you, cancel before day 8
+            and pay nothing.
           </p>
           <div className="hero-ctas">
             <a href="#plans" className="btn btn-primary">
@@ -242,20 +263,35 @@ export default function Pricing() {
       </header>
 
       {/* ============ PLANES ============ */}
-      <section className="section bloom" id="plans" style={{ scrollMarginTop: "5rem" }}>
+      <section className="section" id="plans" style={{ scrollMarginTop: "5rem" }}>
         <div className="section-inner" ref={plans.ref}>
           <div className={plans.className}>
             <span className="day-marker">Plans</span>
             <h2 className="section-title">
-              One method. <span className="accent">Three ways to start.</span>
+              One method. <span style={{ color: "var(--c-yellow)" }}>Three ways to start.</span>
             </h2>
+            <p
+              style={{
+                marginTop: "1.4rem",
+                maxWidth: "40rem",
+                fontSize: "1.05rem",
+                lineHeight: 1.6,
+                color: "var(--c-mist)",
+              }}
+            >
+              One subscription. Every program: 650+ recorded sessions, 12+
+              nutrition protocols, 120+ recipes, new releases at no extra cost.{" "}
+              <Link to="/on" style={{ color: "var(--c-yellow)", textDecoration: "none" }}>
+                See every program →
+              </Link>
+            </p>
             <div className="pricing-grid">
               {PLANS.map((p) => (
                 <div
                   key={p.priceId}
                   className={`pricing-card${p.featured ? " featured" : ""}`}
                 >
-                  {p.featured && (
+                  {p.badge && (
                     <span
                       className="day-marker"
                       style={{
@@ -264,13 +300,17 @@ export default function Pricing() {
                         right: "1.4rem",
                         marginBottom: 0,
                         background: "var(--c-ink)",
+                        fontSize: "0.62rem",
+                        letterSpacing: "0.08em",
+                        whiteSpace: "nowrap",
+                        padding: "0.4rem 0.8rem",
                       }}
                     >
-                      Best value
+                      {p.badge}
                     </span>
                   )}
                   <span className="pricing-plan">{p.plan}</span>
-                  {/* PRECIO_PENDIENTE — confirmar precios con cliente */}
+                  {/* PRECIO_PENDIENTE: confirmar precios con cliente */}
                   <div className="pricing-price">{p.price}</div>
                   <span className="pricing-period">{p.period}</span>
                   <p style={{ marginTop: "0.9rem", fontSize: "0.95rem", lineHeight: 1.5, color: "var(--c-mist)" }}>
@@ -342,13 +382,13 @@ export default function Pricing() {
       </section>
 
       {/* ============ QUÉ INCLUYE TODO PLAN ============ */}
-      <section className="section bloom-right">
+      <section className="section" style={{ paddingTop: 0 }}>
         <div className="section-inner" ref={included.ref}>
           <div className={included.className}>
             <span className="day-marker">Everything included</span>
             <div className="method-intro">
               <h2 className="section-title">
-                Every plan includes <span className="accent">everything.</span>
+                Every plan includes <span style={{ color: "var(--c-yellow)" }}>everything.</span>
               </h2>
               <p>
                 The plan only changes what you pay and how often. The method is
@@ -370,12 +410,12 @@ export default function Pricing() {
       </section>
 
       {/* ============ SIN RIESGO (anti-objeción + garantía) ============ */}
-      <section className="section bloom">
+      <section className="section" style={{ paddingTop: 0 }}>
         <div className="section-inner" ref={noRisk.ref}>
           <div className={noRisk.className}>
             <span className="day-marker">Zero risk</span>
             <h2 className="section-title">
-              If it's not for you, <span className="accent">you don't pay.</span>
+              If it's not for you, <span style={{ color: "var(--c-yellow)" }}>you don't pay.</span>
             </h2>
             <div className="pricing-grid">
               {NO_RISK.map((item) => (
@@ -396,14 +436,14 @@ export default function Pricing() {
       </section>
 
       {/* ============ PRUEBA SOCIAL (placeholder) ============ */}
-      {/* SOCIAL_PROOF_PLACEHOLDER — reemplazar con testimonios reales,
+      {/* SOCIAL_PROOF_PLACEHOLDER: reemplazar con testimonios reales,
           fotos y generaciones confirmadas por el cliente */}
-      <section className="section bloom-right">
+      <section className="section" style={{ paddingTop: 0 }}>
         <div className="section-inner" ref={proof.ref}>
           <div className={proof.className}>
             <span className="day-marker">Results</span>
             <h2 className="section-title">
-              Thousands have done it. <span className="accent">You're next.</span>
+              Thousands have done it. <span style={{ color: "var(--c-yellow)" }}>You're next.</span>
             </h2>
             <div className="pricing-grid">
               {TESTIMONIALS.map((t) => (
@@ -431,12 +471,12 @@ export default function Pricing() {
       </section>
 
       {/* ============ FAQ ============ */}
-      <section className="section bloom">
+      <section className="section" style={{ paddingTop: 0 }}>
         <div className="section-inner" ref={faq.ref}>
           <div className={faq.className}>
             <span className="day-marker">Questions</span>
             <h2 className="section-title">
-              What you'd ask <span className="accent">before starting.</span>
+              What you'd ask <span style={{ color: "var(--c-yellow)" }}>before starting.</span>
             </h2>
             <div className="faq-list">
               {FAQS.map((f) => (
@@ -468,7 +508,7 @@ export default function Pricing() {
         <div className="section-inner" ref={cta.ref}>
           <div className={`final-wrap ${cta.className}`}>
             <h2 className="final-title">
-              Your Day 1 <span className="accent">starts free.</span>
+              Your Day 1 <span style={{ color: "var(--c-yellow)" }}>starts free.</span>
             </h2>
             <div className="hero-ctas">
               <a href="#plans" className="btn btn-primary">

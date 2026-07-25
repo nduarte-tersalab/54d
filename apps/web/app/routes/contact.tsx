@@ -7,11 +7,11 @@ import { STUDIOS } from "../data/studios";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Contact — 54D" },
+    { title: "Contact 54D" },
     {
       name: "description",
       content:
-        "Questions about 54D ON, the studios, or your subscription? Write to us — we actually answer. Find us in Miami, Mexico City, and Bogotá.",
+        "Questions about 54D ON, the studios, or your subscription? Write to us. We actually answer. Find us in Miami, Mexico City, and Bogotá.",
     },
   ];
 }
@@ -84,7 +84,7 @@ export default function Contact() {
           </h1>
           <p className="hero-sub">
             Questions about the method, the studios, or your subscription? We
-            answer for real — a human on the team, not a bot.
+            answer for real: a human on the team, not a bot.
           </p>
         </div>
       </header>
@@ -95,7 +95,10 @@ export default function Contact() {
           <div className={caminos.className}>
             <span className="day-marker">Choose your path</span>
             <h2 className="section-title">
-              Your question has <span className="accent">a straight answer.</span>
+              Your question has{" "}
+              <span style={{ color: "var(--c-yellow)" }}>
+                a straight answer.
+              </span>
             </h2>
           </div>
         </div>
@@ -103,12 +106,12 @@ export default function Contact() {
       <div className="split">
         <div className="split-panel split-on" style={{ minHeight: "40vh" }}>
           <div>
-            <span className="split-label">Online? — 54D ON</span>
+            <span className="split-label">Online? 54D ON</span>
             <h3 className="split-title">Plans and pricing</h3>
             <p className="split-desc">
               7-day free trial, monthly, quarterly, and annual plans, billing
-              and cancellation. It's all explained — no fine print — on the
-              pricing page.
+              and cancellation. It's all explained on the pricing page. No
+              fine print.
             </p>
           </div>
           <div className="split-footer">
@@ -121,7 +124,7 @@ export default function Contact() {
         </div>
         <div className="split-panel split-studios" style={{ minHeight: "40vh" }}>
           <div>
-            <span className="split-label">In person? — 54D Studios</span>
+            <span className="split-label">In person? 54D Studios</span>
             <h3 className="split-title">Talk to your studio</h3>
             <p className="split-desc">
               Generations, start dates, spots, and schedules are handled
@@ -142,7 +145,8 @@ export default function Contact() {
           <div className={sedes.className}>
             <span className="day-marker">Studios</span>
             <h2 className="section-title">
-              Five studios. <span className="accent">Three countries.</span>
+              Five studios.{" "}
+              <span style={{ color: "var(--c-yellow)" }}>Three countries.</span>
             </h2>
             <div className="studios-list">
               {STUDIOS.map((s) => (
@@ -190,7 +194,10 @@ export default function Contact() {
               <div>
                 <span className="day-marker">Write to us</span>
                 <h2 className="section-title">
-                  Tell us <span className="accent">what you need.</span>
+                  Tell us{" "}
+                  <span style={{ color: "var(--c-yellow)" }}>
+                    what you need.
+                  </span>
                 </h2>
                 <p
                   style={{
@@ -201,7 +208,7 @@ export default function Contact() {
                     maxWidth: "30rem",
                   }}
                 >
-                  The method, plans, your subscription, or press — leave your
+                  The method, plans, your subscription, or press: leave your
                   message and we reply within one business day.
                 </p>
 
@@ -362,7 +369,7 @@ export default function Contact() {
                         <option value="">Not sure yet / it's about 54D ON</option>
                         {STUDIOS.map((s) => (
                           <option key={s.slug} value={s.slug}>
-                            {s.city} — {s.country}
+                            {s.city}, {s.country}
                           </option>
                         ))}
                       </select>
@@ -419,11 +426,12 @@ export default function Contact() {
         <div className="section-inner" ref={cierre.ref}>
           <div className={`final-wrap ${cierre.className}`}>
             <h2 className="final-title">
-              Ask less. <span className="accent">Train more.</span>
+              Ask less.{" "}
+              <span style={{ color: "var(--c-yellow)" }}>Train more.</span>
             </h2>
             <div className="hero-ctas">
               <Link to="/pricing" className="btn btn-primary">
-                Start free — 7 days
+                Start free. 7 days.
               </Link>
               <Link to="/method#faq" className="btn btn-ghost">
                 See the FAQ

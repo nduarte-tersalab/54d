@@ -3,11 +3,15 @@ import { Link } from "react-router";
 import type { Route } from "./+types/studio-detail";
 import { Nav, Footer, useReveal } from "../components/site";
 import { STUDIOS } from "../data/studios";
+import { asset } from "../lib/asset";
 
 /* ============================================================
-   /studios/:slug — Detalle de sede (54D Studios)
+   /studios/:slug: detalle de sede (54D Studios)
    Funnel: conversión presencial. Fase 1: lead → POST /leads
-   (Mindbody live en fase 2). Copy según SITE_STRATEGY.md.
+   (Mindbody live en fase 2). Copy según SITE_STRATEGY.md y
+   COPY_V3.md (sin em/en dashes en copy visible).
+   Fotos: galería real de Coral Gables (IMAGES_CG.md); resto de
+   sedes con fotos de marca genéricas (IMAGES_BRAND.md).
    ============================================================ */
 
 export async function loader({ params }: Route.LoaderArgs) {
@@ -16,19 +20,26 @@ export async function loader({ params }: Route.LoaderArgs) {
   return { studio };
 }
 
+/* Display de ciudad: el em dash del data ("Mexico City [u2014] Carso") se
+   convierte a middle dot ("Mexico City · Carso") en UI y a espacio simple
+   ("Mexico City Carso") en SEO/schema. Regla COPY_V3 §2. Escape unicode a
+   propósito: el caracter literal está prohibido en apps/web/app (CI grep). */
+const cityLabel = (city: string) => city.replace(/\s*\u2014\s*/g, " · ");
+const cityPlain = (city: string) => city.replace(/\s*\u2014\s*/g, " ");
+
 export function meta({ loaderData }: Route.MetaArgs) {
   if (!loaderData) return [{ title: "54D Studios" }];
   const { studio } = loaderData;
   return [
-    { title: `54D ${studio.city} — Join the Next Generation` },
+    { title: `54D ${cityPlain(studio.city)}: Join the Next Generation` },
     {
       name: "description",
-      content: `The 54D Method in ${studio.city}: small-group training with a coach, nutrition, and physiotherapy. Next Generation starting soon — limited spots.`,
+      content: `The 54D Method in ${cityPlain(studio.city)}: small-group training with a coach, nutrition, and physiotherapy. Next Generation starting soon. Limited spots.`,
     },
   ];
 }
 
-/* Sub localizado del hero por sede (zona/barrio) — PLACEHOLDER, confirmar con cliente */
+/* Sub localizado del hero por sede (zona/barrio): PLACEHOLDER, confirmar con cliente */
 const ZONE: Record<string, string> = {
   "coral-gables": "In the heart of Coral Gables, on Ponce de Leon Blvd.",
   hallandale: "Between Miami and Fort Lauderdale, on Hallandale Beach Blvd.",
@@ -37,7 +48,7 @@ const ZONE: Record<string, string> = {
   bogota: "In Chapinero, steps from Parque de la 93.",
 };
 
-/* Próxima generación por sede — DATO_PENDIENTE (fechas y cupos placeholder,
+/* Próxima generación por sede: DATO_PENDIENTE (fechas y cupos placeholder,
    confirmar con cliente / Mindbody antes del launch) */
 const GENERATION: Record<string, { start: string; startShort: string; spots: number }> = {
   "coral-gables": { start: "Monday, August 17", startShort: "AUG 17", spots: 20 },
@@ -47,11 +58,11 @@ const GENERATION: Record<string, { start: string; startShort: string; spots: num
   bogota: { start: "Monday, August 31", startShort: "AUG 31", spots: 20 },
 };
 
-/* Horarios estáticos fase 1 — PLACEHOLDER (Mindbody live en fase 2) */
+/* Horarios estáticos fase 1: PLACEHOLDER (Mindbody live en fase 2) */
 const SCHEDULE = [
-  { days: "Monday – Friday", hours: "5:30 AM – 9:00 PM" },
-  { days: "Saturday", hours: "7:00 AM – 12:00 PM" },
-  { days: "Sunday", hours: "Active recovery — your protocol sets it" },
+  { days: "Monday to Friday", hours: "5:30 AM to 9:00 PM" },
+  { days: "Saturday", hours: "7:00 AM to 12:00 PM" },
+  { days: "Sunday", hours: "Active recovery: your protocol sets it" },
 ];
 
 /* Qué incluye la experiencia presencial en la sede */
@@ -64,7 +75,7 @@ const INCLUDES = [
   {
     num: "02",
     name: "Nutritionist on site",
-    desc: "Your nutrition protocol is built from real measurements and adjusted across the 54 days — not set once.",
+    desc: "Your nutrition protocol is built from real measurements and adjusted across the 54 days, not set once.",
   },
   {
     num: "03",
@@ -74,9 +85,117 @@ const INCLUDES = [
   {
     num: "04",
     name: "Fixed group",
-    desc: "Your Generation trains with you from start to finish. Same group, same date, same goal — no one goes it alone.",
+    desc: "Your Generation trains with you from start to finish. Same group, same date, same goal. No one goes it alone.",
   },
 ];
+
+/* ============================================================
+   Fotos por sede (ART_DIRECTION_V3 §2)
+   Coral Gables: galería real del studio (IMAGES_CG.md, 9 verticales 2:3).
+   Resto de sedes: fotos de marca 54D con captions genéricos (no
+   afirman ser esa sede) hasta que el cliente envíe fotos propias.
+   Ratios calculados para igualar alturas en el photo-grid
+   (columna 3fr a ratio R exige columna 2fr a ratio 1.5R).
+   ============================================================ */
+type GalleryPhoto = {
+  src: string;
+  alt: string;
+  ratio: string;
+  caption: string;
+};
+type GalleryRow = { flip?: boolean; photos: [GalleryPhoto, GalleryPhoto] };
+
+const cg = (file: string) => `images/studios/coral-gables/${file}`;
+
+/* Foto real de hero solo donde existe galería propia de la sede */
+const HERO_PHOTO: Record<string, { src: string; alt: string }> = {
+  "coral-gables": {
+    src: cg("jump-training-54d-wall-01.jpg"),
+    alt: "Athlete mid jump during plyometric training in front of the giant 54 mural at 54D Coral Gables",
+  },
+};
+
+const GALLERY_ROWS: Record<string, GalleryRow[]> = {
+  "coral-gables": [
+    {
+      photos: [
+        {
+          src: cg("group-squat-class-01.jpg"),
+          alt: "Full class holding deep squats under the LED strips at 54D Coral Gables",
+          ratio: "1 / 1",
+          caption: "Every rep, watched",
+        },
+        {
+          src: cg("coach-with-headset-01.jpg"),
+          alt: "54D coach with a headset mic leading the class on the training floor",
+          ratio: "2 / 3",
+          caption: "Coaches on the floor",
+        },
+      ],
+    },
+    {
+      flip: true,
+      photos: [
+        {
+          src: cg("spin-bikes-boxing-bags-01.jpg"),
+          alt: "Row of spin bikes in use with boxing bags hanging from the rig behind",
+          ratio: "2 / 3",
+          caption: "The equipment",
+        },
+        {
+          src: cg("barbell-press-class-01.jpg"),
+          alt: "Group class pressing barbells with the 54D mural in the background",
+          ratio: "1 / 1",
+          caption: "Strength, coached live",
+        },
+      ],
+    },
+    {
+      photos: [
+        {
+          src: cg("agility-ladder-drill-01.jpg"),
+          alt: "Two athletes running an agility ladder drill past the golden 54D wall logo",
+          ratio: "1 / 1",
+          caption: "Speed and agility work",
+        },
+        {
+          src: cg("group-cardio-session-01.jpg"),
+          alt: "Group cardio session in full movement on the 54D training floor",
+          ratio: "2 / 3",
+          caption: "Cardio with the group",
+        },
+      ],
+    },
+  ],
+};
+
+/* Fila genérica de marca para sedes sin galería propia */
+const BRAND_ROWS: GalleryRow[] = [
+  {
+    photos: [
+      {
+        src: "images/brand/class-plank-54d-mural.jpg",
+        alt: "Full class training on mats under the 54D mural on a black wall",
+        ratio: "3 / 2",
+        caption: "The 54D method on the floor",
+      },
+      {
+        src: "images/brand/coach-class-boxing-bags-vertical.jpg",
+        alt: "54D coach standing over a mat class in front of hanging boxing bags",
+        ratio: "1 / 1",
+        caption: "Small groups, coached live",
+      },
+    ],
+  },
+];
+
+/* Banda fotográfica emocional: solo Coral Gables (foto de graduación real) */
+const BAND_PHOTO: Record<string, { src: string; alt: string }> = {
+  "coral-gables": {
+    src: cg("graduation-celebration-01.jpg"),
+    alt: "Emotional group hug at a 54D graduation with golden balloons and the 54D mural",
+  },
+};
 
 function LeadForm({ locationSlug }: { locationSlug: string }) {
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">(
@@ -220,8 +339,13 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
   );
   const whatsappUrl = `https://wa.me/${studio.whatsapp.replace(/\D/g, "")}`;
 
+  const heroPhoto = HERO_PHOTO[studio.slug];
+  const galleryRows = GALLERY_ROWS[studio.slug] ?? BRAND_ROWS;
+  const bandPhoto = BAND_PHOTO[studio.slug];
+
   const gen = useReveal();
   const includes = useReveal();
+  const gallery = useReveal();
   const location = useReveal();
   const lead = useReveal();
   const cta = useReveal();
@@ -238,14 +362,14 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
     <div>
       <Nav />
 
-      {/* Schema LocalBusiness/ExerciseGym — SEO local + AEO */}
+      {/* Schema LocalBusiness/ExerciseGym: SEO local + AEO */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "ExerciseGym",
-            name: `54D ${studio.city}`,
+            name: `54D ${cityPlain(studio.city)}`,
             address: studio.address,
             telephone: studio.whatsapp,
             url: `https://54d.com/studios/${studio.slug}`,
@@ -256,8 +380,12 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
       {/* ============ HERO INTERIOR ============ */}
       <header className="hero hero-inner">
         <div className="hero-media">
-          {/* Foto de la sede pendiente del cliente — poster de luz mientras tanto */}
-          <div className="hero-poster" />
+          {heroPhoto ? (
+            <img src={asset(heroPhoto.src)} alt={heroPhoto.alt} />
+          ) : (
+            /* Foto propia de la sede pendiente del cliente: poster de luz mientras tanto */
+            <div className="hero-poster" />
+          )}
         </div>
         <div className="hero-veil" />
         <div className="hero-content">
@@ -266,13 +394,13 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
             <span>/</span>
             <Link to="/studios">Studios</Link>
             <span>/</span>
-            <span>{studio.city}</span>
+            <span>{cityLabel(studio.city)}</span>
           </nav>
           <span className="day-marker">54D Studios · {studio.country}</span>
           <h1 className="hero-title">
             54D
             <br />
-            <span className="accent">{studio.city}.</span>
+            <span className="accent">{cityLabel(studio.city)}.</span>
           </h1>
           <p className="hero-sub">
             {ZONE[studio.slug] ?? studio.address} The full method, in person:
@@ -295,7 +423,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
       </header>
 
       {/* ============ PRÓXIMA GENERACIÓN ============ */}
-      <section className="section bloom">
+      <section className="section">
         <div className="section-inner" ref={gen.ref}>
           <div className={gen.className}>
             <span className="day-marker">Next Generation</span>
@@ -312,8 +440,8 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
               }}
             >
               {generation
-                ? `Yours starts ${generation.start}. Limited spots — when it's full, the next window is the next Generation.`
-                : "Limited spots per Generation — when it's full, the next window is the next Generation."}
+                ? `Yours starts ${generation.start}. Limited spots: when it's full, the next window is the next Generation.`
+                : "Limited spots per Generation: when it's full, the next window is the next Generation."}
             </p>
             {generation && (
               <div className="stat-row" style={{ maxWidth: "46rem" }}>
@@ -341,7 +469,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
       </section>
 
       {/* ============ QUÉ INCLUYE LA EXPERIENCIA ============ */}
-      <section className="section bloom-right">
+      <section className="section">
         <div className="section-inner" ref={includes.ref}>
           <div className={includes.className}>
             <span className="day-marker">The experience</span>
@@ -350,9 +478,9 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                 What you get training <span className="accent">here.</span>
               </h2>
               <p>
-                You start with a full initial assessment on day 1 —
-                measurements, history, and goal — and from there the whole
-                studio team works on your transformation.
+                You start with a full initial assessment on day 1:
+                measurements, history, and goal. From there the whole studio
+                team works on your transformation.
               </p>
             </div>
             <div className="method-grid">
@@ -368,8 +496,72 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
         </div>
       </section>
 
+      {/* ============ GALERÍA: FOTOS REALES ============ */}
+      <section className="section">
+        <div className="section-inner" ref={gallery.ref}>
+          <div className={gallery.className}>
+            <span className="day-marker">
+              {GALLERY_ROWS[studio.slug] ? "Inside the studio" : "Inside 54D"}
+            </span>
+            <h2 className="section-title">This is where it happens.</h2>
+            <div style={{ display: "grid", gap: "1rem", marginTop: "3rem" }}>
+              {galleryRows.map((row, i) => (
+                <div
+                  key={i}
+                  className={row.flip ? "photo-grid flip" : "photo-grid"}
+                >
+                  {row.photos.map((p) => (
+                    <figure key={p.src} style={{ margin: 0 }}>
+                      <div
+                        className="photo-card"
+                        style={{ aspectRatio: p.ratio }}
+                      >
+                        <img src={asset(p.src)} alt={p.alt} loading="lazy" />
+                      </div>
+                      <figcaption className="photo-caption">
+                        {p.caption}
+                      </figcaption>
+                    </figure>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============ PHOTO BAND: GRADUACIÓN (solo sedes con foto real) ============ */}
+      {bandPhoto && (
+        <section className="photo-band">
+          <img src={asset(bandPhoto.src)} alt={bandPhoto.alt} loading="lazy" />
+          <div className="photo-band-content">
+            <span className="day-marker">Day 54</span>
+            <h2 className="section-title">
+              Graduation day is real here.
+            </h2>
+            <p
+              style={{
+                marginTop: "1.4rem",
+                maxWidth: "34rem",
+                fontSize: "1.08rem",
+                lineHeight: 1.6,
+                color: "var(--c-mist)",
+              }}
+            >
+              Every Generation at 54D {cityLabel(studio.city)} ends the same
+              way: results on the table and a room full of people who made it.
+            </p>
+            <div className="hero-ctas">
+              <a href="#reserva" className="btn btn-primary">
+                Reserve your spot
+              </a>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ============ HORARIOS Y UBICACIÓN ============ */}
-      <section className="section bloom">
+      <section className="section">
         <div className="section-inner" ref={location.ref}>
           <div className={location.className}>
             <span className="day-marker">Schedule and location</span>
@@ -384,7 +576,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                 marginTop: "3rem",
               }}
             >
-              {/* Horarios estáticos fase 1 — Mindbody live en fase 2 */}
+              {/* Horarios estáticos fase 1: Mindbody live en fase 2 */}
               <div style={panelStyle}>
                 <div className="method-name" style={{ marginTop: 0 }}>
                   Schedule
@@ -454,7 +646,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                           to={`/studios/${s.slug}`}
                           style={{ color: "var(--c-yellow)", textDecoration: "none" }}
                         >
-                          {s.city}
+                          {cityLabel(s.city)}
                         </Link>
                       </span>
                     ))}
@@ -467,7 +659,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
       </section>
 
       {/* ============ FORMULARIO DE LEAD ============ */}
-      <section className="section bloom-right" id="reserva">
+      <section className="section" id="reserva">
         <div className="section-inner" ref={lead.ref}>
           <div className={lead.className}>
             <span className="day-marker">Reserve</span>
@@ -485,14 +677,15 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
               }}
             >
               Leave your details and we'll reach out to confirm your spot,
-              your schedule, and your initial assessment at 54D {studio.city}.
+              your schedule, and your initial assessment at 54D{" "}
+              {cityLabel(studio.city)}.
             </p>
             <LeadForm locationSlug={studio.slug} />
           </div>
         </div>
       </section>
 
-      {/* ============ CTA FINAL — CRUCE A ON ============ */}
+      {/* ============ CTA FINAL: CRUCE A ON ============ */}
       <section className="section" style={{ paddingTop: 0 }}>
         <div className="section-inner" ref={cta.ref}>
           <div className={`final-wrap ${cta.className}`}>

@@ -12,7 +12,7 @@ import { getSupabase } from "../lib/supabase";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "54D — Acceso al panel" },
+    { title: "54D: Acceso al panel" },
     { name: "robots", content: "noindex" },
   ];
 }

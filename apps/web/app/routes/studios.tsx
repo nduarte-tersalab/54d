@@ -2,16 +2,18 @@ import { Link } from "react-router";
 import type { Route } from "./+types/studios";
 import { Nav, Footer, useReveal } from "../components/site";
 import { STUDIOS } from "../data/studios";
+import { asset } from "../lib/asset";
 
 /* ============================================================
-   /studios — Index de sedes (54D Studios)
-   Funnel: consideración presencial. Copy según SITE_STRATEGY.md.
-   Mapa conceptual: grid de cards glass por ciudad (no mapa real).
+   /studios: index de sedes (54D Studios)
+   Funnel: consideración presencial. Copy según SITE_STRATEGY.md
+   y COPY_V3.md (sin em/en dashes en copy visible).
+   Fotos reales según ART_DIRECTION_V3.md + IMAGES_BRAND.md.
    ============================================================ */
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "54D Studios — Miami, Mexico City, Bogotá" },
+    { title: "54D Studios: Miami, Mexico City, Bogotá" },
     {
       name: "description",
       content:
@@ -19,6 +21,12 @@ export function meta({}: Route.MetaArgs) {
     },
   ];
 }
+
+/* Display de ciudad: el em dash del data ("Mexico City [u2014] Carso") se
+   convierte a middle dot ("Mexico City · Carso") solo en UI.
+   Regla COPY_V3 §2: nunca en slugs ni SEO. Escape unicode a propósito:
+   el caracter literal está prohibido en apps/web/app (CI grep). */
+const cityLabel = (city: string) => city.replace(/\s*\u2014\s*/g, " · ");
 
 /* La experiencia presencial: qué la hace distinta a entrenar solo */
 const EXPERIENCE = [
@@ -49,7 +57,7 @@ const GENERATION_TIMELINE = [
   {
     day: "Today",
     title: "Reserve your spot",
-    desc: "Spots per Generation are limited. When it's full, it's full — the next window is the next Generation, not tomorrow.",
+    desc: "Spots per Generation are limited. When it's full, it's full. The next window is the next Generation, not tomorrow.",
   },
   {
     day: "D01",
@@ -57,7 +65,7 @@ const GENERATION_TIMELINE = [
     desc: "Everyone starts the same day, with the same initial assessment. No one joins late and no one starts alone.",
   },
   {
-    day: "D01–D54",
+    day: "D01 to D54",
     title: "Same group, 54 days",
     desc: "You train with the same people and the same coaches through the entire program. The pressure of the group is part of the method.",
   },
@@ -68,8 +76,55 @@ const GENERATION_TIMELINE = [
   },
 ];
 
+/* Grid editorial asimétrico (ART_DIRECTION_V3 §2): fotos de marca reales.
+   Ratios calculados para que ambas columnas del photo-grid queden a la
+   misma altura (3fr a ratio R exige 2fr a ratio 1.5R). */
+type FloorPhoto = {
+  src: string;
+  alt: string;
+  ratio: string;
+  caption: string;
+};
+
+const FLOOR_ROWS: { flip?: boolean; photos: [FloorPhoto, FloorPhoto] }[] = [
+  {
+    photos: [
+      {
+        src: "images/brand/gym-structure-heavy-bags-wide.jpg",
+        alt: "Industrial 54D gym structure with heavy bags hanging from chains over the training floor",
+        ratio: "3 / 2",
+        caption: "The floor, the rig, the bags",
+      },
+      {
+        src: "images/brand/coach-class-boxing-bags-vertical.jpg",
+        alt: "54D coach standing over a mat class in front of a row of hanging boxing bags",
+        ratio: "1 / 1",
+        caption: "Coaches in the room",
+      },
+    ],
+  },
+  {
+    flip: true,
+    photos: [
+      {
+        src: "images/brand/coach-stretch-demo-vertical.jpg",
+        alt: "Coach with a headset demonstrating a stretch to students seated on mats",
+        ratio: "1 / 1",
+        caption: "Demo first, then work",
+      },
+      {
+        src: "images/brand/class-plank-rows-54d-mural.jpg",
+        alt: "Rows of students holding planks on colored mats under the 54D mural",
+        ratio: "3 / 2",
+        caption: "One group, one standard",
+      },
+    ],
+  },
+];
+
 export default function Studios() {
   const map = useReveal();
+  const floor = useReveal();
   const experience = useReveal();
   const generations = useReveal();
   const cta = useReveal();
@@ -78,10 +133,13 @@ export default function Studios() {
     <div>
       <Nav />
 
-      {/* ============ HERO INTERIOR ============ */}
+      {/* ============ HERO INTERIOR (foto real de marca) ============ */}
       <header className="hero hero-inner">
         <div className="hero-media">
-          <div className="hero-poster" />
+          <img
+            src={asset("images/brand/studio-class-54d-mural-stairs.jpg")}
+            alt="Full 54D class training on mats with a coach standing, giant 54D mural on the wall"
+          />
         </div>
         <div className="hero-veil" />
         <div className="hero-content">
@@ -111,8 +169,8 @@ export default function Studios() {
         </div>
       </header>
 
-      {/* ============ MAPA CONCEPTUAL DE SEDES (grid glass) ============ */}
-      <section className="section bloom" id="sedes">
+      {/* ============ MAPA CONCEPTUAL DE SEDES (grid de cards) ============ */}
+      <section className="section" id="sedes">
         <div className="section-inner" ref={map.ref}>
           <div className={map.className}>
             <span className="day-marker">Studios</span>
@@ -163,7 +221,7 @@ export default function Studios() {
                     <span className="studio-country">{s.country}</span>
                   </div>
                   <div className="method-name" style={{ marginTop: "2rem" }}>
-                    {s.city}
+                    {cityLabel(s.city)}
                   </div>
                   <p className="method-desc">{s.address}</p>
                   <span
@@ -179,8 +237,40 @@ export default function Studios() {
         </div>
       </section>
 
+      {/* ============ FOTOS REALES: EL PISO DE 54D ============ */}
+      <section className="section">
+        <div className="section-inner" ref={floor.ref}>
+          <div className={floor.className}>
+            <span className="day-marker">Inside 54D</span>
+            <h2 className="section-title">The floor does the talking.</h2>
+            <div style={{ display: "grid", gap: "1rem", marginTop: "3rem" }}>
+              {FLOOR_ROWS.map((row, i) => (
+                <div
+                  key={i}
+                  className={row.flip ? "photo-grid flip" : "photo-grid"}
+                >
+                  {row.photos.map((p) => (
+                    <figure key={p.src} style={{ margin: 0 }}>
+                      <div
+                        className="photo-card"
+                        style={{ aspectRatio: p.ratio }}
+                      >
+                        <img src={asset(p.src)} alt={p.alt} loading="lazy" />
+                      </div>
+                      <figcaption className="photo-caption">
+                        {p.caption}
+                      </figcaption>
+                    </figure>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ============ LA EXPERIENCIA PRESENCIAL ============ */}
-      <section className="section bloom-right">
+      <section className="section">
         <div className="section-inner" ref={experience.ref}>
           <div className={experience.className}>
             <span className="day-marker">The experience</span>
@@ -208,7 +298,7 @@ export default function Studios() {
       </section>
 
       {/* ============ CÓMO FUNCIONAN LAS GENERACIONES ============ */}
-      <section className="section bloom">
+      <section className="section">
         <div className="section-inner" ref={generations.ref}>
           <div className={generations.className}>
             <span className="day-marker">Generations</span>
@@ -225,10 +315,10 @@ export default function Studios() {
                 color: "var(--c-mist)",
               }}
             >
-              Each studio opens Generations — the group you start and finish
-              with — with a start date, limited spots, and 54 days together.
-              That's why it works: this is not an open membership. It's a
-              commitment with a date.
+              Each studio opens Generations: the group you start and finish
+              with. A start date, limited spots, and 54 days together. That's
+              why it works. This is not an open membership. It's a commitment
+              with a date.
             </p>
             <div className="timeline">
               {GENERATION_TIMELINE.map((t) => (
@@ -243,7 +333,41 @@ export default function Studios() {
         </div>
       </section>
 
-      {/* ============ CTA FINAL — CRUCE A ON ============ */}
+      {/* ============ PHOTO BAND: COMUNIDAD (foto grupal real) ============ */}
+      <section className="photo-band">
+        <img
+          src={asset("images/brand/group-photo-54d-mural.jpg")}
+          alt="A full 54D Generation smiling together in front of the 54D mural after class"
+          loading="lazy"
+        />
+        <div className="photo-band-content">
+          <span className="day-marker">The Generation</span>
+          <h2 className="section-title">
+            You start with strangers.
+            <br />
+            You finish with your people.
+          </h2>
+          <p
+            style={{
+              marginTop: "1.4rem",
+              maxWidth: "34rem",
+              fontSize: "1.08rem",
+              lineHeight: 1.6,
+              color: "var(--c-mist)",
+            }}
+          >
+            Every Generation trains, sweats, and graduates together. That is
+            what the studios are for.
+          </p>
+          <div className="hero-ctas">
+            <a href="#sedes" className="btn btn-primary">
+              Find your studio
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ============ CTA FINAL: CRUCE A ON ============ */}
       <section className="section" style={{ paddingTop: 0 }}>
         <div className="section-inner" ref={cta.ref}>
           <div className={`final-wrap ${cta.className}`}>

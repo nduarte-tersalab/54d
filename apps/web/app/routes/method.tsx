@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import type { Route } from "./+types/method";
 import { Nav, Footer, useReveal } from "../components/site";
+import { asset } from "../lib/asset";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -22,7 +23,7 @@ const PILLARS = [
   {
     num: "01",
     name: "Training",
-    desc: "Daily high-intensity sessions designed by coaches, not by an algorithm. Every day has a purpose inside a 54-session progression that scales with your level — in the studio or with whatever you have at home.",
+    desc: "Daily high-intensity sessions designed by coaches, not by an algorithm. Every day has a purpose inside a 54-session progression that scales with your level. In the studio or with whatever you have at home.",
   },
   {
     num: "02",
@@ -37,7 +38,7 @@ const PILLARS = [
   {
     num: "04",
     name: "Result",
-    desc: "On day 54 you don't finish a challenge: you finish someone new. And you have the tools — habits, protocol, judgment — to keep it without depending on anyone.",
+    desc: "On day 54 you don't finish a challenge: you finish someone new. And you have the tools to keep it without depending on anyone: habits, protocol, judgment.",
   },
 ];
 
@@ -50,12 +51,12 @@ const TIMELINE = [
   {
     day: "Day 07",
     title: "Your protocol is already running",
-    desc: "Your nutrition protocol is already running and your coach has a week of your data. The first adjustments land here: loads, portions, recovery. The program stops being generic — for good.",
+    desc: "Your nutrition protocol is already running and your coach has a week of your data. The first adjustments land here: loads, portions, recovery. The program stops being generic. For good.",
   },
   {
     day: "Day 21",
     title: "Where most people quit",
-    desc: "The early motivation is spent and the full result isn't visible yet. This is where most people quit — and where your coach pushes harder: more follow-up, not less. This is what the method is for.",
+    desc: "The early motivation is spent and the full result isn't visible yet. This is where most people quit. And where your coach pushes harder: more follow-up, not less. This is what the method is for.",
   },
   {
     day: "Day 35",
@@ -64,7 +65,7 @@ const TIMELINE = [
   },
   {
     day: "Day 54",
-    title: "The result — and the plan to keep it",
+    title: "The result. And the plan to keep it",
     desc: "Final measurements, a comparison against your day 1, and something bigger: 54 days of installed habits. You leave with a concrete plan to keep the result, because finishing the program isn't the end.",
   },
 ];
@@ -86,7 +87,7 @@ const FIT_NO = [
 const FAQ = [
   {
     q: "Do I need prior experience?",
-    a: "No. Day 1 starts with an assessment: your level, your measurements, your starting point. The program scales with you — the standard is relative to your body, not the person next to you. You start where you are, with what you have.",
+    a: "No. Day 1 starts with an assessment: your level, your measurements, your starting point. The program scales with you: the standard is relative to your body, not the person next to you. You start where you are, with what you have.",
     links: [{ href: "/blog", label: "More guides on the blog" }],
   },
   {
@@ -95,8 +96,8 @@ const FAQ = [
     links: [],
   },
   {
-    q: "ON or Studios — which one is for me?",
-    a: "If you want to train wherever you are, on your schedule: 54D ON. If you want the full in-person experience — coaches on the floor, a fixed group, a nutritionist, and physiotherapy: 54D Studios in Miami, Mexico City, or Bogotá. The method is the same.",
+    q: "ON or Studios: which one is for me?",
+    a: "If you want to train wherever you are, on your schedule: 54D ON. If you want the full in-person experience: coaches on the floor, a fixed group, a nutritionist, and physiotherapy. That's 54D Studios in Miami, Mexico City, or Bogotá. The method is the same.",
     links: [
       { href: "/on", label: "Discover 54D ON" },
       { href: "/studios", label: "Explore the studios" },
@@ -156,7 +157,7 @@ export default function Method() {
           </p>
           <div className="hero-ctas">
             <Link to="/pricing" className="btn btn-primary">
-              Start free — 7 days
+              Start free. 7 days.
             </Link>
             <Link to="/studios" className="btn btn-ghost">
               Explore the studios
@@ -173,7 +174,7 @@ export default function Method() {
             <div className="method-intro">
               <h2 className="section-title">
                 A method with structure, a standard, and{" "}
-                <span className="accent">an end.</span>
+                <span style={{ color: "var(--c-yellow)" }}>an end.</span>
               </h2>
               <p>{DEFINITION}</p>
             </div>
@@ -206,7 +207,10 @@ export default function Method() {
             <span className="day-marker">The 4 pillars</span>
             <div className="method-intro">
               <h2 className="section-title">
-                Four pillars. <span className="accent">Zero improvisation.</span>
+                Four pillars.{" "}
+                <span style={{ color: "var(--c-yellow)" }}>
+                  Zero improvisation.
+                </span>
               </h2>
               <p>
                 Every day of the program combines all four. None of them works
@@ -227,6 +231,24 @@ export default function Method() {
         </div>
       </section>
 
+      {/* ============ PHOTO BAND: LA CLASE EN TRABAJO ============ */}
+      <section className="photo-band" aria-label="Inside a 54D class">
+        <img
+          src={asset("images/brand/class-plank-54d-mural.jpg")}
+          alt="A full 54D class holding planks on the mats under the 54D mural"
+          loading="lazy"
+        />
+        <div className="photo-band-content">
+          <span className="day-marker">Inside a session</span>
+          <h2 className="section-title">
+            This is what
+            <br />
+            the work looks like.
+          </h2>
+          <p className="photo-caption">54D class in session, day by day</p>
+        </div>
+      </section>
+
       {/* ============ TIMELINE D01 → D54 ============ */}
       <section className="section bloom" id="timeline">
         <div className="section-inner" ref={timeline.ref}>
@@ -234,7 +256,7 @@ export default function Method() {
             <span className="day-marker">D01 → D54</span>
             <div className="method-intro">
               <h2 className="section-title">
-                54 days, <span className="accent">day by day.</span>
+                54 days, <span style={{ color: "var(--c-yellow)" }}>day by day.</span>
               </h2>
               <p>
                 The program isn't &ldquo;train hard and eat well&rdquo;. It's a
@@ -263,11 +285,11 @@ export default function Method() {
             <div className="method-intro">
               <h2 className="section-title">
                 If you do the work and it doesn't work,{" "}
-                <span className="accent">you don't pay.</span>
+                <span style={{ color: "var(--c-yellow)" }}>you don't pay.</span>
               </h2>
               <p>
-                You have 30 days. Follow the program — training, nutrition
-                protocol, and daily check-ins with your coach — and if you don't
+                You have 30 days. Follow the program: training, nutrition
+                protocol, and daily check-ins with your coach. If you don't
                 see results, we refund your money. No interrogation, no fine
                 print, no &ldquo;call us to cancel&rdquo;.
               </p>
@@ -296,7 +318,8 @@ export default function Method() {
           <div className={fit.className}>
             <span className="day-marker">An honest filter</span>
             <h2 className="section-title">
-              This isn't for everyone. <span className="accent">That's fine.</span>
+              This isn't for everyone.{" "}
+              <span style={{ color: "var(--c-yellow)" }}>That's fine.</span>
             </h2>
             <div
               style={{
@@ -339,7 +362,8 @@ export default function Method() {
           <div className={faq.className}>
             <span className="day-marker">Questions</span>
             <h2 className="section-title">
-              What people ask <span className="accent">before they start.</span>
+              What people ask{" "}
+              <span style={{ color: "var(--c-yellow)" }}>before they start.</span>
             </h2>
             <div className="faq-list">
               {FAQ.map((f) => (
@@ -375,7 +399,7 @@ export default function Method() {
       <section className="split">
         <div className="split-panel split-on">
           <div>
-            <span className="split-label">Online — 54D ON</span>
+            <span className="split-label">Online: 54D ON</span>
             <h3 className="split-title">Do it online.</h3>
             <p className="split-desc">
               The full method from home: video training sessions, a nutrition
@@ -392,12 +416,12 @@ export default function Method() {
         </div>
         <div className="split-panel split-studios">
           <div>
-            <span className="split-label">In person — 5 studios</span>
+            <span className="split-label">In person: 5 studios</span>
             <h3 className="split-title">Do it in a studio.</h3>
             <p className="split-desc">
-              The full experience, in person: coaches on the floor, a Generation
-              — the group you start and finish with — and limited spots. Miami,
-              Mexico City, and Bogotá.
+              The full experience, in person: coaches on the floor, a
+              Generation, the group you start and finish with, and limited
+              spots. Miami, Mexico City, and Bogotá.
             </p>
           </div>
           <div className="split-footer">
@@ -413,11 +437,12 @@ export default function Method() {
         <div className="section-inner" ref={cta.ref}>
           <div className={`final-wrap ${cta.className}`}>
             <h2 className="final-title">
-              Now you know the method. <span className="accent">Use it.</span>
+              Now you know the method.{" "}
+              <span style={{ color: "var(--c-yellow)" }}>Use it.</span>
             </h2>
             <div className="hero-ctas">
               <Link to="/pricing" className="btn btn-primary">
-                Start free — 7 days
+                Start free. 7 days.
               </Link>
               <Link to="/studios" className="btn btn-ghost">
                 Explore the studios

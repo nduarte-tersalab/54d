@@ -14,7 +14,7 @@ import { getSupabase } from "../lib/supabase";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "54D — Editor de post (admin)" },
+    { title: "54D: Editor de post (admin)" },
     { name: "robots", content: "noindex" },
   ];
 }
@@ -378,7 +378,7 @@ export default function AdminBlogEdit({ params }: Route.ComponentProps) {
 
             <div className="field">
               <div style={labelRow}>
-                <label htmlFor="post-seo-title">SEO — Título</label>
+                <label htmlFor="post-seo-title">SEO: Título</label>
                 <span style={counterStyle(form.seo_title.length, 60)}>
                   {form.seo_title.length}/60
                 </span>
@@ -394,7 +394,7 @@ export default function AdminBlogEdit({ params }: Route.ComponentProps) {
 
             <div className="field">
               <div style={labelRow}>
-                <label htmlFor="post-seo-desc">SEO — Descripción</label>
+                <label htmlFor="post-seo-desc">SEO: Descripción</label>
                 <span style={counterStyle(form.seo_description.length, 155)}>
                   {form.seo_description.length}/155
                 </span>

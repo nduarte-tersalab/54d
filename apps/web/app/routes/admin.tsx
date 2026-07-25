@@ -13,7 +13,7 @@ import { getSupabase } from "../lib/supabase";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "54D — Dashboard" },
+    { title: "54D: Dashboard" },
     { name: "robots", content: "noindex" },
   ];
 }
@@ -118,7 +118,7 @@ export default function Admin() {
           <div className="metric-card" key={m.label}>
             <div className="label">{m.label}</div>
             <div className={m.accent ? "value accent" : "value"}>
-              {loaded && summary ? (m.value ?? 0) : "—"}
+              {loaded && summary ? (m.value ?? 0) : "-"}
             </div>
           </div>
         ))}
@@ -195,9 +195,9 @@ export default function Admin() {
                     style={{ borderTop: "1px solid var(--hairline)" }}
                   >
                     <td style={{ ...td, color: "var(--c-white)" }}>
-                      {row.utm_source ?? "—"}
+                      {row.utm_source ?? "-"}
                     </td>
-                    <td style={td}>{row.utm_campaign ?? "—"}</td>
+                    <td style={td}>{row.utm_campaign ?? "-"}</td>
                     <td style={tdNum}>{row.checkouts_iniciados ?? 0}</td>
                     <td style={tdNum}>{row.trials_iniciados ?? 0}</td>
                     <td style={tdNum}>{row.conversiones_pagas ?? 0}</td>

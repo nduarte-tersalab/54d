@@ -13,7 +13,7 @@ import { getSupabase } from "../lib/supabase";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "54D — Blog (admin)" },
+    { title: "54D: Blog (admin)" },
     { name: "robots", content: "noindex" },
   ];
 }
@@ -105,9 +105,9 @@ const dateFmt = new Intl.DateTimeFormat("es", {
 });
 
 function fmtDate(iso: string | null): string {
-  if (!iso) return "—";
+  if (!iso) return "-";
   const d = new Date(iso);
-  return Number.isNaN(d.getTime()) ? "—" : dateFmt.format(d);
+  return Number.isNaN(d.getTime()) ? "-" : dateFmt.format(d);
 }
 
 export default function AdminBlog() {

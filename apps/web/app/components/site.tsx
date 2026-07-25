@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router";
+import { Link, NavLink } from "react-router";
 import { STUDIOS } from "../data/studios";
 
 /* ============================================================
@@ -41,32 +41,84 @@ export function useReveal() {
   return { ref, className: `reveal${visible ? " visible" : ""}` };
 }
 
-/** Nav global pill flotante. Links a rutas reales (no anclas). */
+const NAV_LINKS = [
+  { to: "/method", label: "Method" },
+  { to: "/on", label: "54D ON" },
+  { to: "/studios", label: "Studios" },
+  { to: "/blog", label: "Blog" },
+] as const;
+
+/** Nav global: barra sólida full-width (ART_DIRECTION_V3 §1).
+ *  Transparente sobre el hero, negro pleno al scroll (scrollY > 40).
+ *  Mobile: hamburger + drawer full-screen que bloquea el scroll del
+ *  body y se cierra al navegar. Links a rutas reales (no anclas). */
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Drawer abierto: bloquear scroll del body
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
+  const close = () => setOpen(false);
+
   return (
     <nav className={`nav${scrolled ? " scrolled" : ""}`}>
-      <Link to="/" className="nav-logo">
-        54<em>D</em>
+      <Link to="/" className="nav-logo" onClick={close}>
+        54D
       </Link>
       <div className="nav-links">
-        <Link to="/method">Method</Link>
-        <Link to="/on">54D ON</Link>
-        <Link to="/studios">Studios</Link>
-        <Link to="/blog">Blog</Link>
-        <Link to="/pricing" className="btn btn-primary btn-nav">
+        {NAV_LINKS.map((item) => (
+          <NavLink key={item.to} to={item.to}>
+            {item.label}
+          </NavLink>
+        ))}
+        <Link to="/pricing" className="btn btn-nav">
+          Start free
+        </Link>
+      </div>
+      <button
+        type="button"
+        className="nav-burger"
+        aria-label={open ? "Close menu" : "Open menu"}
+        aria-expanded={open}
+        aria-controls="nav-drawer"
+        onClick={() => setOpen((v) => !v)}
+      >
+        <span />
+        <span />
+        <span />
+      </button>
+      <div id="nav-drawer" className={`nav-drawer${open ? " open" : ""}`}>
+        {NAV_LINKS.map((item) => (
+          <Link key={item.to} to={item.to} onClick={close}>
+            {item.label}
+          </Link>
+        ))}
+        <Link to="/pricing" className="btn btn-nav" onClick={close}>
           Start free
         </Link>
       </div>
     </nav>
   );
 }
+
+/** Regla de copy v3 (COPY_V3 §1-2): nada de em/en dashes visibles.
+ *  Nombres de sede "City <dash> Area" se muestran "City · Area".
+ *  (\u2014 = em dash, \u2013 = en dash; escapados por el grep de CI) */
+const cityLabel = (city: string): string =>
+  city.replace(/\s*[\u2014\u2013]\s*/g, " · ");
 
 /** Footer global. Sedes desde app/data/studios.ts. */
 export function Footer() {
@@ -92,7 +144,7 @@ export function Footer() {
             <h4>Studios</h4>
             {STUDIOS.map((s) => (
               <Link key={s.slug} to={`/studios/${s.slug}`}>
-                {s.city}
+                {cityLabel(s.city)}
               </Link>
             ))}
           </div>

@@ -14,7 +14,7 @@ import { getSupabase } from "../lib/supabase";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "54D — Programas (admin)" },
+    { title: "54D: Programas (admin)" },
     { name: "robots", content: "noindex" },
   ];
 }

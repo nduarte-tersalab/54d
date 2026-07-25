@@ -1,10 +1,13 @@
 /* ============================================================
-   54D Studios — single source of truth for locations (shared).
+   54D Studios: single source of truth for locations (shared).
    5 active locations: Coral Gables, Hallandale, Mexico City
    Carso, Mexico City Santa Fe, Bogotá. NYC was removed: do
    not add it back.
-   Addresses and WhatsApp numbers are PLACEHOLDER — confirm
+   Addresses and WhatsApp numbers are PLACEHOLDER: confirm
    with the client before launch.
+   Display naming (COPY_V3.md §2): "{City} · {Area}" with a
+   middle dot, only when a city has more than one studio. The
+   dot is display-only: never in slugs or SEO titles.
    ============================================================ */
 
 export type CountryCode = "US" | "MX" | "CO";
@@ -15,9 +18,9 @@ export interface Studio {
   city: string;
   country: string;
   countryCode: CountryCode;
-  /** PLACEHOLDER — address pending client confirmation */
+  /** PLACEHOLDER: address pending client confirmation */
   address: string;
-  /** PLACEHOLDER — WhatsApp number pending client confirmation */
+  /** PLACEHOLDER: WhatsApp number pending client confirmation */
   whatsapp: string;
   /** IANA timezone of the location */
   timezone: string;
@@ -44,7 +47,7 @@ export const STUDIOS: Studio[] = [
   },
   {
     slug: "mexico-carso",
-    city: "Mexico City — Carso",
+    city: "Mexico City · Carso",
     country: "Mexico",
     countryCode: "MX",
     address: "Lago Zúrich 245, Ampliación Granada, Miguel Hidalgo, 11529 CDMX", // PLACEHOLDER
@@ -53,7 +56,7 @@ export const STUDIOS: Studio[] = [
   },
   {
     slug: "mexico-santa-fe",
-    city: "Mexico City — Santa Fe",
+    city: "Mexico City · Santa Fe",
     country: "Mexico",
     countryCode: "MX",
     address: "Av. Vasco de Quiroga 3800, Santa Fe, Cuajimalpa, 05348 CDMX", // PLACEHOLDER

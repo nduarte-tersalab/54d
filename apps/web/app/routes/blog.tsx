@@ -4,29 +4,29 @@ import type { Route } from "./+types/blog";
 import { Nav, Footer, useReveal } from "../components/site";
 
 /* ============================================================
-   /blog — Index del blog (awareness · SEO/AEO top-funnel).
+   /blog: Index del blog (awareness · SEO/AEO top-funnel).
    Hero editorial + destacado + grid por categoría + newsletter.
-   Copy EN según docs/marketing/COPY_EN.md (voz directa, you).
+   Copy EN según docs/marketing/COPY_V3.md (voz directa, you).
    ============================================================ */
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "54D Blog — Training, Nutrition, and the Method" },
+    { title: "54D Blog: Training, Nutrition, and the Method" },
     {
       name: "description",
       content:
-        "Training, nutrition, and transformation guides written by 54D coaches. No fitness noise — what actually works, and why.",
+        "Training, nutrition, and transformation guides written by 54D coaches. No fitness noise. What actually works, and why.",
     },
   ];
 }
 
 /* ------------------------------------------------------------
    Data placeholder de artículos.
-   TODO: conectar a Supabase (tabla `posts`) — este array local
+   TODO: conectar a Supabase (tabla `posts`): este array local
    desaparece cuando el CMS esté listo. Los slugs quedan definidos
    para las futuras rutas /blog/:slug (hoy las cards linkean a "#").
    TODO: schema `Article` (JSON-LD) se agrega en la página de cada
-   post cuando exista la ruta real — no en este index.
+   post cuando exista la ruta real, no en este index.
    AUTOR_PENDIENTE: nombres y credenciales reales por confirmar
    con el cliente (E-E-A-T). FECHAS placeholder.
    ------------------------------------------------------------ */
@@ -52,10 +52,10 @@ const POSTS: Post[] = [
     title:
       "How Long Does It Really Take to Transform Your Body? What 54 Days of Data Show",
     excerpt:
-      "It's not 21 days or 12 magic weeks. We analyzed data from our Generations to answer, with evidence, when the first real change shows up — and what speeds it up.",
+      "It's not 21 days or 12 magic weeks. We analyzed data from our Generations to answer, with evidence, when the first real change shows up. And what speeds it up.",
     category: "Method",
     author: "Head Coach, 54D", // AUTOR_PENDIENTE
-    credential: "Certified strength & conditioning coach", // AUTOR_PENDIENTE — credencial real
+    credential: "Certified strength & conditioning coach", // AUTOR_PENDIENTE: credencial real
     initials: "HC",
     date: "Jul 21, 2026",
     dateISO: "2026-07-21",
@@ -65,10 +65,10 @@ const POSTS: Post[] = [
     slug: "training-at-home-vs-gym",
     title: "Training at Home vs. the Gym: What Works Better for Your Goal",
     excerpt:
-      "The gym isn't mandatory, and your living room isn't a plan B. We compare results, adherence, and real cost so you choose by your goal — not the myth.",
+      "The gym isn't mandatory, and your living room isn't a plan B. We compare results, adherence, and real cost so you choose by your goal, not the myth.",
     category: "Training",
     author: "54D ON Coach", // AUTOR_PENDIENTE
-    credential: "BSc Sports Science", // AUTOR_PENDIENTE — credencial real
+    credential: "BSc Sports Science", // AUTOR_PENDIENTE: credencial real
     initials: "ON",
     date: "Jul 14, 2026",
     dateISO: "2026-07-14",
@@ -79,10 +79,10 @@ const POSTS: Post[] = [
     title:
       "What to Eat Before and After Training: A Practical Guide, No Miracle Supplements",
     excerpt:
-      "What you eat around training matters more than any powder. A straight guide from our nutritionist: what, how much, and when — with real food.",
+      "What you eat around training matters more than any powder. A straight guide from our nutritionist: what, how much, and when. With real food.",
     category: "Nutrition",
     author: "54D Nutritionist", // AUTOR_PENDIENTE
-    credential: "Registered Dietitian", // AUTOR_PENDIENTE — cédula/licencia
+    credential: "Registered Dietitian", // AUTOR_PENDIENTE: cédula/licencia
     initials: "NU",
     date: "Jul 7, 2026",
     dateISO: "2026-07-07",
@@ -277,7 +277,7 @@ export default function Blog() {
             <span className="accent">And why.</span>
           </h1>
           <p className="hero-sub">
-            Written by the coaches behind thousands of transformations — not by
+            Written by the coaches behind thousands of transformations, not by
             a content generator.
           </p>
         </div>
@@ -289,7 +289,7 @@ export default function Blog() {
           <div className={destacado.className}>
             <span className="day-marker">Featured</span>
             <h2 className="section-title">
-              Start <span className="accent">here.</span>
+              Start <span style={{ color: "var(--c-yellow)" }}>here.</span>
             </h2>
             <article
               style={{
@@ -387,11 +387,7 @@ export default function Blog() {
                   fontWeight: 800,
                   fontSize: "clamp(6rem, 13vw, 12rem)",
                   lineHeight: 0.8,
-                  background:
-                    "linear-gradient(180deg, rgba(255, 210, 0, 0.22) 0%, rgba(255, 210, 0, 0.02) 90%)",
-                  WebkitBackgroundClip: "text",
-                  backgroundClip: "text",
-                  color: "transparent",
+                  color: "rgba(255, 210, 0, 0.14)",
                 }}
               >
                 54
@@ -407,7 +403,7 @@ export default function Blog() {
           <div className={articulos.className}>
             <span className="day-marker">All articles</span>
             <h2 className="section-title">
-              Pick your <span className="accent">topic.</span>
+              Pick your <span style={{ color: "var(--c-yellow)" }}>topic.</span>
             </h2>
 
             {/* Strip de categorías (filtro local) */}
@@ -495,19 +491,10 @@ export default function Blog() {
                 }}
               >
                 Done reading?{" "}
-                <span
-                  style={{
-                    background: "var(--grad-text)",
-                    WebkitBackgroundClip: "text",
-                    backgroundClip: "text",
-                    color: "transparent",
-                  }}
-                >
-                  Start doing.
-                </span>
+                <span style={{ color: "var(--c-yellow)" }}>Start doing.</span>
               </p>
               <Link to="/pricing" className="btn btn-primary">
-                Start free — 7 days
+                Start free. 7 days.
               </Link>
             </div>
           </div>
@@ -549,7 +536,10 @@ export default function Blog() {
                   className="section-title"
                   style={{ fontSize: "clamp(1.8rem, 3.6vw, 3rem)" }}
                 >
-                  The method, <span className="accent">in your inbox.</span>
+                  The method,{" "}
+                  <span style={{ color: "var(--c-yellow)" }}>
+                    in your inbox.
+                  </span>
                 </h2>
                 <p
                   style={{
@@ -609,11 +599,12 @@ export default function Blog() {
         <div className="section-inner" ref={cierre.ref}>
           <div className={`final-wrap ${cierre.className}`}>
             <h2 className="final-title">
-              You have the theory. <span className="accent">Now the method.</span>
+              You have the theory.{" "}
+              <span style={{ color: "var(--c-yellow)" }}>Now the method.</span>
             </h2>
             <div className="hero-ctas">
               <Link to="/pricing" className="btn btn-primary">
-                Start free — 7 days
+                Start free. 7 days.
               </Link>
               <Link to="/method" className="btn btn-ghost">
                 See the method
