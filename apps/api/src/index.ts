@@ -12,6 +12,7 @@ import Stripe from 'stripe';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type { CheckoutRequest, Env } from './types';
 import { sendMetaEvent } from './lib/meta';
+import { pushLeadToMindbody } from './lib/mindbody';
 import { sendGa4Event } from './lib/ga4';
 
 type Ctx = { Bindings: Env };
@@ -426,17 +427,47 @@ app.post('/leads', async (c) => {
   const body = await c.req.json<Record<string, string>>();
   if (!body?.email && !body?.phone) return c.json({ error: 'email o phone requerido' }, 400);
 
-  const { error } = await db(c.env).from('leads').insert({
-    name: body.name,
-    email: body.email,
-    phone: body.phone,
-    location_id: body.location_id || null,
-    program_id: body.program_id || null,
-    utm_source: body.utm_source,
-    utm_medium: body.utm_medium,
-    utm_campaign: body.utm_campaign,
-  });
+  const supabase = db(c.env);
+
+  // Los forms del sitio mandan location_slug: resolver a id
+  let locationId: string | null = body.location_id || null;
+  if (!locationId && body.location_slug) {
+    const { data: loc } = await supabase
+      .from('locations')
+      .select('id')
+      .eq('slug', body.location_slug)
+      .maybeSingle();
+    locationId = loc?.id ?? null;
+  }
+
+  const { data: lead, error } = await supabase
+    .from('leads')
+    .insert({
+      name: body.name,
+      email: body.email,
+      phone: body.phone,
+      location_id: locationId,
+      program_id: body.program_id || null,
+      notes: body.notes || null,
+      utm_source: body.utm_source,
+      utm_medium: body.utm_medium,
+      utm_campaign: body.utm_campaign,
+    })
+    .select('id')
+    .single();
   if (error) return c.json({ error: error.message }, 500);
+
+  // Push a Mindbody (best-effort: nunca rompe el alta del lead;
+  // éxito o error quedan registrados en la fila, visibles en el ABM)
+  const mb = await pushLeadToMindbody(c.env, body);
+  await supabase
+    .from('leads')
+    .update(
+      mb.ok
+        ? { mindbody_client_id: mb.clientId, mindbody_synced_at: new Date().toISOString(), mindbody_sync_error: null }
+        : { mindbody_sync_error: mb.error }
+    )
+    .eq('id', lead.id);
 
   await sendMetaEvent(c.env, {
     eventName: 'Lead',

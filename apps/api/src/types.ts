@@ -1,5 +1,10 @@
 export type Env = {
   SITE_URL: string;
+  // Mindbody Public API v6 (sandbox hasta el go-live del developer account)
+  MINDBODY_API_KEY?: string;
+  MINDBODY_SITE_ID?: string;
+  MINDBODY_STAFF_USER?: string;
+  MINDBODY_STAFF_PASSWORD?: string;
   SUPABASE_URL: string;
   SUPABASE_SERVICE_ROLE_KEY: string;
   STRIPE_SECRET_KEY: string;
