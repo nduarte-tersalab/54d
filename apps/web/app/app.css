@@ -41,7 +41,9 @@
   --font-label: 'Helvetica Neue Condensed', 'Archivo Narrow', sans-serif; /* eyebrows, captions, cifras */
 
   /* Escala (TYPO §2; hero min baja para que TRANSFORMATION quepa a 390px) */
-  --text-hero: clamp(2.1rem, 9.6vw, 6.75rem);  /* lh 0.92, tracking -0.01em */
+  /* min/preferred calibrados para que "TRANSFORMATION." no clipee
+     en 360-430px (medido: la palabra mide ~10.2x el font-size) */
+  --text-hero: clamp(1.92rem, 8.6vw, 6.75rem);  /* lh 0.92, tracking -0.01em */
   --text-h2:   clamp(2rem, 4.2vw, 3.4rem);     /* lh 0.98 */
   --text-h3:   1.4rem;                          /* títulos de card, lh 1.1 */
   --text-lead: 1.25rem;                         /* lh 1.55, blanco pleno */
@@ -102,7 +104,7 @@ body {
 
 /* ---------- Nav (barra sólida full-width, ART_DIRECTION_V3 §1) ---------- */
 .nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  position: fixed; top: var(--app-banner-h, 0px); left: 0; right: 0; z-index: 100;
   display: flex; align-items: center; justify-content: space-between;
   height: 64px; padding: 0 var(--gutter);
   background: transparent; border-bottom: 1px solid transparent;
@@ -158,6 +160,39 @@ body {
 @media (max-width: 820px) {
   .nav-links { display: none; }
   .nav-burger { display: block; }
+}
+
+/* ---------- Smart App Banner (Android + iOS no-Safari) ---------- */
+.app-banner {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 90;
+  height: 56px;
+  display: flex; align-items: center; gap: 10px;
+  padding: 0 12px;
+  background: #0D0D0D;
+  border-bottom: 1px solid var(--hairline);
+}
+.app-banner-close {
+  background: none; border: 0; color: var(--c-faint);
+  font-size: 1.4rem; line-height: 1; padding: 6px; cursor: pointer;
+}
+.app-banner-icon {
+  width: 34px; height: 34px; object-fit: contain;
+  background: var(--c-black); border: 1px solid var(--hairline);
+  border-radius: var(--r-control); padding: 3px;
+}
+.app-banner-text { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.app-banner-text b {
+  font-family: var(--font-display); font-weight: 800; font-size: 0.9rem;
+  color: var(--c-white); text-transform: uppercase; letter-spacing: 0.04em;
+}
+.app-banner-text small { font-size: 0.72rem; color: var(--c-faint); }
+.app-banner-get {
+  flex: none;
+  font-family: var(--font-display); font-weight: 700; font-size: 0.75rem;
+  text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--c-black); background: var(--c-yellow);
+  border-radius: var(--r-control); padding: 0.55rem 1rem;
+  text-decoration: none;
 }
 
 /* ---------- Botones — UNA regla de geometría; muere el pill ---------- */

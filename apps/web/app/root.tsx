@@ -11,6 +11,7 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import { useEffect } from "react";
 import { captureAttribution } from "./lib/attribution";
+import { SmartAppBanner } from "./components/app-banner";
 
 const BASE = import.meta.env.BASE_URL;
 /* og:image absoluta (Meta/WhatsApp la fetchean desde afuera):
@@ -40,6 +41,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        {/* iOS Safari: Smart App Banner nativo con botón GET */}
+        <meta name="apple-itunes-app" content="app-id=1520445334" />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="54D" />
         <meta property="og:image" content={OG_IMAGE} />
@@ -87,7 +90,12 @@ export default function App() {
   useEffect(() => {
     captureAttribution();
   }, []);
-  return <Outlet />;
+  return (
+    <>
+      <SmartAppBanner />
+      <Outlet />
+    </>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
