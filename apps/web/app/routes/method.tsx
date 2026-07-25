@@ -140,11 +140,6 @@ export default function Method() {
         </div>
         <div className="hero-veil" />
         <div className="hero-content">
-          <nav className="breadcrumb">
-            <Link to="/">Home</Link>
-            <span>/</span>
-            <span>The Method</span>
-          </nav>
           <span className="day-marker">The Method</span>
           <h1 className="hero-title">
             54 days of method.
@@ -174,7 +169,7 @@ export default function Method() {
             <div className="method-intro">
               <h2 className="section-title">
                 A method with structure, a standard, and{" "}
-                <span style={{ color: "var(--c-yellow)" }}>an end.</span>
+                <span className="accent">an end.</span>
               </h2>
               <p>{DEFINITION}</p>
             </div>
@@ -207,10 +202,7 @@ export default function Method() {
             <span className="day-marker">The 4 pillars</span>
             <div className="method-intro">
               <h2 className="section-title">
-                Four pillars.{" "}
-                <span style={{ color: "var(--c-yellow)" }}>
-                  Zero improvisation.
-                </span>
+                Four pillars. <span className="accent">Zero improvisation.</span>
               </h2>
               <p>
                 Every day of the program combines all four. None of them works
@@ -256,7 +248,7 @@ export default function Method() {
             <span className="day-marker">D01 → D54</span>
             <div className="method-intro">
               <h2 className="section-title">
-                54 days, <span style={{ color: "var(--c-yellow)" }}>day by day.</span>
+                54 days, <span className="accent">day by day.</span>
               </h2>
               <p>
                 The program isn't &ldquo;train hard and eat well&rdquo;. It's a
@@ -285,7 +277,7 @@ export default function Method() {
             <div className="method-intro">
               <h2 className="section-title">
                 If you do the work and it doesn't work,{" "}
-                <span style={{ color: "var(--c-yellow)" }}>you don't pay.</span>
+                <span className="accent">you don't pay.</span>
               </h2>
               <p>
                 You have 30 days. Follow the program: training, nutrition
@@ -313,13 +305,18 @@ export default function Method() {
       </section>
 
       {/* ============ PARA QUIÉN ES / PARA QUIÉN NO ============ */}
-      <section className="section bloom" id="para-quien">
+      {/* paddingBottom 0: cierra el vacío de ~350px antes del FAQ
+          (DESIGN_FIXES_V4 §5, evidencia method-desktop-2.png) */}
+      <section
+        className="section bloom"
+        id="para-quien"
+        style={{ paddingBottom: 0 }}
+      >
         <div className="section-inner" ref={fit.ref}>
           <div className={fit.className}>
             <span className="day-marker">An honest filter</span>
             <h2 className="section-title">
-              This isn't for everyone.{" "}
-              <span style={{ color: "var(--c-yellow)" }}>That's fine.</span>
+              This isn't for everyone. <span className="accent">That's fine.</span>
             </h2>
             <div
               style={{
@@ -330,7 +327,7 @@ export default function Method() {
               }}
             >
               <div className="method-card">
-                <div className="method-num">Yes</div>
+                <div className="method-num">YES</div>
                 <div className="method-name">It's for you if…</div>
                 <ul className="pricing-features">
                   {FIT_YES.map((item) => (
@@ -339,7 +336,7 @@ export default function Method() {
                 </ul>
               </div>
               <div className="method-card">
-                <div className="method-num">No</div>
+                <div className="method-num">NO</div>
                 <div className="method-name">It's not for you if…</div>
                 <ul className="pricing-features">
                   {FIT_NO.map((item) => (
@@ -362,8 +359,7 @@ export default function Method() {
           <div className={faq.className}>
             <span className="day-marker">Questions</span>
             <h2 className="section-title">
-              What people ask{" "}
-              <span style={{ color: "var(--c-yellow)" }}>before they start.</span>
+              What people ask <span className="accent">before they start.</span>
             </h2>
             <div className="faq-list">
               {FAQ.map((f) => (
@@ -437,8 +433,7 @@ export default function Method() {
         <div className="section-inner" ref={cta.ref}>
           <div className={`final-wrap ${cta.className}`}>
             <h2 className="final-title">
-              Now you know the method.{" "}
-              <span style={{ color: "var(--c-yellow)" }}>Use it.</span>
+              Now you know the method. <span className="accent">Use it.</span>
             </h2>
             <div className="hero-ctas">
               <Link to="/pricing" className="btn btn-primary">

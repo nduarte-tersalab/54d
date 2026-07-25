@@ -215,7 +215,6 @@ function LeadForm({ locationSlug }: { locationSlug: string }) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             name: data.get("name"),
-            email: data.get("email"),
             phone: data.get("phone"),
             location_slug: locationSlug,
           }),
@@ -233,7 +232,7 @@ function LeadForm({ locationSlug }: { locationSlug: string }) {
     maxWidth: "36rem",
     marginTop: "3rem",
     padding: "clamp(2rem, 4vw, 3rem)",
-    borderRadius: "var(--r-lg)",
+    borderRadius: "var(--r-card, 8px)",
     background: "var(--glass)",
     border: "1px solid var(--hairline)",
     backdropFilter: "blur(10px)",
@@ -242,10 +241,7 @@ function LeadForm({ locationSlug }: { locationSlug: string }) {
   if (status === "success") {
     return (
       <div style={panelStyle} aria-live="polite">
-        <div
-          className="method-name"
-          style={{ marginTop: 0, fontSize: "1.5rem" }}
-        >
+        <div className="method-name" style={{ marginTop: 0 }}>
           Done. Your spot is <span style={{ color: "var(--c-yellow)" }}>held.</span>
         </div>
         <p className="method-desc" style={{ marginTop: "0.9rem" }}>
@@ -256,6 +252,8 @@ function LeadForm({ locationSlug }: { locationSlug: string }) {
     );
   }
 
+  /* Mini-form de reserva: nombre + WhatsApp (DESIGN_FIXES_V4 §5).
+     El API acepta leads con solo phone (email O phone requerido). */
   return (
     <form onSubmit={handleSubmit} style={panelStyle} noValidate={false}>
       <div className="field">
@@ -270,18 +268,7 @@ function LeadForm({ locationSlug }: { locationSlug: string }) {
         />
       </div>
       <div className="field">
-        <label htmlFor="lead-email">Email</label>
-        <input
-          id="lead-email"
-          name="email"
-          type="email"
-          required
-          autoComplete="email"
-          placeholder="you@email.com"
-        />
-      </div>
-      <div className="field">
-        <label htmlFor="lead-phone">Phone</label>
+        <label htmlFor="lead-phone">WhatsApp</label>
         <input
           id="lead-phone"
           name="phone"
@@ -352,7 +339,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
 
   const panelStyle: React.CSSProperties = {
     padding: "clamp(1.8rem, 3.5vw, 2.6rem)",
-    borderRadius: "var(--r-lg)",
+    borderRadius: "var(--r-card, 8px)",
     background: "var(--glass)",
     border: "1px solid var(--hairline)",
     backdropFilter: "blur(10px)",
@@ -389,13 +376,6 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
         </div>
         <div className="hero-veil" />
         <div className="hero-content">
-          <nav className="breadcrumb">
-            <Link to="/">Home</Link>
-            <span>/</span>
-            <Link to="/studios">Studios</Link>
-            <span>/</span>
-            <span>{cityLabel(studio.city)}</span>
-          </nav>
           <span className="day-marker">54D Studios · {studio.country}</span>
           <h1 className="hero-title">
             54D
@@ -410,13 +390,15 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
             <a href="#reserva" className="btn btn-primary">
               Reserve your spot
             </a>
+            {/* Secundario ligero y más corto que el primario
+                (DESIGN_FIXES_V4 §5, studio-cg-desktop-0.png) */}
             <a
               href={whatsappUrl}
               target="_blank"
               rel="noreferrer"
               className="btn btn-ghost"
             >
-              Message us on WhatsApp
+              WhatsApp us
             </a>
           </div>
         </div>
@@ -430,15 +412,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
             <h2 className="section-title">
               Generations <span className="accent">fill up.</span>
             </h2>
-            <p
-              style={{
-                marginTop: "1.4rem",
-                maxWidth: "38rem",
-                fontSize: "1.08rem",
-                lineHeight: 1.6,
-                color: "var(--c-mist)",
-              }}
-            >
+            <p className="lead" style={{ marginTop: "1.4rem", maxWidth: "38rem" }}>
               {generation
                 ? `Yours starts ${generation.start}. Limited spots: when it's full, the next window is the next Generation.`
                 : "Limited spots per Generation: when it's full, the next window is the next Generation."}
@@ -539,15 +513,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
             <h2 className="section-title">
               Graduation day is real here.
             </h2>
-            <p
-              style={{
-                marginTop: "1.4rem",
-                maxWidth: "34rem",
-                fontSize: "1.08rem",
-                lineHeight: 1.6,
-                color: "var(--c-mist)",
-              }}
-            >
+            <p className="lead" style={{ marginTop: "1.4rem", maxWidth: "34rem" }}>
               Every Generation at 54D {cityLabel(studio.city)} ends the same
               way: results on the table and a room full of people who made it.
             </p>
@@ -581,7 +547,8 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                 <div className="method-name" style={{ marginTop: 0 }}>
                   Schedule
                 </div>
-                <div style={{ marginTop: "1.4rem" }}>
+                {/* .schedule: tabular-nums vía global CSS (DESIGN_FIXES_V4 §2) */}
+                <div className="schedule" style={{ marginTop: "1.4rem" }}>
                   {SCHEDULE.map((row) => (
                     <div
                       key={row.days}
@@ -631,7 +598,6 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                     target="_blank"
                     rel="noreferrer"
                     className="btn btn-ghost"
-                    style={{ padding: "0.8rem 1.6rem", fontSize: "0.85rem" }}
                   >
                     WhatsApp · {studio.whatsapp}
                   </a>
@@ -667,15 +633,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
               Reserve your spot in the next{" "}
               <span className="accent">Generation.</span>
             </h2>
-            <p
-              style={{
-                marginTop: "1.4rem",
-                maxWidth: "36rem",
-                fontSize: "1.08rem",
-                lineHeight: 1.6,
-                color: "var(--c-mist)",
-              }}
-            >
+            <p className="lead" style={{ marginTop: "1.4rem", maxWidth: "36rem" }}>
               Leave your details and we'll reach out to confirm your spot,
               your schedule, and your initial assessment at 54D{" "}
               {cityLabel(studio.city)}.

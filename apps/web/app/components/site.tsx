@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink } from "react-router";
 import { STUDIOS } from "../data/studios";
+import { asset } from "../lib/asset";
+import { AppStoreBadges } from "./badges";
 
 /* ============================================================
    Componentes globales del sitio (Nav, Footer) + useReveal.
@@ -48,6 +50,14 @@ const NAV_LINKS = [
   { to: "/blog", label: "Blog" },
 ] as const;
 
+/* CTA global unificado (DESIGN_FIXES_V4 §5): nav y hero, mismo copy.
+   \u2014 = em dash del copy V4, escapado por el grep de CI. */
+const CTA_COPY = "Start free. 7 days.";
+
+const APP_STORE_URL = "https://apps.apple.com/us/app/54d-on/id1520445334";
+const GOOGLE_PLAY_URL =
+  "https://play.google.com/store/apps/details?id=com.trainerize.fiftyfourdays";
+
 /** Nav global: barra sólida full-width (ART_DIRECTION_V3 §1).
  *  Transparente sobre el hero, negro pleno al scroll (scrollY > 40).
  *  Mobile: hamburger + drawer full-screen que bloquea el scroll del
@@ -75,8 +85,8 @@ export function Nav() {
 
   return (
     <nav className={`nav${scrolled ? " scrolled" : ""}`}>
-      <Link to="/" className="nav-logo" onClick={close}>
-        54D
+      <Link to="/" className="nav-logo" onClick={close} aria-label="54D home">
+        <img src={asset("images/brand/logo-54d.png")} alt="54D" width={52} height={52} />
       </Link>
       <div className="nav-links">
         {NAV_LINKS.map((item) => (
@@ -84,8 +94,8 @@ export function Nav() {
             {item.label}
           </NavLink>
         ))}
-        <Link to="/pricing" className="btn btn-nav">
-          Start free
+        <Link to="/pricing" className="btn btn-primary btn-nav">
+          {CTA_COPY}
         </Link>
       </div>
       <button
@@ -106,8 +116,8 @@ export function Nav() {
             {item.label}
           </Link>
         ))}
-        <Link to="/pricing" className="btn btn-nav" onClick={close}>
-          Start free
+        <Link to="/pricing" className="btn btn-primary btn-nav" onClick={close}>
+          {CTA_COPY}
         </Link>
       </div>
     </nav>
@@ -129,8 +139,14 @@ export function Footer() {
           <div>
             <h4>54D</h4>
             <p style={{ maxWidth: "22rem", fontSize: "0.95rem", lineHeight: 1.6 }}>
-              The 54-day transformation method. Miami · Mexico City · Bogotá
-              · Online.
+              The 54-day transformation method. Coral Gables · Hallandale
+              · Mexico City · Bogotá · Online.
+            </p>
+            <AppStoreBadges appStoreUrl={APP_STORE_URL} googlePlayUrl={GOOGLE_PLAY_URL} />
+            <p className="footer-trust">
+              <span>7 days free</span>
+              <span>Cancel anytime</span>
+              <span>30-day guarantee</span>
             </p>
           </div>
           <div>
@@ -152,14 +168,40 @@ export function Footer() {
             <h4>More</h4>
             <Link to="/blog">Blog</Link>
             <Link to="/contact">Contact</Link>
-            <a href="https://www.instagram.com/54d.online" rel="noreferrer" target="_blank">
+            <a
+              className="footer-social"
+              href="https://www.instagram.com/54d.online"
+              rel="noreferrer"
+              target="_blank"
+            >
+              <svg
+                aria-hidden="true"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+              >
+                <rect x="2.5" y="2.5" width="19" height="19" rx="5" />
+                <circle cx="12" cy="12" r="4.4" />
+                <circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none" />
+              </svg>
               Instagram
             </a>
           </div>
         </div>
-        <div className="footer-giant" aria-hidden="true">
-          54D
-        </div>
+        {/* Lockup real como máscara (V4 §3): letterforms del PNG, mismo gradiente.
+            URL vía asset() por el BASE_URL de Pages. */}
+        <div
+          className="footer-giant"
+          style={{
+            WebkitMaskImage: `url(${asset("images/brand/logo-54d.png")})`,
+            maskImage: `url(${asset("images/brand/logo-54d.png")})`,
+          }}
+          aria-hidden="true"
+        />
         <div className="footer-legal">
           <span>© {new Date().getFullYear()} 54D. All rights reserved.</span>
           <span>

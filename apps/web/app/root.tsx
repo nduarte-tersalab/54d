@@ -12,7 +12,14 @@ import "./app.css";
 import { useEffect } from "react";
 import { captureAttribution } from "./lib/attribution";
 
+const BASE = import.meta.env.BASE_URL;
+/* og:image absoluta (Meta/WhatsApp la fetchean desde afuera):
+   apunta al worker canónico, sirve para todos los previews */
+const OG_IMAGE = "https://54d-web.54d.workers.dev/images/og/og-54d.jpg";
+
 export const links: Route.LinksFunction = () => [
+  { rel: "icon", type: "image/png", href: `${BASE}favicon-64.png` },
+  { rel: "apple-touch-icon", href: `${BASE}apple-touch-icon.png` },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
@@ -33,6 +40,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="54D" />
+        <meta property="og:image" content={OG_IMAGE} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content={OG_IMAGE} />
         <Meta />
         <Links />
         {/* GA4 + Meta Pixel: se activan solo si hay IDs en el env.

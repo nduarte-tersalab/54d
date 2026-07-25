@@ -143,11 +143,6 @@ export default function Studios() {
         </div>
         <div className="hero-veil" />
         <div className="hero-content">
-          <nav className="breadcrumb">
-            <Link to="/">Home</Link>
-            <span>/</span>
-            <span>Studios</span>
-          </nav>
           <span className="day-marker">54D Studios</span>
           <h1 className="hero-title">
             Three countries.
@@ -177,15 +172,7 @@ export default function Studios() {
             <h2 className="section-title">
               Choose your <span className="accent">studio.</span>
             </h2>
-            <p
-              style={{
-                marginTop: "1.4rem",
-                maxWidth: "38rem",
-                fontSize: "1.08rem",
-                lineHeight: 1.6,
-                color: "var(--c-mist)",
-              }}
-            >
+            <p className="lead" style={{ marginTop: "1.4rem", maxWidth: "38rem" }}>
               Miami, Mexico City, and Bogotá. Each studio runs its own
               Generations: same method, same standard, your city.
             </p>
@@ -306,15 +293,7 @@ export default function Studios() {
               You don't join whenever you want. You join with your{" "}
               <span className="accent">Generation.</span>
             </h2>
-            <p
-              style={{
-                marginTop: "1.4rem",
-                maxWidth: "38rem",
-                fontSize: "1.08rem",
-                lineHeight: 1.6,
-                color: "var(--c-mist)",
-              }}
-            >
+            <p className="lead" style={{ marginTop: "1.4rem", maxWidth: "38rem" }}>
               Each studio opens Generations: the group you start and finish
               with. A start date, limited spots, and 54 days together. That's
               why it works. This is not an open membership. It's a commitment
@@ -347,15 +326,7 @@ export default function Studios() {
             <br />
             You finish with your people.
           </h2>
-          <p
-            style={{
-              marginTop: "1.4rem",
-              maxWidth: "34rem",
-              fontSize: "1.08rem",
-              lineHeight: 1.6,
-              color: "var(--c-mist)",
-            }}
-          >
+          <p className="lead" style={{ marginTop: "1.4rem", maxWidth: "34rem" }}>
             Every Generation trains, sweats, and graduates together. That is
             what the studios are for.
           </p>

@@ -73,11 +73,6 @@ export default function Contact() {
         </div>
         <div className="hero-veil" />
         <div className="hero-content">
-          <nav className="breadcrumb">
-            <Link to="/">Home</Link>
-            <span>/</span>
-            <span>Contact</span>
-          </nav>
           <span className="day-marker">Contact</span>
           <h1 className="hero-title">
             Let's talk<span className="accent">.</span>
@@ -95,10 +90,7 @@ export default function Contact() {
           <div className={caminos.className}>
             <span className="day-marker">Choose your path</span>
             <h2 className="section-title">
-              Your question has{" "}
-              <span style={{ color: "var(--c-yellow)" }}>
-                a straight answer.
-              </span>
+              Your question has <span className="accent">a straight answer.</span>
             </h2>
           </div>
         </div>
@@ -145,8 +137,7 @@ export default function Contact() {
           <div className={sedes.className}>
             <span className="day-marker">Studios</span>
             <h2 className="section-title">
-              Five studios.{" "}
-              <span style={{ color: "var(--c-yellow)" }}>Three countries.</span>
+              Five studios. <span className="accent">Three countries.</span>
             </h2>
             <div className="studios-list">
               {STUDIOS.map((s) => (
@@ -160,8 +151,6 @@ export default function Contact() {
             <p
               style={{
                 marginTop: "2.5rem",
-                fontSize: "1.05rem",
-                lineHeight: 1.6,
                 color: "var(--c-mist)",
                 maxWidth: "34rem",
               }}
@@ -194,20 +183,9 @@ export default function Contact() {
               <div>
                 <span className="day-marker">Write to us</span>
                 <h2 className="section-title">
-                  Tell us{" "}
-                  <span style={{ color: "var(--c-yellow)" }}>
-                    what you need.
-                  </span>
+                  Tell us <span className="accent">what you need.</span>
                 </h2>
-                <p
-                  style={{
-                    marginTop: "1.6rem",
-                    fontSize: "1.12rem",
-                    lineHeight: 1.65,
-                    color: "var(--c-mist)",
-                    maxWidth: "30rem",
-                  }}
-                >
+                <p className="lead" style={{ marginTop: "1.6rem", maxWidth: "30rem" }}>
                   The method, plans, your subscription, or press: leave your
                   message and we reply within one business day.
                 </p>
@@ -218,7 +196,7 @@ export default function Contact() {
                       display: "block",
                       fontSize: "0.75rem",
                       textTransform: "uppercase",
-                      letterSpacing: "0.16em",
+                      letterSpacing: "var(--track-label, 0.14em)",
                       color: "var(--c-faint)",
                       marginBottom: "1rem",
                     }}
@@ -251,7 +229,7 @@ export default function Contact() {
                       display: "block",
                       fontSize: "0.75rem",
                       textTransform: "uppercase",
-                      letterSpacing: "0.16em",
+                      letterSpacing: "var(--track-label, 0.14em)",
                       color: "var(--c-faint)",
                       marginBottom: "1rem",
                     }}
@@ -278,7 +256,7 @@ export default function Contact() {
                 style={{
                   background: "var(--glass)",
                   border: "1px solid var(--hairline)",
-                  borderRadius: "var(--r-lg)",
+                  borderRadius: "var(--r-card, 8px)",
                   padding: "clamp(1.8rem, 3.5vw, 2.6rem)",
                   backdropFilter: "blur(10px)",
                 }}
@@ -426,8 +404,7 @@ export default function Contact() {
         <div className="section-inner" ref={cierre.ref}>
           <div className={`final-wrap ${cierre.className}`}>
             <h2 className="final-title">
-              Ask less.{" "}
-              <span style={{ color: "var(--c-yellow)" }}>Train more.</span>
+              Ask less. <span className="accent">Train more.</span>
             </h2>
             <div className="hero-ctas">
               <Link to="/pricing" className="btn btn-primary">

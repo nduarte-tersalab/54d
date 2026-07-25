@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import { Link } from "react-router";
 import type { Route } from "./+types/on";
 import { Nav, Footer, useReveal } from "../components/site";
+import { AppStoreBadges } from "../components/badges";
 import { asset } from "../lib/asset";
 
 export function meta({}: Route.MetaArgs) {
@@ -250,7 +251,7 @@ const FAQ = [
 
 const tableWrap: CSSProperties = {
   marginTop: "3rem",
-  borderRadius: "var(--r-lg)",
+  borderRadius: "var(--r-card, 8px)",
   border: "1px solid var(--hairline)",
   background: "var(--glass)",
   backdropFilter: "blur(10px)",
@@ -268,7 +269,7 @@ const th: CSSProperties = {
   fontWeight: 700,
   fontSize: "0.78rem",
   textTransform: "uppercase",
-  letterSpacing: "0.2em",
+  letterSpacing: "var(--track-eyebrow, 0.22em)",
   textAlign: "left",
   padding: "1.3rem 1.6rem",
   color: "var(--c-faint)",
@@ -279,7 +280,7 @@ const tdLabel: CSSProperties = {
   fontWeight: 700,
   fontSize: "0.82rem",
   textTransform: "uppercase",
-  letterSpacing: "0.12em",
+  letterSpacing: "var(--track-label, 0.14em)",
   color: "var(--c-white)",
   padding: "1.15rem 1.6rem",
   borderTop: "1px solid var(--hairline)",
@@ -308,7 +309,7 @@ const progNum: CSSProperties = {
   fontFamily: "var(--font-display)",
   fontWeight: 800,
   fontSize: "0.82rem",
-  letterSpacing: "0.14em",
+  letterSpacing: "var(--track-label, 0.14em)",
   color: "var(--c-yellow)",
 };
 const progName: CSSProperties = {
@@ -325,12 +326,12 @@ const progTag: CSSProperties = {
   marginTop: "0.6rem",
   fontFamily: "var(--font-display)",
   fontWeight: 700,
-  fontSize: "0.62rem",
+  fontSize: "0.68rem",
   textTransform: "uppercase",
-  letterSpacing: "0.2em",
+  letterSpacing: "var(--track-eyebrow, 0.22em)",
   color: "var(--c-yellow)",
-  border: "1px solid rgba(255, 210, 0, 0.35)",
-  borderRadius: "2px",
+  border: "1px solid var(--line-accent, rgba(255, 210, 0, 0.3))",
+  borderRadius: "var(--r-control, 2px)",
   padding: "0.3rem 0.6rem",
 };
 const progBody: CSSProperties = {
@@ -351,9 +352,9 @@ const progMeta: CSSProperties = {
 const metaKey: CSSProperties = {
   fontFamily: "var(--font-display)",
   fontWeight: 700,
-  fontSize: "0.66rem",
+  fontSize: "0.68rem",
   textTransform: "uppercase",
-  letterSpacing: "0.18em",
+  letterSpacing: "var(--track-label, 0.14em)",
   color: "var(--c-faint)",
   marginRight: "0.4rem",
 };
@@ -368,31 +369,8 @@ const progFollowUp: CSSProperties = {
   fontWeight: 700,
   fontSize: "0.7rem",
   textTransform: "uppercase",
-  letterSpacing: "0.16em",
+  letterSpacing: "var(--track-label, 0.14em)",
   color: "var(--c-yellow)",
-};
-
-/* Badges de stores como bloques de texto (sin arte trademark) */
-const storeBadge: CSSProperties = {
-  display: "flex",
-  flexDirection: "column",
-  padding: "0.7rem 1.4rem",
-  border: "1px solid var(--hairline)",
-  borderRadius: "2px",
-  textDecoration: "none",
-};
-const storeBadgeSmall: CSSProperties = {
-  fontSize: "0.62rem",
-  textTransform: "uppercase",
-  letterSpacing: "0.18em",
-  color: "var(--c-faint)",
-};
-const storeBadgeName: CSSProperties = {
-  fontFamily: "var(--font-display)",
-  fontWeight: 800,
-  fontSize: "1rem",
-  textTransform: "uppercase",
-  color: "var(--c-white)",
 };
 const photoCaption: CSSProperties = {
   display: "flex",
@@ -403,7 +381,7 @@ const photoCaption: CSSProperties = {
   fontWeight: 700,
   fontSize: "0.68rem",
   textTransform: "uppercase",
-  letterSpacing: "0.22em",
+  letterSpacing: "var(--track-eyebrow, 0.22em)",
   color: "var(--c-faint)",
 };
 const captionTick: CSSProperties = {
@@ -462,7 +440,7 @@ function AppPhone() {
         aspectRatio: "9 / 19.2",
         margin: "0 auto",
         borderRadius: "42px",
-        border: "1px solid #2a2a2a",
+        border: "1px solid var(--hairline)",
         background: "#101010",
         padding: "10px",
         boxShadow: "0 40px 90px rgba(0, 0, 0, 0.6)",
@@ -514,7 +492,7 @@ function AppPhone() {
             fontWeight: 700,
             fontSize: "0.78rem",
             textTransform: "uppercase",
-            letterSpacing: "0.3em",
+            letterSpacing: "var(--track-eyebrow, 0.22em)",
             color: "var(--c-yellow)",
           }}
         >
@@ -551,11 +529,6 @@ export default function On() {
         </div>
         <div className="hero-veil" />
         <div className="hero-content">
-          <nav className="breadcrumb">
-            <Link to="/">Home</Link>
-            <span>/</span>
-            <span>54D ON</span>
-          </nav>
           <span className="day-marker">54D ON · Online</span>
           <h1 className="hero-title">
             The full method.
@@ -771,26 +744,10 @@ export default function On() {
                     </li>
                   ))}
                 </ol>
-                <div style={{ display: "flex", gap: "0.8rem", flexWrap: "wrap" }}>
-                  <a
-                    href="https://apps.apple.com/us/app/54d-on/id1520445334"
-                    target="_blank"
-                    rel="noreferrer"
-                    style={storeBadge}
-                  >
-                    <small style={storeBadgeSmall}>Download on the</small>
-                    <b style={storeBadgeName}>App Store</b>
-                  </a>
-                  <a
-                    href="https://play.google.com/store/apps/details?id=com.trainerize.fiftyfourdays"
-                    target="_blank"
-                    rel="noreferrer"
-                    style={storeBadge}
-                  >
-                    <small style={storeBadgeSmall}>Get it on</small>
-                    <b style={storeBadgeName}>Google Play</b>
-                  </a>
-                </div>
+                <AppStoreBadges
+                  appStoreUrl="https://apps.apple.com/us/app/54d-on/id1520445334"
+                  googlePlayUrl="https://play.google.com/store/apps/details?id=com.trainerize.fiftyfourdays"
+                />
                 <div
                   style={{
                     display: "flex",
@@ -798,7 +755,7 @@ export default function On() {
                     marginTop: "1.4rem",
                     fontSize: "0.8rem",
                     textTransform: "uppercase",
-                    letterSpacing: "0.14em",
+                    letterSpacing: "var(--track-label, 0.14em)",
                     color: "var(--c-faint)",
                   }}
                 >
@@ -807,6 +764,7 @@ export default function On() {
                       style={{
                         color: "var(--c-yellow)",
                         fontFamily: "var(--font-display)",
+                        fontVariantNumeric: "tabular-nums",
                         marginRight: "0.4rem",
                       }}
                     >
@@ -819,6 +777,7 @@ export default function On() {
                       style={{
                         color: "var(--c-yellow)",
                         fontFamily: "var(--font-display)",
+                        fontVariantNumeric: "tabular-nums",
                         marginRight: "0.4rem",
                       }}
                     >
@@ -888,28 +847,39 @@ export default function On() {
             <h2 className="section-title">
               The same method. <span style={solidAccent}>Two ways in.</span>
             </h2>
-            <p style={{ marginTop: "1.4rem", maxWidth: "38rem", fontSize: "1.05rem", lineHeight: 1.6, color: "var(--c-mist)" }}>
-              No fine print: ON and Studios share the same program and the same
-              standard. What changes is where you train, and who you train
-              with.
-            </p>
-            <figure style={{ margin: "2.5rem 0 0", maxWidth: "40rem" }}>
-              <img
-                src={asset("images/brand/gym-structure-heavy-bags-wide.jpg")}
-                alt="Training floor at a 54D studio: wood beams, heavy bags, and a coach with a headset"
-                loading="lazy"
-                style={{
-                  width: "100%",
-                  display: "block",
-                  borderRadius: "4px",
-                  filter: "saturate(0.82) contrast(1.05)",
-                }}
-              />
-              <figcaption style={photoCaption}>
-                <span style={captionTick} aria-hidden="true" />
-                The studio floor. Same method, in person.
-              </figcaption>
-            </figure>
+            {/* Texto y foto lado a lado: llena la mitad derecha vacía (on-desktop-2.png) */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))",
+                gap: "clamp(2rem, 5vw, 4.5rem)",
+                alignItems: "center",
+                marginTop: "1.4rem",
+              }}
+            >
+              <p style={{ maxWidth: "38rem", fontSize: "1.05rem", lineHeight: 1.6, color: "var(--c-mist)" }}>
+                No fine print: ON and Studios share the same program and the same
+                standard. What changes is where you train, and who you train
+                with.
+              </p>
+              <figure style={{ margin: 0 }}>
+                <img
+                  src={asset("images/brand/gym-structure-heavy-bags-wide.jpg")}
+                  alt="Training floor at a 54D studio: wood beams, heavy bags, and a coach with a headset"
+                  loading="lazy"
+                  style={{
+                    width: "100%",
+                    display: "block",
+                    borderRadius: "var(--r-media, 2px)",
+                    filter: "saturate(0.82) contrast(1.05)",
+                  }}
+                />
+                <figcaption style={photoCaption}>
+                  <span style={captionTick} aria-hidden="true" />
+                  The studio floor. Same method, in person.
+                </figcaption>
+              </figure>
+            </div>
             <CompareTable
               columns={["", "54D ON", "54D Studios"]}
               rows={VS_STUDIOS}
@@ -951,7 +921,7 @@ export default function On() {
         <div className="section-inner" ref={cta.ref}>
           <div className={`final-wrap ${cta.className}`}>
             <h2 className="final-title">
-              Your Day 1 doesn't need <span style={solidAccent}>a gym.</span>
+              Your Day 1 doesn't need <span className="accent">a gym.</span>
             </h2>
             <div className="hero-ctas">
               <Link to="/pricing" className="btn btn-primary">

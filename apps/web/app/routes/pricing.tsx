@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import type { Route } from "./+types/pricing";
 import { Nav, Footer, useReveal } from "../components/site";
@@ -52,7 +52,7 @@ const PLANS: Plan[] = [
     price: "$156", // PRECIO_PENDIENTE
     period: "/ quarter",
     note: "Three months: the full 54 days plus time to lock in the habit.",
-    badge: "Most chosen: one full 54-day program fits inside",
+    badge: "Most chosen",
     features: [
       "Everything in the monthly plan",
       "Works out to $52/mo", // PRECIO_PENDIENTE
@@ -202,6 +202,25 @@ export default function Pricing() {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  /* Sticky bar mobile al 50% de scroll (DESIGN_FIXES_V4 §5) */
+  const [showStickyBar, setShowStickyBar] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 900px)");
+    const update = () => {
+      const doc = document.documentElement;
+      const max = doc.scrollHeight - window.innerHeight;
+      setShowStickyBar(mq.matches && max > 0 && window.scrollY / max >= 0.5);
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
   async function handleCheckout(priceId: string) {
     if (loadingPlan) return;
     setError(null);
@@ -235,11 +254,6 @@ export default function Pricing() {
         </div>
         <div className="hero-veil" />
         <div className="hero-content">
-          <nav className="breadcrumb">
-            <Link to="/">Home</Link>
-            <span>/</span>
-            <span>Pricing</span>
-          </nav>
           <span className="day-marker">54D ON · 7-day free trial</span>
           <h1 className="hero-title">
             Start today.
@@ -247,18 +261,13 @@ export default function Pricing() {
             <span className="accent">The first 7 days are on us.</span>
           </h1>
           <p className="hero-sub">
-            Full access to the method: training, nutrition, and a real coach
-            every day. No commitment. If it's not for you, cancel before day 8
-            and pay nothing.
+            Full access to the method. Cancel before day 8 and pay nothing.
           </p>
           <div className="hero-ctas">
             <a href="#plans" className="btn btn-primary">
-              Start free trial
+              Start free. 7 days.
             </a>
           </div>
-          <p style={{ marginTop: "1rem", fontSize: "0.82rem", color: "var(--c-faint)" }}>
-            {MICROCOPY}
-          </p>
         </div>
       </header>
 
@@ -300,8 +309,8 @@ export default function Pricing() {
                         right: "1.4rem",
                         marginBottom: 0,
                         background: "var(--c-ink)",
-                        fontSize: "0.62rem",
-                        letterSpacing: "0.08em",
+                        fontSize: "0.68rem",
+                        letterSpacing: "var(--track-label, 0.14em)",
                         whiteSpace: "nowrap",
                         padding: "0.4rem 0.8rem",
                       }}
@@ -422,7 +431,7 @@ export default function Pricing() {
                 <div className="method-card" key={item.name}>
                   <div
                     className="method-num"
-                    style={{ fontSize: "1rem", letterSpacing: "0.06em" }}
+                    style={{ fontSize: "1rem", letterSpacing: "var(--track-btn, 0.07em)" }}
                   >
                     {item.q}
                   </div>
@@ -457,7 +466,7 @@ export default function Pricing() {
                       marginTop: "0.3rem",
                       fontSize: "0.78rem",
                       textTransform: "uppercase",
-                      letterSpacing: "0.16em",
+                      letterSpacing: "var(--track-label, 0.14em)",
                       color: "var(--c-faint)",
                     }}
                   >
@@ -478,7 +487,15 @@ export default function Pricing() {
             <h2 className="section-title">
               What you'd ask <span style={{ color: "var(--c-yellow)" }}>before starting.</span>
             </h2>
-            <div className="faq-list">
+            {/* 2 columnas: mata el 50% de viewport en negro vacío (pricing-desktop-2.png) */}
+            <div
+              className="faq-list"
+              style={{
+                maxWidth: "none",
+                gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 24rem), 1fr))",
+                alignItems: "start",
+              }}
+            >
               {FAQS.map((f) => (
                 <details className="faq-item" key={f.q}>
                   <summary>{f.q}</summary>
@@ -508,11 +525,11 @@ export default function Pricing() {
         <div className="section-inner" ref={cta.ref}>
           <div className={`final-wrap ${cta.className}`}>
             <h2 className="final-title">
-              Your Day 1 <span style={{ color: "var(--c-yellow)" }}>starts free.</span>
+              Your Day 1 <span className="accent">starts free.</span>
             </h2>
             <div className="hero-ctas">
               <a href="#plans" className="btn btn-primary">
-                Start free trial
+                Start free. 7 days.
               </a>
               <Link to="/studios" className="btn btn-ghost">
                 Rather train in person? See the studios
@@ -524,6 +541,32 @@ export default function Pricing() {
           </div>
         </div>
       </section>
+
+      {/* ============ STICKY BAR MOBILE (visible al 50% de scroll) ============ */}
+      {showStickyBar && (
+        <div
+          style={{
+            position: "fixed",
+            left: 0,
+            right: 0,
+            bottom: 0,
+            zIndex: 60,
+            padding: "0.8rem 1rem calc(0.8rem + env(safe-area-inset-bottom))",
+            background: "rgba(7, 7, 7, 0.92)",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            borderTop: "1px solid var(--hairline)",
+          }}
+        >
+          <a
+            href="#plans"
+            className="btn btn-primary"
+            style={{ display: "block", width: "100%", textAlign: "center" }}
+          >
+            Start free. 7 days.
+          </a>
+        </div>
+      )}
 
       <Footer />
     </div>

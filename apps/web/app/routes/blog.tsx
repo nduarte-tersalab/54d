@@ -104,11 +104,11 @@ function CategoryPill({ label }: { label: Category }) {
         fontFamily: "var(--font-display)",
         fontWeight: 700,
         fontSize: "0.68rem",
-        letterSpacing: "0.18em",
+        letterSpacing: "var(--track-eyebrow, 0.22em)",
         textTransform: "uppercase",
         color: "var(--c-yellow)",
         padding: "0.32rem 0.8rem",
-        borderRadius: "var(--r-pill)",
+        borderRadius: "var(--r-control, 2px)",
         border: "1px solid rgba(255, 210, 0, 0.25)",
         background: "rgba(255, 210, 0, 0.06)",
         whiteSpace: "nowrap",
@@ -138,7 +138,7 @@ function AuthorRow({ post }: { post: Post }) {
           fontFamily: "var(--font-display)",
           fontWeight: 800,
           fontSize: "0.78rem",
-          letterSpacing: "0.06em",
+          letterSpacing: "var(--track-btn, 0.07em)",
         }}
       >
         {post.initials}
@@ -184,17 +184,14 @@ function PostCard({ post }: { post: Post }) {
           style={{
             fontSize: "0.72rem",
             textTransform: "uppercase",
-            letterSpacing: "0.14em",
+            letterSpacing: "var(--track-label, 0.14em)",
             color: "var(--c-faint)",
           }}
         >
           <time dateTime={post.dateISO}>{post.date}</time> · {post.readTime}
         </span>
       </div>
-      <h3
-        className="method-name"
-        style={{ fontSize: "1.18rem", lineHeight: 1.14, marginTop: "1.2rem" }}
-      >
+      <h3 className="method-name" style={{ marginTop: "1.2rem" }}>
         {post.title}
       </h3>
       <p
@@ -226,7 +223,7 @@ function PostCard({ post }: { post: Post }) {
             fontFamily: "var(--font-display)",
             fontWeight: 700,
             fontSize: "0.78rem",
-            letterSpacing: "0.12em",
+            letterSpacing: "var(--track-label, 0.14em)",
             textTransform: "uppercase",
             color: "var(--c-faint)",
             whiteSpace: "nowrap",
@@ -265,11 +262,6 @@ export default function Blog() {
         </div>
         <div className="hero-veil" />
         <div className="hero-content">
-          <nav className="breadcrumb">
-            <Link to="/">Home</Link>
-            <span>/</span>
-            <span>Blog</span>
-          </nav>
           <span className="day-marker">54D Blog</span>
           <h1 className="hero-title">
             What works.
@@ -289,7 +281,7 @@ export default function Blog() {
           <div className={destacado.className}>
             <span className="day-marker">Featured</span>
             <h2 className="section-title">
-              Start <span style={{ color: "var(--c-yellow)" }}>here.</span>
+              Start <span className="accent">here.</span>
             </h2>
             <article
               style={{
@@ -300,7 +292,7 @@ export default function Blog() {
                 gap: "clamp(1.5rem, 4vw, 3rem)",
                 alignItems: "center",
                 padding: "clamp(2rem, 4.5vw, 3.8rem)",
-                borderRadius: "var(--r-lg)",
+                borderRadius: "var(--r-card, 8px)",
                 background: "var(--glass)",
                 border: "1px solid var(--hairline)",
                 backdropFilter: "blur(10px)",
@@ -332,7 +324,7 @@ export default function Blog() {
                     style={{
                       fontSize: "0.72rem",
                       textTransform: "uppercase",
-                      letterSpacing: "0.14em",
+                      letterSpacing: "var(--track-label, 0.14em)",
                       color: "var(--c-faint)",
                     }}
                   >
@@ -358,8 +350,6 @@ export default function Blog() {
                   style={{
                     marginTop: "1.2rem",
                     maxWidth: "38rem",
-                    fontSize: "1.05rem",
-                    lineHeight: 1.6,
                     color: "var(--c-mist)",
                   }}
                 >
@@ -403,7 +393,7 @@ export default function Blog() {
           <div className={articulos.className}>
             <span className="day-marker">All articles</span>
             <h2 className="section-title">
-              Pick your <span style={{ color: "var(--c-yellow)" }}>topic.</span>
+              Pick your <span className="accent">topic.</span>
             </h2>
 
             {/* Strip de categorías (filtro local) */}
@@ -429,10 +419,10 @@ export default function Blog() {
                       fontFamily: "var(--font-display)",
                       fontWeight: 700,
                       fontSize: "0.78rem",
-                      letterSpacing: "0.16em",
+                      letterSpacing: "var(--track-label, 0.14em)",
                       textTransform: "uppercase",
                       padding: "0.6rem 1.3rem",
-                      borderRadius: "var(--r-pill)",
+                      borderRadius: "var(--r-control, 2px)",
                       cursor: "pointer",
                       transition: "all var(--transition)",
                       color: active ? "var(--c-yellow)" : "var(--c-mist)",
@@ -474,7 +464,7 @@ export default function Blog() {
                 gap: "1.5rem",
                 flexWrap: "wrap",
                 padding: "1.8rem 2.2rem",
-                borderRadius: "var(--r-lg)",
+                borderRadius: "var(--r-card, 8px)",
                 background: "var(--glass)",
                 border: "1px solid var(--hairline)",
                 backdropFilter: "blur(10px)",
@@ -513,7 +503,7 @@ export default function Blog() {
                 gap: "clamp(2rem, 4vw, 4rem)",
                 alignItems: "center",
                 padding: "clamp(2.2rem, 4.5vw, 4rem)",
-                borderRadius: "var(--r-lg)",
+                borderRadius: "var(--r-card, 8px)",
                 background: "var(--glass)",
                 border: "1px solid var(--hairline)",
                 backdropFilter: "blur(10px)",
@@ -532,21 +522,13 @@ export default function Blog() {
               />
               <div style={{ position: "relative", minWidth: 0 }}>
                 <span className="day-marker">Newsletter</span>
-                <h2
-                  className="section-title"
-                  style={{ fontSize: "clamp(1.8rem, 3.6vw, 3rem)" }}
-                >
-                  The method,{" "}
-                  <span style={{ color: "var(--c-yellow)" }}>
-                    in your inbox.
-                  </span>
+                <h2 className="section-title">
+                  The method, <span className="accent">in your inbox.</span>
                 </h2>
                 <p
                   style={{
                     marginTop: "1.2rem",
                     maxWidth: "32rem",
-                    fontSize: "1.05rem",
-                    lineHeight: 1.6,
                     color: "var(--c-mist)",
                   }}
                 >
@@ -599,8 +581,7 @@ export default function Blog() {
         <div className="section-inner" ref={cierre.ref}>
           <div className={`final-wrap ${cierre.className}`}>
             <h2 className="final-title">
-              You have the theory.{" "}
-              <span style={{ color: "var(--c-yellow)" }}>Now the method.</span>
+              You have the theory. <span className="accent">Now the method.</span>
             </h2>
             <div className="hero-ctas">
               <Link to="/pricing" className="btn btn-primary">

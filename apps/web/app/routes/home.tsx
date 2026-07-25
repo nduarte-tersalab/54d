@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import type { Route } from "./+types/home";
 import { Nav, Footer, useReveal } from "../components/site";
+import { AppStoreBadges } from "../components/badges";
 import { STUDIOS } from "../data/studios";
 import { asset } from "../lib/asset";
 
@@ -145,7 +146,10 @@ export default function Home() {
             <br />
             <span className="accent">One transformation.</span>
           </h1>
-          <p className="hero-sub">
+          <p
+            className="hero-sub lead"
+            style={{ textShadow: "0 1px 24px rgba(7,7,7,.6)" }}
+          >
             High-intensity training, personalized nutrition, and a coach who
             checks in every single day. Online, or in our studios.
           </p>
@@ -172,7 +176,7 @@ export default function Home() {
                 Not a gym. A program with a start.{" "}
                 <span style={solidAccent}>And an end.</span>
               </h2>
-              <p>
+              <p className="lead">
                 54D started with a simple question: what happens when you treat
                 your transformation like a professional project, with dates, a
                 method, and someone who demands more of you? This is what
@@ -206,12 +210,11 @@ export default function Home() {
               You don't finish alone.
             </h2>
             <p
+              className="lead"
               style={{
                 maxWidth: "32rem",
                 marginTop: "1.4rem",
-                fontSize: "1.12rem",
-                lineHeight: 1.6,
-                color: "var(--c-mist)",
+                textShadow: "0 1px 24px rgba(7,7,7,.6)",
               }}
             >
               Every program runs as a generation: same start date, same finish
@@ -227,7 +230,7 @@ export default function Home() {
           <div>
             <span className="split-label">Online. Wherever you are.</span>
             <h3 className="split-title">54D ON</h3>
-            <p className="split-desc">
+            <p className="split-desc lead">
               Every digital program, your nutrition protocol, and daily
               follow-up from a live coach. From home, with whatever you have.
             </p>
@@ -273,7 +276,7 @@ export default function Home() {
           </div>
           <div className="split-footer" style={{ position: "relative", zIndex: 1 }}>
             <a href="#studios" className="btn btn-primary">
-              Explore the studios
+              See the studios
             </a>
           </div>
         </div>
@@ -285,38 +288,26 @@ export default function Home() {
           <div className={app.className}>
             <div className="app-section">
               <div className="phone" aria-hidden="true">
-                <div
-                  className="phone-screen"
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <span
+                <div className="phone-screen">
+                  <img
+                    src={asset("images/brand/coach-stretch-demo-vertical.jpg")}
+                    alt=""
+                    loading="lazy"
                     style={{
-                      fontFamily: "var(--font-display)",
-                      fontWeight: 800,
-                      fontSize: "2.6rem",
-                      letterSpacing: "0.02em",
-                      color: "var(--c-white)",
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      objectPosition: "43% 30%",
                     }}
-                  >
-                    54<span style={solidAccent}>D</span>
-                  </span>
+                  />
                 </div>
               </div>
               <div>
                 <span className="day-marker">54D On. iOS and Android.</span>
                 <h2 className="section-title">The method lives in the app.</h2>
                 <p
-                  style={{
-                    maxWidth: "34rem",
-                    marginTop: "1.4rem",
-                    fontSize: "1.12rem",
-                    lineHeight: 1.6,
-                    color: "var(--c-mist)",
-                  }}
+                  className="lead"
+                  style={{ maxWidth: "34rem", marginTop: "1.4rem" }}
                 >
                   Training, nutrition, and a real coach in one place. Rated 4.9
                   on the App Store.
@@ -331,27 +322,17 @@ export default function Home() {
                     </li>
                   ))}
                 </ol>
-                <div className="store-badges">
-                  <a
-                    className="store-badge"
-                    href={APP_STORE_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <small>Download on the</small>
-                    <b>App Store</b>
-                  </a>
-                  <a
-                    className="store-badge"
-                    href={GOOGLE_PLAY_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <small>Get it on</small>
-                    <b>Google Play</b>
-                  </a>
-                </div>
-                <div className="app-rating">
+                <AppStoreBadges
+                  appStoreUrl={APP_STORE_URL}
+                  googlePlayUrl={GOOGLE_PLAY_URL}
+                />
+                <div
+                  className="app-rating"
+                  style={{
+                    fontSize: "var(--text-body)",
+                    color: "var(--c-white)",
+                  }}
+                >
                   <span>
                     <b>4.9</b>App Store
                   </span>
