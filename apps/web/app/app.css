@@ -231,33 +231,6 @@ body {
   max-width: var(--container);
   margin: 0 auto 4vh;
 }
-.hero-kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.26em;
-  color: var(--c-mist);
-  padding: 0.5rem 1.1rem;
-  border-radius: var(--r-pill);
-  border: 1px solid var(--hairline);
-  background: var(--glass);
-  backdrop-filter: blur(8px);
-  margin-bottom: 1.6rem;
-}
-.hero-kicker::before {
-  content: '';
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  background: var(--c-yellow);
-  box-shadow: 0 0 12px rgba(255, 210, 0, 0.9);
-  animation: pulse 2.4s ease-in-out infinite;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.35; }
-}
 .hero-title {
   font-family: var(--font-display);
   font-weight: 800;
@@ -283,7 +256,7 @@ body {
 }
 .hero-ctas { display: flex; gap: 1rem; margin-top: 2.4rem; flex-wrap: wrap; }
 
-.hero-title, .hero-sub, .hero-ctas, .hero-kicker {
+.hero-title, .hero-sub, .hero-ctas {
   animation: rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 .hero-sub { animation-delay: 0.15s; }
@@ -347,21 +320,24 @@ body {
   background: radial-gradient(ellipse 55% 50% at 85% 20%, rgba(255, 184, 0, 0.06), transparent 60%);
 }
 
+/* Eyebrow editorial: regla amarilla + caps duras. Sin pill, sin caja. */
 .day-marker {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
+  gap: 0.9rem;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 0.78rem;
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--c-yellow);
-  padding: 0.5rem 1.1rem;
-  border-radius: var(--r-pill);
-  border: 1px solid rgba(255, 210, 0, 0.25);
-  background: rgba(255, 210, 0, 0.06);
   margin-bottom: 2.2rem;
+}
+.day-marker::before {
+  content: '';
+  width: 26px;
+  height: 2px;
+  background: var(--c-yellow);
 }
 .section-title {
   font-family: var(--font-display);

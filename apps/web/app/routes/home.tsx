@@ -140,7 +140,6 @@ export default function Home() {
         </div>
         <div className="hero-veil" />
         <div className="hero-content">
-          <span className="hero-kicker">The 54D Method</span>
           <h1 className="hero-title">
             54 days.
             <br />
