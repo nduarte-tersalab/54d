@@ -29,10 +29,13 @@ interface SubscriptionSummary {
 interface CampaignFunnelRow {
   utm_source: string | null;
   utm_campaign: string | null;
+  utm_content: string | null;
   checkouts_iniciados: number | null;
   trials_iniciados: number | null;
   conversiones_pagas: number | null;
   activas_hoy: number | null;
+  canceladas: number | null;
+  bajas_en_trial: number | null;
   revenue_cents: number | null;
 }
 
@@ -181,10 +184,13 @@ export default function Admin() {
                 <tr>
                   <th style={th}>Fuente</th>
                   <th style={th}>Campaña</th>
+                  <th style={th}>Anuncio</th>
                   <th style={thNum}>Checkouts</th>
                   <th style={thNum}>Trials</th>
                   <th style={thNum}>Conversiones</th>
                   <th style={thNum}>Activas</th>
+                  <th style={thNum}>Canceladas</th>
+                  <th style={thNum}>Bajas en trial</th>
                   <th style={thNum}>Revenue</th>
                 </tr>
               </thead>
@@ -198,10 +204,13 @@ export default function Admin() {
                       {row.utm_source ?? "-"}
                     </td>
                     <td style={td}>{row.utm_campaign ?? "-"}</td>
+                    <td style={td}>{row.utm_content ?? "-"}</td>
                     <td style={tdNum}>{row.checkouts_iniciados ?? 0}</td>
                     <td style={tdNum}>{row.trials_iniciados ?? 0}</td>
                     <td style={tdNum}>{row.conversiones_pagas ?? 0}</td>
                     <td style={tdNum}>{row.activas_hoy ?? 0}</td>
+                    <td style={tdNum}>{row.canceladas ?? 0}</td>
+                    <td style={tdNum}>{row.bajas_en_trial ?? 0}</td>
                     <td style={{ ...tdNum, color: "var(--c-yellow)" }}>
                       {usd.format((row.revenue_cents ?? 0) / 100)}
                     </td>

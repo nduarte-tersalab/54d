@@ -87,22 +87,31 @@ app.post('/checkout', async (c) => {
     .maybeSingle();
   const isOneTime = price?.interval === 'one_time';
 
-  // 3. Crear Checkout Session
+  // 3. Crear Checkout Session.
+  //    metadata.source = '54d-web' marca la PROCEDENCIA: la cuenta de
+  //    Stripe puede estar compartida con Mindbody, y el webhook ignora
+  //    todo lo que no lleve nuestra marca. subscription_data.metadata
+  //    va aparte porque la metadata de la session NO se propaga a la
+  //    subscription.
   const session = await stripe(c.env).checkout.sessions.create({
     mode: isOneTime ? 'payment' : 'subscription',
     line_items: [{ price: body.priceId, quantity: 1 }],
     customer_email: body.email || undefined,
     client_reference_id: attr.id,
-    subscription_data:
-      !isOneTime && price?.trial_days
-        ? { trial_period_days: price.trial_days }
-        : undefined,
+    subscription_data: !isOneTime
+      ? {
+          metadata: { source: '54d-web', attribution_id: attr.id },
+          ...(price?.trial_days
+            ? { trial_period_days: price.trial_days }
+            : {}),
+        }
+      : undefined,
     allow_promotion_codes: true,
     // TODO: página /thanks dedicada (sirve además para disparar los
     // eventos browser-side de conversión en GA4/Pixel)
     success_url: `${c.env.SITE_URL}/pricing?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${c.env.SITE_URL}/pricing?checkout=cancelled`,
-    metadata: { attribution_id: attr.id },
+    metadata: { attribution_id: attr.id, source: '54d-web' },
   });
 
   await supabase
@@ -142,20 +151,43 @@ app.post('/webhooks/stripe', async (c) => {
 
   try {
     switch (event.type) {
-      case 'checkout.session.completed':
-        await onCheckoutCompleted(c.env, supabase, event.data.object);
+      /* FILTRO DE PROCEDENCIA (crítico): la cuenta de Stripe puede estar
+         compartida con Mindbody (cobra los studios con su propia
+         integración). Solo procesamos objetos creados por NUESTRO
+         checkout (metadata.source = '54d-web') o que ya existan en
+         nuestro espejo. Todo lo demás se marca procesado y se ignora:
+         si no, cada cobro de Mindbody contaminaría las métricas de ads. */
+      case 'checkout.session.completed': {
+        const s = event.data.object;
+        if (s.metadata?.source === '54d-web' && s.metadata?.attribution_id) {
+          await onCheckoutCompleted(c.env, supabase, s);
+        }
         break;
+      }
       case 'customer.subscription.created':
       case 'customer.subscription.updated':
-      case 'customer.subscription.deleted':
-        await upsertSubscription(supabase, event.data.object);
+      case 'customer.subscription.deleted': {
+        const sub = event.data.object;
+        const isOurs =
+          sub.metadata?.source === '54d-web' ||
+          (await subscriptionExists(supabase, sub.id));
+        if (isOurs) await upsertSubscription(supabase, sub);
         break;
-      case 'invoice.paid':
-        await onInvoicePaid(c.env, supabase, event.data.object);
+      }
+      case 'invoice.paid': {
+        const inv = event.data.object;
+        if (await invoiceIsOurs(supabase, inv)) {
+          await onInvoicePaid(c.env, supabase, inv);
+        }
         break;
-      case 'invoice.payment_failed':
-        await upsertInvoice(supabase, event.data.object);
+      }
+      case 'invoice.payment_failed': {
+        const inv = event.data.object;
+        if (await invoiceIsOurs(supabase, inv)) {
+          await upsertInvoice(supabase, inv);
+        }
         break;
+      }
     }
     await supabase
       .from('webhook_events')
@@ -192,6 +224,30 @@ async function upsertCustomer(
     .select('id')
     .single();
   return data!.id;
+}
+
+/* ¿La suscripción ya vive en nuestro espejo? (procedencia 54d-web) */
+async function subscriptionExists(
+  supabase: SupabaseClient,
+  stripeSubId: string
+): Promise<boolean> {
+  const { data } = await supabase
+    .from('subscriptions')
+    .select('id')
+    .eq('stripe_subscription_id', stripeSubId)
+    .maybeSingle();
+  return !!data;
+}
+
+/* Un invoice es nuestro solo si referencia una suscripción de nuestro
+   espejo. Invoices de Mindbody (misma cuenta Stripe) quedan fuera. */
+async function invoiceIsOurs(
+  supabase: SupabaseClient,
+  invoice: Stripe.Invoice
+): Promise<boolean> {
+  const stripeSubId = (invoice.subscription as string | null) ?? null;
+  if (!stripeSubId) return false;
+  return subscriptionExists(supabase, stripeSubId);
 }
 
 async function upsertSubscription(
