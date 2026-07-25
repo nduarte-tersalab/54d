@@ -873,12 +873,13 @@ body {
    Glifos monocromos deliberadamente: el Play multicolor pelearía
    con la paleta binaria. Solo borde y glifo viran al hover. */
 .store-badges { display: flex; gap: 12px; flex-wrap: wrap; }
-.store-badge { display: inline-flex; align-items: center; gap: 12px; height: 56px;
-  padding: 0 20px 0 16px; background: var(--c-black);
+/* a.store-badge: especificidad (0,1,1) para ganarle a ".footer a" (block) */
+a.store-badge { display: inline-flex; align-items: center; gap: 12px; height: 56px;
+  margin: 0; padding: 0 20px 0 16px; background: var(--c-black);
   border: 1px solid rgba(255, 255, 255, 0.18); border-radius: var(--r-control);
-  color: #fff; text-decoration: none;
+  color: #fff; text-decoration: none; font-size: initial;
   transition: border-color var(--transition), color var(--transition); }
-.store-badge:hover, .store-badge:focus-visible { border-color: var(--c-yellow); color: var(--c-yellow); }
+a.store-badge:hover, a.store-badge:focus-visible { border-color: var(--c-yellow); color: var(--c-yellow); }
 .store-badge svg { flex: none; }
 .store-badge-text { display: flex; flex-direction: column; }
 .store-badge small { font-size: 10px; text-transform: uppercase;
