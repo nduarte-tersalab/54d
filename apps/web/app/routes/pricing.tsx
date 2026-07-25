@@ -30,13 +30,18 @@ type Plan = {
   features: string[];
   featured: boolean;
   badge?: string;
+  regular?: string;
 };
 
+/* Precios reales de store.54d.com/packs, verificados 25/07/2026.
+   regular = precio de lista que la tienda tacha (ancla de descuento).
+   PRICE_IDs de Stripe pendientes de las keys del cliente. */
 const PLANS: Plan[] = [
   {
     priceId: "PRICE_ID_MENSUAL",
     plan: "Monthly",
-    price: "$54", // PRECIO_PENDIENTE
+    price: "$54",
+    regular: "$99",
     period: "/ month",
     note: "Start at your own pace. No strings.",
     features: [
@@ -49,13 +54,14 @@ const PLANS: Plan[] = [
   {
     priceId: "PRICE_ID_TRIMESTRAL",
     plan: "Quarterly",
-    price: "$156", // PRECIO_PENDIENTE
+    price: "$156",
+    regular: "$267",
     period: "/ quarter",
     note: "Three months: the full 54 days plus time to lock in the habit.",
     badge: "Most chosen",
     features: [
       "Everything in the monthly plan",
-      "Works out to $52/mo", // PRECIO_PENDIENTE
+      "Works out to $52/mo",
       "Covers your full transformation",
     ],
     featured: true,
@@ -63,12 +69,13 @@ const PLANS: Plan[] = [
   {
     priceId: "PRICE_ID_ANUAL",
     plan: "Annual",
-    price: "$588", // PRECIO_PENDIENTE
+    price: "$588",
+    regular: "$954",
     period: "/ year",
     note: "For those going for more than one transformation.",
     features: [
       "Everything in the monthly plan",
-      "Works out to $49/mo, the best price", // PRECIO_PENDIENTE
+      "Works out to $49/mo, the best price",
       "A full year of the method and your coach",
     ],
     featured: false,
@@ -320,7 +327,21 @@ export default function Pricing() {
                   )}
                   <span className="pricing-plan">{p.plan}</span>
                   {/* PRECIO_PENDIENTE: confirmar precios con cliente */}
-                  <div className="pricing-price">{p.price}</div>
+                  <div className="pricing-price">
+                    {p.regular && (
+                      <s
+                        style={{
+                          fontSize: "0.45em",
+                          color: "var(--c-faint)",
+                          fontWeight: 500,
+                          marginRight: "0.4em",
+                        }}
+                      >
+                        {p.regular}
+                      </s>
+                    )}
+                    {p.price}
+                  </div>
                   <span className="pricing-period">{p.period}</span>
                   <p style={{ marginTop: "0.9rem", fontSize: "0.95rem", lineHeight: 1.5, color: "var(--c-mist)" }}>
                     {p.note}

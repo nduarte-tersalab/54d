@@ -41,7 +41,9 @@ const INCLUDES = [
   },
 ];
 
-/* Programas reales: PROGRAMS_ON.md, copy de COPY_V3.md seccion 3 */
+/* Programas reales: PROGRAMS_ON.md + precios de store.54d.com/packs
+   (verificados 25/07/2026). oneTime = precio de compra individual en USD;
+   sin oneTime = solo disponible dentro de la membresía. */
 type Program = {
   num: string;
   name: string;
@@ -51,7 +53,18 @@ type Program = {
   audience: string;
   tag?: string;
   followUp?: boolean;
+  duration: string;
+  oneTime?: number;
+  startNote?: string;
 };
+
+/* Tiers reales de la membresía (store.54d.com/packs, 25/07/2026).
+   Stripe PRICE_IDs pendientes: el checkout se cablea cuando estén las keys. */
+const MEMBERSHIP_TIERS = [
+  { plan: "Monthly", price: 54, regular: 99, per: "per month", note: "Cancel anytime" },
+  { plan: "Quarterly", price: 156, regular: 267, per: "per quarter", note: "$52 a month" },
+  { plan: "Yearly", price: 588, regular: 954, per: "per year", note: "$49 a month", featured: true },
+];
 
 const PROGRAMS: Program[] = [
   {
@@ -63,6 +76,9 @@ const PROGRAMS: Program[] = [
     intensity: "High",
     audience: "The full transformation, start to finish",
     followUp: true,
+    duration: "9 weeks",
+    oneTime: 385,
+    startNote: "Starts Mondays",
   },
   {
     num: "02",
@@ -72,6 +88,8 @@ const PROGRAMS: Program[] = [
     intensity: "Extreme",
     audience: "54D ON graduates and advanced athletes",
     followUp: true,
+    duration: "9 weeks",
+    oneTime: 400,
   },
   {
     num: "03",
@@ -81,78 +99,105 @@ const PROGRAMS: Program[] = [
     equipment: "Resistance bands needed",
     intensity: "High",
     audience: "Fast fat loss on a deadline",
+    duration: "14 days",
+    oneTime: 39,
   },
   {
     num: "04",
+    name: "Max Burn",
+    line: "Thirty minutes a day, built to burn. Nothing decorative about it.",
+    equipment: "Resistance bands needed",
+    intensity: "High",
+    audience: "Accelerated fat loss in short sessions",
+    duration: "14 days",
+    oneTime: 39,
+  },
+  {
+    num: "05",
     name: "Reset 7",
     line: "Don't let four days of excess define the next four months. Seven days to correct course.",
     equipment: "Elastic bands suggested",
     intensity: "Full body work, short format",
     audience: "Getting back on track after you fell off",
+    duration: "7 days",
+    oneTime: 19,
   },
   {
-    num: "05",
+    num: "06",
     name: "First Move",
     line: "The first step. Low impact, daily discipline, zero assumptions.",
     equipment: "None",
     intensity: "Low impact",
     audience: "Beginners, sedentary starters, and advanced ages",
+    duration: "14 days",
+    oneTime: 39,
   },
   {
-    num: "06",
+    num: "07",
     name: "Full Body",
     line: "Don't do things halfway. Tone and strengthen every area of the body.",
     equipment: "Resistance bands needed",
     intensity: "Medium, mixed training",
     audience: "Overall conditioning, head to toe",
+    duration: "4 weeks",
+    oneTime: 95,
   },
   {
-    num: "07",
+    num: "08",
     name: "Lower Body",
     line: "Turn on the power in your lower half.",
     equipment: "Resistance bands needed",
     intensity: "Focused strength work",
     audience: "Thighs and glutes",
+    duration: "9 weeks",
+    oneTime: 185,
   },
   {
-    num: "08",
+    num: "09",
     name: "Upper Body",
     line: "Strong arms. A back that shows the work.",
     equipment: "Resistance bands needed",
     intensity: "Focused strength work",
     audience: "Arm and back strength and definition",
+    duration: "9 weeks",
+    oneTime: 185,
   },
   {
-    num: "09",
+    num: "10",
     name: "Booty on Fire",
     line: "Glute work that earns the name.",
     equipment: "Resistance bands needed",
     intensity: "Targeted, high effort",
     audience: "Maximum glute results in less time",
+    duration: "14 days",
+    oneTime: 39,
   },
   {
-    num: "10",
+    num: "11",
     name: "Runners 5K",
     line: "Your first 5K, or a faster one.",
     equipment: "Your running shoes",
     intensity: "Beginner, intermediate, or advanced tracks",
     audience: "First-time and short-distance runners",
+    duration: "Self-paced",
   },
   {
-    num: "11",
+    num: "12",
     name: "Runners 10K",
     line: "The next distance. Take it seriously.",
     equipment: "Your running shoes",
     intensity: "Intermediate and advanced tracks",
     audience: "Runners moving up to medium distance",
+    duration: "Self-paced",
   },
   {
-    num: "12",
+    num: "13",
     name: "Runner 21K",
     line: "The half marathon. Prepare like you mean it.",
     equipment: "Your running shoes",
     intensity: "Single advanced track",
     audience: "Long-distance runners pushing their limit",
+    duration: "Self-paced",
   },
 ];
 
@@ -222,8 +267,12 @@ const VS_STUDIOS: [string, string, string][] = [
 
 const FAQ = [
   {
+    q: "Should I get the membership or buy one program?",
+    a: "The membership includes every program, unlimited coaching, and the community, and starts with a free week: it's the way to go if you want the full method or aren't sure where to start. Buying a single program makes sense when you want exactly one run, one payment, no subscription. Same training, same coach, either way.",
+  },
+  {
     q: "Which program should I start with?",
-    a: "If you want the full transformation, start with 54D ON: it's the signature program. If you've never trained, start with First Move. If you're coming back after a rough patch, Reset 7. Your subscription includes all twelve, so you can switch or enroll in more than one.",
+    a: "If you want the full transformation, start with 54D ON: it's the signature program. If you've never trained, start with First Move. If you're coming back after a rough patch, Reset 7. With the membership you can switch or enroll in more than one at a time.",
   },
   {
     q: "Do I need equipment or prior experience?",
@@ -372,6 +421,51 @@ const progFollowUp: CSSProperties = {
   letterSpacing: "var(--track-label, 0.14em)",
   color: "var(--c-yellow)",
 };
+/* Columna de precio individual (derecha de cada fila de programa) */
+const progPrice: CSSProperties = {
+  flex: "0 0 auto",
+  marginLeft: "auto",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-end",
+  gap: "0.15rem",
+  minWidth: "8.5rem",
+  textAlign: "right",
+};
+const progDuration: CSSProperties = {
+  fontFamily: "var(--font-label)",
+  fontWeight: 700,
+  fontSize: "0.72rem",
+  textTransform: "uppercase",
+  letterSpacing: "var(--track-label, 0.14em)",
+  color: "var(--c-faint)",
+};
+const progAmount: CSSProperties = {
+  fontFamily: "var(--font-display)",
+  fontWeight: 800,
+  fontSize: "1.5rem",
+  lineHeight: 1,
+  color: "var(--c-white)",
+};
+const progPriceNote: CSSProperties = {
+  fontSize: "0.75rem",
+  color: "var(--c-faint)",
+};
+/* Badge "Best value" de la card destacada */
+const tierBadge: CSSProperties = {
+  position: "absolute",
+  top: "1rem",
+  right: "1rem",
+  fontFamily: "var(--font-label)",
+  fontWeight: 700,
+  fontSize: "0.68rem",
+  textTransform: "uppercase",
+  letterSpacing: "var(--track-label, 0.14em)",
+  color: "var(--c-black)",
+  background: "var(--c-yellow)",
+  borderRadius: "var(--r-control)",
+  padding: "0.3rem 0.6rem",
+};
 const photoCaption: CSSProperties = {
   display: "flex",
   gap: "0.6rem",
@@ -507,6 +601,7 @@ function AppPhone() {
 
 export default function On() {
   const incluye = useReveal();
+  const membresia = useReveal();
   const programas = useReveal();
   const app = useReveal();
   const pasos = useReveal();
@@ -580,18 +675,86 @@ export default function On() {
         </div>
       </section>
 
+      {/* ============ MEMBRESÍA (el modelo comercial, sin ambigüedad) ============ */}
+      <section className="section" style={{ paddingTop: 0 }} id="membership">
+        <div className="section-inner" ref={membresia.ref}>
+          <div className={membresia.className}>
+            <span className="day-marker">The membership</span>
+            <div className="method-intro">
+              <h2 className="section-title">
+                One membership. <span style={solidAccent}>Everything.</span>
+              </h2>
+              <p>
+                Every program on this page, unlimited coaching, live sessions,
+                and the community. First week free. Cancel anytime.
+              </p>
+            </div>
+            <div className="pricing-grid" style={{ marginTop: "0.5rem" }}>
+              {MEMBERSHIP_TIERS.map((t) => (
+                <div
+                  className={t.featured ? "pricing-card featured" : "pricing-card"}
+                  key={t.plan}
+                >
+                  {t.featured && <span style={tierBadge}>Best value</span>}
+                  <div className="pricing-plan">{t.plan}</div>
+                  <div className="pricing-price">
+                    <s
+                      style={{
+                        fontSize: "0.5em",
+                        color: "var(--c-faint)",
+                        fontWeight: 500,
+                        marginRight: "0.4em",
+                      }}
+                    >
+                      ${t.regular}
+                    </s>
+                    ${t.price}
+                  </div>
+                  <div className="pricing-period">{t.per}</div>
+                  <p
+                    style={{
+                      marginTop: "0.6rem",
+                      fontSize: "0.85rem",
+                      color: "var(--c-mist)",
+                    }}
+                  >
+                    {t.note}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <div
+              style={{
+                marginTop: "2rem",
+                display: "flex",
+                alignItems: "center",
+                gap: "1.4rem",
+                flexWrap: "wrap",
+              }}
+            >
+              <Link to="/pricing" className="btn btn-primary">
+                Start free. 7 days.
+              </Link>
+              <span style={{ fontSize: "0.85rem", color: "var(--c-faint)" }}>
+                Prefer to pay once? Every program below is also sold on its own.
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ============ PROGRAMAS REALES (lista editorial) ============ */}
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section" style={{ paddingTop: 0 }} id="programs">
         <div className="section-inner" ref={programas.ref}>
           <div className={programas.className}>
             <span className="day-marker">Programs</span>
             <div className="method-intro">
               <h2 className="section-title">
-                Twelve programs. <span style={solidAccent}>One subscription.</span>
+                Thirteen programs. <span style={solidAccent}>Two ways in.</span>
               </h2>
               <p>
-                Every program below is included. Enroll in more than one at a
-                time. New releases at no extra cost.
+                All of them come with the membership. Or buy just the one you
+                need: one payment, the full run, your coach included.
               </p>
             </div>
             <div style={{ borderBottom: "1px solid var(--hairline)" }}>
@@ -624,6 +787,20 @@ export default function On() {
                       </span>
                     )}
                   </div>
+                  <div style={progPrice}>
+                    <span style={progDuration}>{p.duration}</span>
+                    {p.oneTime ? (
+                      <>
+                        <span style={progAmount}>${p.oneTime}</span>
+                        <span style={progPriceNote}>one payment</span>
+                      </>
+                    ) : (
+                      <span style={progPriceNote}>Membership only</span>
+                    )}
+                    {p.startNote && (
+                      <span style={progPriceNote}>{p.startNote}</span>
+                    )}
+                  </div>
                 </article>
               ))}
             </div>
@@ -640,7 +817,7 @@ export default function On() {
                 Start free. 7 days.
               </Link>
               <span style={{ fontSize: "0.85rem", color: "var(--c-faint)" }}>
-                All twelve included in one subscription.
+                Not sure which one? The free week includes them all.
               </span>
             </div>
           </div>

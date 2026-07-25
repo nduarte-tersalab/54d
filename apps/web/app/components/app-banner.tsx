@@ -34,7 +34,9 @@ export function SmartAppBanner() {
     const root = document.documentElement;
     if (platform) root.style.setProperty("--app-banner-h", BANNER_H);
     else root.style.removeProperty("--app-banner-h");
-    return () => root.style.removeProperty("--app-banner-h");
+    return () => {
+      root.style.removeProperty("--app-banner-h");
+    };
   }, [platform]);
 
   if (!platform) return null;
