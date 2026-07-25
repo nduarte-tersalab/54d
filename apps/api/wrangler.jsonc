@@ -10,6 +10,7 @@
   // META_PIXEL_ID, META_CAPI_ACCESS_TOKEN,
   // GA4_MEASUREMENT_ID, GA4_API_SECRET
   "vars": {
-    "SITE_URL": "http://localhost:5173"
+    // Prod: preview de GitHub Pages (con path /54d). Local se pisa en .dev.vars.
+    "SITE_URL": "https://nduarte-tersalab.github.io/54d"
   }
 }

@@ -19,7 +19,12 @@ type Ctx = { Bindings: Env };
 const app = new Hono<Ctx>();
 
 app.use('*', async (c, next) => {
-  const corsMw = cors({ origin: [c.env.SITE_URL], allowMethods: ['GET', 'POST'] });
+  // SITE_URL puede llevar path (GitHub Pages sirve bajo /54d);
+  // CORS compara solo el origin.
+  const corsMw = cors({
+    origin: [new URL(c.env.SITE_URL).origin],
+    allowMethods: ['GET', 'POST'],
+  });
   return corsMw(c, next);
 });
 
@@ -83,8 +88,10 @@ app.post('/checkout', async (c) => {
       ? { trial_period_days: price.trial_days }
       : undefined,
     allow_promotion_codes: true,
-    success_url: `${c.env.SITE_URL}/gracias?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${c.env.SITE_URL}/precios`,
+    // TODO: página /thanks dedicada (sirve además para disparar los
+    // eventos browser-side de conversión en GA4/Pixel)
+    success_url: `${c.env.SITE_URL}/pricing?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${c.env.SITE_URL}/pricing?checkout=cancelled`,
     metadata: { attribution_id: attr.id },
   });
 

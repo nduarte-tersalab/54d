@@ -4,12 +4,9 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "web",
+	"name": "54d-web",
 	"compatibility_date": "2026-07-24",
 	"main": "./workers/app.ts",
-	"vars": {
-		"VALUE_FROM_CLOUDFLARE": "Hello from Cloudflare"
-	},
 	"observability": {
 		"enabled": true
 	},
