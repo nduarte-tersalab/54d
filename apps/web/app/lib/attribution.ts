@@ -95,6 +95,12 @@ export async function startCheckout(priceId: string): Promise<void> {
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ priceId, attribution }),
   });
+  if (res.status === 503) {
+    // Stripe aún sin configurar (keys pendientes)
+    throw new Error(
+      "Payments are being connected. Checkout opens very soon; nothing is wrong on your end."
+    );
+  }
   if (!res.ok) throw new Error("We couldn't start checkout");
   const { url } = (await res.json()) as { url: string };
   window.location.href = url;

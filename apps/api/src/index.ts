@@ -48,6 +48,12 @@ app.post('/checkout', async (c) => {
   const body = await c.req.json<CheckoutRequest>();
   if (!body?.priceId) return c.json({ error: 'priceId requerido' }, 400);
 
+  // Stripe todavía no configurado (keys pendientes del cliente):
+  // responder claro para que el front no muestre un error de red falso.
+  if (!c.env.STRIPE_SECRET_KEY || body.priceId.startsWith('PENDING_')) {
+    return c.json({ error: 'payments_not_configured' }, 503);
+  }
+
   const supabase = db(c.env);
 
   // 1. Guardar atribución ANTES de crear la sesión
@@ -71,22 +77,26 @@ app.post('/checkout', async (c) => {
     .single();
   if (attrErr) return c.json({ error: attrErr.message }, 500);
 
-  // 2. Trial days: los define el Price en Stripe (espejo en program_prices)
+  // 2. Interval + trial: los define el espejo en program_prices.
+  //    one_time → mode 'payment' (programas individuales);
+  //    month/quarter/year → mode 'subscription' (membresía).
   const { data: price } = await supabase
     .from('program_prices')
-    .select('trial_days')
+    .select('trial_days, interval')
     .eq('stripe_price_id', body.priceId)
     .maybeSingle();
+  const isOneTime = price?.interval === 'one_time';
 
   // 3. Crear Checkout Session
   const session = await stripe(c.env).checkout.sessions.create({
-    mode: 'subscription',
+    mode: isOneTime ? 'payment' : 'subscription',
     line_items: [{ price: body.priceId, quantity: 1 }],
     customer_email: body.email || undefined,
     client_reference_id: attr.id,
-    subscription_data: price?.trial_days
-      ? { trial_period_days: price.trial_days }
-      : undefined,
+    subscription_data:
+      !isOneTime && price?.trial_days
+        ? { trial_period_days: price.trial_days }
+        : undefined,
     allow_promotion_codes: true,
     // TODO: página /thanks dedicada (sirve además para disparar los
     // eventos browser-side de conversión en GA4/Pixel)

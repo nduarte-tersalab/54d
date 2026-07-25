@@ -1,9 +1,11 @@
+import { useState } from "react";
 import type { CSSProperties } from "react";
 import { Link } from "react-router";
 import type { Route } from "./+types/on";
 import { Nav, Footer, useReveal } from "../components/site";
 import { AppStoreBadges } from "../components/badges";
 import { asset } from "../lib/asset";
+import { startCheckout } from "../lib/attribution";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -55,15 +57,36 @@ type Program = {
   followUp?: boolean;
   duration: string;
   oneTime?: number;
+  priceId?: string;
   startNote?: string;
 };
 
 /* Tiers reales de la membresía (store.54d.com/packs, 25/07/2026).
-   Stripe PRICE_IDs pendientes: el checkout se cablea cuando estén las keys. */
+   El precio POR MES es el protagonista: el total facturado va como
+   nota. Stripe PRICE_IDs pendientes de las keys del cliente. */
 const MEMBERSHIP_TIERS = [
-  { plan: "Monthly", price: 54, regular: 99, per: "per month", note: "Cancel anytime" },
-  { plan: "Quarterly", price: 156, regular: 267, per: "per quarter", note: "$52 a month" },
-  { plan: "Yearly", price: 588, regular: 954, per: "per year", note: "$49 a month", featured: true },
+  {
+    priceId: "PENDING_membership_monthly",
+    plan: "Monthly",
+    perMonth: 54,
+    regularPerMonth: 99,
+    billed: "Billed monthly. Cancel anytime.",
+  },
+  {
+    priceId: "PENDING_membership_quarterly",
+    plan: "Quarterly",
+    perMonth: 52,
+    regularPerMonth: 89,
+    billed: "$156 every 3 months",
+  },
+  {
+    priceId: "PENDING_membership_yearly",
+    plan: "Yearly",
+    perMonth: 49,
+    regularPerMonth: 79,
+    billed: "$588 a year",
+    featured: true,
+  },
 ];
 
 const PROGRAMS: Program[] = [
@@ -78,6 +101,7 @@ const PROGRAMS: Program[] = [
     followUp: true,
     duration: "9 weeks",
     oneTime: 385,
+    priceId: "PENDING_54d-on_onetime",
     startNote: "Starts Mondays",
   },
   {
@@ -90,6 +114,7 @@ const PROGRAMS: Program[] = [
     followUp: true,
     duration: "9 weeks",
     oneTime: 400,
+    priceId: "PENDING_step-2_onetime",
   },
   {
     num: "03",
@@ -101,6 +126,7 @@ const PROGRAMS: Program[] = [
     audience: "Fast fat loss on a deadline",
     duration: "14 days",
     oneTime: 39,
+    priceId: "PENDING_emergency-kit_onetime",
   },
   {
     num: "04",
@@ -111,6 +137,7 @@ const PROGRAMS: Program[] = [
     audience: "Accelerated fat loss in short sessions",
     duration: "14 days",
     oneTime: 39,
+    priceId: "PENDING_max-burn_onetime",
   },
   {
     num: "05",
@@ -121,6 +148,7 @@ const PROGRAMS: Program[] = [
     audience: "Getting back on track after you fell off",
     duration: "7 days",
     oneTime: 19,
+    priceId: "PENDING_reset-7_onetime",
   },
   {
     num: "06",
@@ -131,6 +159,7 @@ const PROGRAMS: Program[] = [
     audience: "Beginners, sedentary starters, and advanced ages",
     duration: "14 days",
     oneTime: 39,
+    priceId: "PENDING_first-move_onetime",
   },
   {
     num: "07",
@@ -141,6 +170,7 @@ const PROGRAMS: Program[] = [
     audience: "Overall conditioning, head to toe",
     duration: "4 weeks",
     oneTime: 95,
+    priceId: "PENDING_full-body_onetime",
   },
   {
     num: "08",
@@ -151,6 +181,7 @@ const PROGRAMS: Program[] = [
     audience: "Thighs and glutes",
     duration: "9 weeks",
     oneTime: 185,
+    priceId: "PENDING_lower-body_onetime",
   },
   {
     num: "09",
@@ -161,6 +192,7 @@ const PROGRAMS: Program[] = [
     audience: "Arm and back strength and definition",
     duration: "9 weeks",
     oneTime: 185,
+    priceId: "PENDING_upper-body_onetime",
   },
   {
     num: "10",
@@ -171,6 +203,7 @@ const PROGRAMS: Program[] = [
     audience: "Maximum glute results in less time",
     duration: "14 days",
     oneTime: 39,
+    priceId: "PENDING_booty-on-fire_onetime",
   },
   {
     num: "11",
@@ -603,6 +636,20 @@ export default function On() {
   const incluye = useReveal();
   const membresia = useReveal();
   const programas = useReveal();
+  const [busy, setBusy] = useState<string | null>(null);
+  const [checkoutErr, setCheckoutErr] = useState<string | null>(null);
+  const buy = async (priceId: string) => {
+    setBusy(priceId);
+    setCheckoutErr(null);
+    try {
+      await startCheckout(priceId);
+    } catch (e) {
+      setCheckoutErr(
+        e instanceof Error ? e.message : "We couldn't start checkout."
+      );
+      setBusy(null);
+    }
+  };
   const app = useReveal();
   const pasos = useReveal();
   const difApps = useReveal();
@@ -706,39 +753,55 @@ export default function On() {
                         marginRight: "0.4em",
                       }}
                     >
-                      ${t.regular}
+                      ${t.regularPerMonth}
                     </s>
-                    ${t.price}
+                    ${t.perMonth}
+                    <span
+                      style={{
+                        fontSize: "0.38em",
+                        fontWeight: 700,
+                        color: "var(--c-mist)",
+                        marginLeft: "0.15em",
+                      }}
+                    >
+                      /mo
+                    </span>
                   </div>
-                  <div className="pricing-period">{t.per}</div>
-                  <p
-                    style={{
-                      marginTop: "0.6rem",
-                      fontSize: "0.85rem",
-                      color: "var(--c-mist)",
-                    }}
+                  <div className="pricing-period">{t.billed}</div>
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    style={{ marginTop: "1.4rem", width: "100%" }}
+                    disabled={busy === t.priceId}
+                    onClick={() => buy(t.priceId)}
                   >
-                    {t.note}
-                  </p>
+                    {busy === t.priceId ? "Opening checkout…" : "Start free trial"}
+                  </button>
                 </div>
               ))}
             </div>
-            <div
+            {checkoutErr && (
+              <p
+                role="alert"
+                style={{
+                  marginTop: "1.2rem",
+                  fontSize: "0.9rem",
+                  color: "var(--c-yellow)",
+                }}
+              >
+                {checkoutErr}
+              </p>
+            )}
+            <p
               style={{
-                marginTop: "2rem",
-                display: "flex",
-                alignItems: "center",
-                gap: "1.4rem",
-                flexWrap: "wrap",
+                marginTop: "1.6rem",
+                fontSize: "0.85rem",
+                color: "var(--c-faint)",
               }}
             >
-              <Link to="/pricing" className="btn btn-primary">
-                Start free. 7 days.
-              </Link>
-              <span style={{ fontSize: "0.85rem", color: "var(--c-faint)" }}>
-                Prefer to pay once? Every program below is also sold on its own.
-              </span>
-            </div>
+              7 days free on every plan. Prefer to pay once? Every program below
+              is also sold on its own.
+            </p>
           </div>
         </div>
       </section>
@@ -789,9 +852,22 @@ export default function On() {
                   </div>
                   <div style={progPrice}>
                     <span style={progDuration}>{p.duration}</span>
-                    {p.oneTime ? (
+                    {p.oneTime && p.priceId ? (
                       <>
                         <span style={progAmount}>${p.oneTime}</span>
+                        <button
+                          type="button"
+                          className="btn btn-ghost"
+                          style={{
+                            padding: "0.5rem 1.1rem",
+                            fontSize: "0.72rem",
+                            marginTop: "0.4rem",
+                          }}
+                          disabled={busy === p.priceId}
+                          onClick={() => buy(p.priceId!)}
+                        >
+                          {busy === p.priceId ? "Opening…" : "Buy this program"}
+                        </button>
                         <span style={progPriceNote}>one payment</span>
                       </>
                     ) : (
