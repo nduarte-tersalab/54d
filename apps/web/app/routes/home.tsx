@@ -16,9 +16,11 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-/* Cuando el cliente entregue el video del hero (R2/Stream), setear acá */
-const HERO_VIDEO_URL: string | null = null;
-const HERO_POSTER_URL: string | null = null;
+/* Video del hero: generado con Higgsfield (Seedance 2.0) desde la foto
+   real de la rampa — 1080p, 8s, loop. Solo desktop; mobile usa la foto
+   (9MB no se le impone a datos móviles). */
+const HERO_VIDEO_URL: string | null = asset("videos/hero-ramp.mp4");
+const HERO_POSTER_URL: string | null = asset("images/hd/cg-ramp-runners-wide.jpg");
 
 /* Links canónicos verificados (docs/marketing/APP_INFO.md). Solo 54D On:
    nunca las apps legacy FitMetrix/Mindbody. */
@@ -115,16 +117,26 @@ export default function Home() {
       <header className="hero">
         <div className="hero-media">
           {HERO_VIDEO_URL ? (
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="none"
-              poster={HERO_POSTER_URL ?? undefined}
-            >
-              <source src={HERO_VIDEO_URL} type="video/mp4" />
-            </video>
+            <>
+              {/* Desktop: video. Mobile: foto vertical (clase .hero-media-mobile). */}
+              <video
+                className="hero-media-desktop"
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                poster={HERO_POSTER_URL ?? undefined}
+              >
+                <source src={HERO_VIDEO_URL} type="video/mp4" />
+              </video>
+              <img
+                className="hero-media-mobile"
+                src={asset("images/hd/cg-runner-vertical.jpg")}
+                alt="Runner climbing the yellow stairs at a 54D studio"
+                fetchPriority="high"
+              />
+            </>
           ) : (
             <picture>
               <source
