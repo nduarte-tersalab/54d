@@ -137,7 +137,7 @@ export default function Studios() {
       <header className="hero hero-inner">
         <div className="hero-media">
           <img
-            src={asset("images/brand/studio-class-54d-mural-stairs.jpg")}
+            src={asset("images/hd/cg-mural-seated.jpg")}
             alt="Full 54D class training on mats with a coach standing, giant 54D mural on the wall"
           />
         </div>
@@ -315,8 +315,8 @@ export default function Studios() {
       {/* ============ PHOTO BAND: COMUNIDAD (foto grupal real) ============ */}
       <section className="photo-band">
         <img
-          src={asset("images/brand/group-photo-54d-mural.jpg")}
-          alt="A full 54D Generation smiling together in front of the 54D mural after class"
+          src={asset("images/hd/hl-laugh.jpg")}
+          alt="A 54D member laughing, drenched after finishing a session"
           loading="lazy"
         />
         <div className="photo-band-content">

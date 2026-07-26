@@ -665,8 +665,8 @@ export default function On() {
       <header className="hero hero-inner">
         <div className="hero-media">
           <img
-            src={asset("images/brand/class-plank-rows-54d-mural.jpg")}
-            alt="Rows of athletes holding a plank under the 54D mural"
+            src={asset("images/hd/cg-overhead-press.jpg")}
+            alt="Athlete pressing a barbell overhead against a clean dark background"
           />
         </div>
         <div className="hero-veil" />
@@ -1117,7 +1117,7 @@ export default function On() {
               </p>
               <figure style={{ margin: 0 }}>
                 <img
-                  src={asset("images/brand/gym-structure-heavy-bags-wide.jpg")}
+                  src={asset("images/hd/hl-locker-space.jpg")}
                   alt="Training floor at a 54D studio: wood beams, heavy bags, and a coach with a headset"
                   loading="lazy"
                   style={{

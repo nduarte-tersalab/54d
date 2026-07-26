@@ -129,11 +129,11 @@ export default function Home() {
             <picture>
               <source
                 media="(max-width: 640px)"
-                srcSet={asset("images/brand/54d-logo-mural-core-class-vertical.jpg")}
+                srcSet={asset("images/hd/cg-runner-vertical.jpg")}
               />
               <img
-                src={asset("images/brand/gym-interior-54d-logo-wide.jpg")}
-                alt="Inside the 54D studio: a full class training on mats under the giant 54D mural"
+                src={asset("images/hd/cg-ramp-runners-wide.jpg")}
+                alt="Runners climbing the yellow ramp inside the dark 54D studio"
                 fetchPriority="high"
               />
             </picture>
@@ -199,8 +199,8 @@ export default function Home() {
       {/* ============ PHOTO BAND: comunidad ============ */}
       <section className="photo-band">
         <img
-          src={asset("images/brand/group-photo-54d-mural.jpg")}
-          alt="A 54D generation of around 25 people celebrating together in front of the 54D mural"
+          src={asset("images/hd/cg-highfive-euphoria.jpg")}
+          alt="A 54D class celebrating with arms up and high fives after finishing a session"
           loading="lazy"
         />
         <div className="photo-band-content" ref={community.ref}>
@@ -244,7 +244,7 @@ export default function Home() {
         </div>
         <div className="split-panel split-studios">
           <img
-            src={asset("images/brand/gym-structure-heavy-bags-wide.jpg")}
+            src={asset("images/hd/cg-stairs-group.jpg")}
             alt=""
             loading="lazy"
             style={{

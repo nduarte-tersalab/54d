@@ -226,7 +226,7 @@ export default function Method() {
       {/* ============ PHOTO BAND: LA CLASE EN TRABAJO ============ */}
       <section className="photo-band" aria-label="Inside a 54D class">
         <img
-          src={asset("images/brand/class-plank-54d-mural.jpg")}
+          src={asset("images/hd/cg-effort-yellow-d.jpg")}
           alt="A full 54D class holding planks on the mats under the 54D mural"
           loading="lazy"
         />

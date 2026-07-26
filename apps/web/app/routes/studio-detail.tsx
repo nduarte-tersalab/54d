@@ -106,12 +106,18 @@ type GalleryPhoto = {
 type GalleryRow = { flip?: boolean; photos: [GalleryPhoto, GalleryPhoto] };
 
 const cg = (file: string) => `images/studios/coral-gables/${file}`;
+const hl = (file: string) => `images/studios/hallandale/${file}`;
 
-/* Foto real de hero solo donde existe galería propia de la sede */
+/* Foto real de hero solo donde existe galería propia de la sede
+   (HD de las galerías pic-time del cliente, 25/07/2026) */
 const HERO_PHOTO: Record<string, { src: string; alt: string }> = {
   "coral-gables": {
-    src: cg("jump-training-54d-wall-01.jpg"),
-    alt: "Athlete mid jump during plyometric training in front of the giant 54 mural at 54D Coral Gables",
+    src: cg("class-mural-wide.jpg"),
+    alt: "Full class training under dramatic light in front of the giant 54D mural at Coral Gables",
+  },
+  hallandale: {
+    src: hl("class-under-letters.jpg"),
+    alt: "A full 54D generation posing under the giant 54D letters at the Hallandale studio",
   },
 };
 
@@ -120,16 +126,16 @@ const GALLERY_ROWS: Record<string, GalleryRow[]> = {
     {
       photos: [
         {
-          src: cg("group-squat-class-01.jpg"),
-          alt: "Full class holding deep squats under the LED strips at 54D Coral Gables",
+          src: cg("boxer-closeup.jpg"),
+          alt: "Close-up of a boxer in guard with white gloves, sweat visible, at 54D Coral Gables",
           ratio: "1 / 1",
-          caption: "Every rep, watched",
+          caption: "Boxing, coached",
         },
         {
-          src: cg("coach-with-headset-01.jpg"),
-          alt: "54D coach with a headset mic leading the class on the training floor",
+          src: cg("sprint-vertical.jpg"),
+          alt: "Athlete sprinting through the cone corridor at 54D Coral Gables",
           ratio: "2 / 3",
-          caption: "Coaches on the floor",
+          caption: "Speed and agility work",
         },
       ],
     },
@@ -137,10 +143,26 @@ const GALLERY_ROWS: Record<string, GalleryRow[]> = {
       flip: true,
       photos: [
         {
-          src: cg("spin-bikes-boxing-bags-01.jpg"),
-          alt: "Row of spin bikes in use with boxing bags hanging from the rig behind",
+          src: cg("ramp-climb-vertical.jpg"),
+          alt: "Athlete climbing the yellow ramp mid stride at 54D Coral Gables",
           ratio: "2 / 3",
-          caption: "The equipment",
+          caption: "The yellow ramp",
+        },
+        {
+          src: cg("coach-correction.jpg"),
+          alt: "54D coach talking face to face with an athlete during the session",
+          ratio: "1 / 1",
+          caption: "Every rep, watched",
+        },
+      ],
+    },
+    {
+      photos: [
+        {
+          src: cg("runner-effort.jpg"),
+          alt: "Runner mid stride with visible effort on the dark training floor",
+          ratio: "3 / 2",
+          caption: "Cardio with the group",
         },
         {
           src: cg("barbell-press-class-01.jpg"),
@@ -150,19 +172,38 @@ const GALLERY_ROWS: Record<string, GalleryRow[]> = {
         },
       ],
     },
+  ],
+  hallandale: [
     {
       photos: [
         {
-          src: cg("agility-ladder-drill-01.jpg"),
-          alt: "Two athletes running an agility ladder drill past the golden 54D wall logo",
+          src: hl("dumbbell-press.jpg"),
+          alt: "Athlete pressing 54D dumbbells at shoulder height, focused",
           ratio: "1 / 1",
-          caption: "Speed and agility work",
+          caption: "54D iron, every rep",
         },
         {
-          src: cg("group-cardio-session-01.jpg"),
-          alt: "Group cardio session in full movement on the 54D training floor",
+          src: hl("stairs-vertical.jpg"),
+          alt: "Runner in a 54D top climbing the yellow staircase at Hallandale",
           ratio: "2 / 3",
-          caption: "Cardio with the group",
+          caption: "The yellow stairs",
+        },
+      ],
+    },
+    {
+      flip: true,
+      photos: [
+        {
+          src: hl("coach-headset.jpg"),
+          alt: "54D coach with a headset leading cardio between the boxing bags",
+          ratio: "2 / 3",
+          caption: "Coaches on the floor",
+        },
+        {
+          src: hl("coach-hands.jpg"),
+          alt: "Coach correcting an athlete's dumbbell press with his hands",
+          ratio: "1 / 1",
+          caption: "Hands-on coaching",
         },
       ],
     },
@@ -189,11 +230,15 @@ const BRAND_ROWS: GalleryRow[] = [
   },
 ];
 
-/* Banda fotográfica emocional: solo Coral Gables (foto de graduación real) */
+/* Banda fotográfica emocional por sede */
 const BAND_PHOTO: Record<string, { src: string; alt: string }> = {
   "coral-gables": {
     src: cg("graduation-celebration-01.jpg"),
     alt: "Emotional group hug at a 54D graduation with golden balloons and the 54D mural",
+  },
+  hallandale: {
+    src: hl("bench-press-54d.jpg"),
+    alt: "Bench press with a 54D branded plate shot from a low dramatic angle",
   },
 };
 
