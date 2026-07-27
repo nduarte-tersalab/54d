@@ -97,7 +97,7 @@ const FAQ = [
   },
   {
     q: "ON or Studios: which one is for me?",
-    a: "If you want to train wherever you are, on your schedule: 54D ON. If you want the full in-person experience: coaches on the floor, a fixed group, a nutritionist, and physiotherapy. That's 54D Studios in Miami, Mexico City, or Bogotá. The method is the same.",
+    a: "One method, two very different programs. 54D ON is your transformation, wherever you are, on your schedule, coached through the 54D On app. 54D Studios is the flagship: in person, by application, with a dedicated team of coaches, a nutritionist, and a physiotherapist in Miami, Mexico City, and Bogotá. Neither is a lighter version of the other. They are built for different lives.",
     links: [
       { href: "/on", label: "Discover 54D ON" },
       { href: "/studios", label: "Explore the studios" },
@@ -463,15 +463,16 @@ export default function Method() {
         </div>
       </section>
 
-      {/* ============ SPLIT DE CIERRE: ON / STUDIOS ============ */}
+      {/* ============ SPLIT DE CIERRE: DOS PRODUCTOS, NO DOS SEDES ============ */}
       <section className="split">
         <div className="split-panel split-on">
           <div>
-            <span className="split-label">Online: 54D ON</span>
-            <h3 className="split-title">Do it online.</h3>
+            <span className="split-label">Online, wherever you are</span>
+            <h3 className="split-title">54D ON</h3>
             <p className="split-desc">
-              The full method from home: video training sessions, a nutrition
-              protocol, and your coach over chat. Start with 7 days free.
+              The 54-day digital program in the 54D On app: daily training,
+              your nutrition protocol, and a real coach in your corner. Start
+              with 7 days free.
             </p>
           </div>
           <div className="split-footer">
@@ -484,18 +485,19 @@ export default function Method() {
         </div>
         <div className="split-panel split-studios">
           <div>
-            <span className="split-label">In person: 5 studios</span>
-            <h3 className="split-title">Do it in a studio.</h3>
+            <span className="split-label">The flagship experience</span>
+            <h3 className="split-title">54D Studios</h3>
             <p className="split-desc">
-              The full experience, in person: coaches on the floor, a
-              Generation, the group you start and finish with, and limited
-              spots. Miami, Mexico City, and Bogotá.
+              The complete method, in person, with a dedicated team of coaches,
+              a nutritionist, and a physiotherapist. Admission by Generation:
+              one start date, limited places. Miami, Mexico City, Bogotá.
             </p>
           </div>
           <div className="split-footer">
             <Link to="/studios" className="btn btn-primary">
-              Explore the studios
+              Request a consultation
             </Link>
+            <span className="split-price">By application · Limited places per Generation</span>
           </div>
         </div>
       </section>

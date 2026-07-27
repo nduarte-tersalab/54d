@@ -31,6 +31,15 @@ const GOOGLE_PLAY_URL =
 /* Acento sólido (regla de de-IA-ificación: gradient text solo en el hero) */
 const solidAccent = { color: "var(--c-yellow)" } as const;
 
+/* Chooser flagship (SEPARATION_SPEC §1): en desktop Studios pesa mas
+   que ON (3fr vs 2fr). Scoped via :has() para no tocar app.css; bajo
+   900px manda el 1fr de app.css y Studios queda arriba por orden DOM. */
+const CHOOSER_CSS = `
+@media (min-width: 901px) {
+  .split:has(.split-flagship) { grid-template-columns: 3fr 2fr; }
+}
+`;
+
 const METHOD = [
   {
     num: "D01",
@@ -111,6 +120,7 @@ export default function Home() {
 
   return (
     <div>
+      <style dangerouslySetInnerHTML={{ __html: CHOOSER_CSS }} />
       <Nav />
 
       {/* ============ HERO ============ */}
@@ -163,19 +173,86 @@ export default function Home() {
             style={{ textShadow: "0 1px 24px rgba(7,7,7,.6)" }}
           >
             High-intensity training, personalized nutrition, and a coach who
-            checks in every single day. Online, or in our studios.
+            demands more of you, every day for 54 days.
           </p>
+          {/* Una sola puerta en el hero (SEPARATION_SPEC §1): el hero no
+              vende ninguno de los dos productos, te manda a elegir. Cero
+              CTAs de checkout antes del chooser. */}
           <div className="hero-ctas" id="empezar">
-            <Link to="/pricing" className="btn btn-primary">
-              Start free. 7 days.
-            </Link>
-            <a href="#studios" className="btn btn-ghost">
-              Explore the studios
+            <a href="#choose" className="btn btn-primary">
+              Choose how you do it
             </a>
           </div>
         </div>
         <Ticker />
       </header>
+
+      {/* ============ EL CHOOSER: dos puertas NO equivalentes ============
+          Studios primero y con mas peso (3fr, CHOOSER_CSS): flagship por
+          aplicacion, sin precio ni trial en su panel. ON con su precio y
+          su trial: son productos distintos, hasta la app es distinta. */}
+      <section className="split" id="choose" style={{ scrollMarginTop: "6rem" }}>
+        <div className="split-panel split-studios split-flagship">
+          <img
+            src={asset("images/studios/coral-gables/class-mural-wide.jpg")}
+            alt=""
+            loading="lazy"
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              filter: "saturate(0.82) contrast(1.05)",
+            }}
+          />
+          <div
+            aria-hidden="true"
+            style={{
+              position: "absolute",
+              inset: 0,
+              background:
+                "linear-gradient(180deg, rgba(7,7,7,0.62) 0%, rgba(7,7,7,0.88) 100%)",
+            }}
+          />
+          <div style={{ position: "relative", zIndex: 1 }}>
+            <span className="split-label">The flagship experience</span>
+            {/* h2: primer heading tras el h1 del hero (outline sin saltos) */}
+            <h2 className="split-title">54D Studios</h2>
+            <p className="split-desc">
+              The complete method, in person, with a dedicated team of
+              coaches, a nutritionist, and a physiotherapist. Admission by
+              Generation: one start date, limited places. Miami, Mexico
+              City, Bogotá.
+            </p>
+          </div>
+          <div className="split-footer" style={{ position: "relative", zIndex: 1 }}>
+            <Link to="/studios" className="btn btn-ghost">
+              Request a consultation
+            </Link>
+            <span className="split-price">
+              By application · Limited places per Generation
+            </span>
+          </div>
+        </div>
+        <div className="split-panel split-on">
+          <div>
+            <span className="split-label">Online, wherever you are</span>
+            <h2 className="split-title">54D ON</h2>
+            <p className="split-desc">
+              The 54-day digital program in the 54D On app: daily training,
+              your nutrition protocol, and a real coach in your corner. From
+              $54 a month.
+            </p>
+          </div>
+          <div className="split-footer">
+            <Link to="/pricing" className="btn btn-on">
+              Start free. 7 days.
+            </Link>
+            <span className="split-price">Cancel anytime</span>
+          </div>
+        </div>
+      </section>
 
       {/* ============ EL MÉTODO (glass cards) ============ */}
       <section className="section seam-warm" id="metodo">
@@ -235,64 +312,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ============ PROGRAMAS: ON / STUDIOS ============ */}
-      <section className="split" id="programas" style={{ scrollMarginTop: "6rem" }}>
-        <div className="split-panel split-on">
-          <div>
-            <span className="split-label">Online. Wherever you are.</span>
-            <h3 className="split-title">54D ON</h3>
-            <p className="split-desc lead">
-              Every digital program, your nutrition protocol, and daily
-              follow-up from a live coach. From home, with whatever you have.
-            </p>
-          </div>
-          <div className="split-footer">
-            <Link to="/pricing" className="btn btn-on">
-              Start free. 7 days.
-            </Link>
-            <span className="split-price">Monthly, quarterly, or annual subscription</span>
-          </div>
-        </div>
-        <div className="split-panel split-studios">
-          <img
-            src={asset("images/hd/cg-stairs-group.jpg")}
-            alt=""
-            loading="lazy"
-            style={{
-              position: "absolute",
-              inset: 0,
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              filter: "saturate(0.82) contrast(1.05)",
-            }}
-          />
-          <div
-            aria-hidden="true"
-            style={{
-              position: "absolute",
-              inset: 0,
-              background:
-                "linear-gradient(180deg, rgba(7,7,7,0.62) 0%, rgba(7,7,7,0.88) 100%)",
-            }}
-          />
-          <div style={{ position: "relative", zIndex: 1 }}>
-            <span className="split-label">In person. 5 studios.</span>
-            <h3 className="split-title">54D Studios</h3>
-            <p className="split-desc">
-              The full experience: small groups, coaches on the floor, a
-              nutritionist, and physiotherapy. Generations with a start date
-              and limited spots.
-            </p>
-          </div>
-          <div className="split-footer" style={{ position: "relative", zIndex: 1 }}>
-            <a href="#studios" className="btn btn-primary">
-              See the studios
-            </a>
-          </div>
-        </div>
-      </section>
-
       {/* ============ THE APP: 54D On ============ */}
       <section className="section" id="app">
         <div className="section-inner" ref={app.ref}>
@@ -314,7 +333,7 @@ export default function Home() {
                 </div>
               </div>
               <div>
-                <span className="day-marker">54D On. iOS and Android.</span>
+                <span className="day-marker">54D ON · The app</span>
                 <h2 className="section-title">The method lives in the app.</h2>
                 <p
                   className="lead"
@@ -365,12 +384,22 @@ export default function Home() {
             <h2 className="section-title">
               Three countries. <span style={solidAccent}>Five studios.</span>
             </h2>
+            <p className="lead" style={{ maxWidth: "34rem", marginTop: "1.4rem" }}>
+              Our flagship program runs in five studios across three
+              countries.
+            </p>
             <div className="studios-list">
               {STUDIOS.map((s) => (
-                <Link key={s.slug} to={`/studios/${s.slug}`} className="studio-row">
+                <Link
+                  key={s.slug}
+                  to={`/studios/${s.slug}`}
+                  className="studio-row"
+                  aria-label={`54D ${s.city} transformation program`}
+                >
                   <span className="studio-city">{s.city}</span>
                   <span className="studio-country">{s.country}</span>
-                  <span className="studio-cta">Book →</span>
+                  {/* Sin verbos de carrito en contexto Studios (rule 5) */}
+                  <span className="studio-cta">Explore →</span>
                 </Link>
               ))}
             </div>
@@ -413,9 +442,13 @@ export default function Home() {
               <h2 className="final-title">
                 Day 1 <span style={solidAccent}>is today.</span>
               </h2>
+              {/* Dos puertas chicas, misma separacion que el chooser */}
               <div className="hero-ctas">
                 <Link to="/pricing" className="btn btn-primary">
-                  Start free. 7 days.
+                  Start ON free
+                </Link>
+                <Link to="/studios" className="btn btn-ghost">
+                  Request a Studios consultation
                 </Link>
               </div>
             </div>

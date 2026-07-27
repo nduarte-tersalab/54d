@@ -6,18 +6,20 @@ import { asset } from "../lib/asset";
 
 /* ============================================================
    /studios: index de sedes (54D Studios)
-   Funnel: consideración presencial. Copy según SITE_STRATEGY.md
-   y COPY_V3.md (sin em/en dashes en copy visible).
+   Funnel: consideración presencial high-ticket (flagship, por
+   aplicación: el CTA es la consulta, nunca carrito). Copy según
+   SITE_STRATEGY.md, COPY_V3.md y SEPARATION_SPEC.md §3 (sin
+   em/en dashes en copy visible).
    Fotos reales según ART_DIRECTION_V3.md + IMAGES_BRAND.md.
    ============================================================ */
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "54D Studios: Miami, Mexico City, Bogotá" },
+    { title: "54D Studios: The Flagship Experience in 3 Countries" },
     {
       name: "description",
       content:
-        "Live the 54D Method in person: small groups, coaches on the floor, nutrition and physiotherapy. Five studios across three countries. Reserve your spot.",
+        "The 54D Method in person: a dedicated team of coaches, nutritionist, and physiotherapy. Admission by Generation, by application. Miami, Mexico City, Bogotá.",
     },
   ];
 }
@@ -56,8 +58,8 @@ const EXPERIENCE = [
 const GENERATION_TIMELINE = [
   {
     day: "Today",
-    title: "Reserve your spot",
-    desc: "Spots per Generation are limited. When it's full, it's full. The next window is the next Generation, not tomorrow.",
+    title: "Request a consultation",
+    desc: "Admission is by Generation: one start date, limited places, no rolling entry. Your consultation covers fit, dates, and the investment.",
   },
   {
     day: "D01",
@@ -72,7 +74,7 @@ const GENERATION_TIMELINE = [
   {
     day: "D54",
     title: "Your Generation closes",
-    desc: "Final measurements, results on the table, and the plan to keep them. The program ends. The new you doesn't.",
+    desc: "Final measurements, results on the table, and how you keep them. The program ends. The new you doesn't.",
   },
 ];
 
@@ -143,15 +145,15 @@ export default function Studios() {
         </div>
         <div className="hero-veil" />
         <div className="hero-content">
-          <span className="day-marker">54D Studios</span>
+          <span className="day-marker">54D Studios · The flagship experience</span>
           <h1 className="hero-title">
             Three countries.
             <br />
             <span className="accent">Five studios.</span>
           </h1>
           <p className="hero-sub">
-            The full experience of the method: coaches on the floor, a
-            nutritionist, physiotherapy, and a Generation that trains with you.
+            The complete method with a dedicated team on one outcome: coaches,
+            a nutritionist, and a physiotherapist assigned to your Generation.
           </p>
           <div className="hero-ctas">
             <a href="#sedes" className="btn btn-primary">
@@ -161,6 +163,12 @@ export default function Studios() {
               Explore 54D ON
             </Link>
           </div>
+          {/* Guardrail high-ticket (SEPARATION_SPEC §3, verbatim) */}
+          <p className="method-desc" style={{ marginTop: "1.6rem", maxWidth: "36rem" }}>
+            54D Studios is our flagship tier, a private-client level program.
+            Your consultation covers fit, your Generation's start date, and
+            the investment.
+          </p>
         </div>
       </header>
 
@@ -190,6 +198,7 @@ export default function Studios() {
                   key={s.slug}
                   to={`/studios/${s.slug}`}
                   className="method-card"
+                  aria-label={`54D ${cityLabel(s.city)} transformation program`}
                   style={{
                     display: "flex",
                     flexDirection: "column",
@@ -216,7 +225,7 @@ export default function Studios() {
                     className="studio-cta"
                     style={{ marginTop: "1.6rem", alignSelf: "flex-start" }}
                   >
-                    Book →
+                    Explore →
                   </span>
                 </Link>
               ))}
@@ -299,6 +308,10 @@ export default function Studios() {
               with. A start date, limited spots, and 54 days together. That's
               why it works. This is not an open membership. It's a commitment
               with a date.
+            </p>
+            <p className="lead" style={{ marginTop: "1rem", maxWidth: "38rem" }}>
+              You are measured on day 1 and on day 54. The numbers are the
+              contract.
             </p>
             <div className="timeline">
               {GENERATION_TIMELINE.map((t) => (

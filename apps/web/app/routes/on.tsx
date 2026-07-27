@@ -353,12 +353,12 @@ const VS_APPS: [string, string, string][] = [
 ];
 
 const VS_STUDIOS: [string, string, string][] = [
-  ["Where", "Wherever you are, with what you have", "At one of our five studios"],
-  ["Coach", "Daily coaching over chat", "Coaches on the floor, every session"],
-  ["Schedule", "You decide when to train", "Your Generation's schedule"],
-  ["Group", "Online community", "A Generation that trains with you: the group you start and finish with"],
-  ["Extras", "The whole method in your pocket", "Nutritionist and physiotherapy at the studio"],
-  ["Start", "Today, with 7 days free", "When your Generation opens. Limited spots."],
+  ["What it is", "The 54-day digital program, coached through the 54D On app", "The flagship experience: the method in person, end to end"],
+  ["Your team", "A real coach over daily chat", "A dedicated team on the floor: coaches, nutritionist, physiotherapist"],
+  ["How you join", "Start today with 7 days free", "By application: a consultation, then your Generation's start date"],
+  ["Your group", "A global online community", "Your Generation: limited places, one start date, 54 days together"],
+  ["Where", "Wherever you are, with what you have", "Five studios: Miami, Mexico City, Bogotá"],
+  ["The commitment", "A subscription you control, from $54 a month", "A private-client level program, discussed in your consultation"],
 ];
 
 const FAQ = [
@@ -841,8 +841,9 @@ export default function On() {
             <span className="accent">Wherever you are.</span>
           </h1>
           <p className="hero-sub">
-            Same training. Same protocol. Same standard. No gym, no scheduling
-            excuses.
+            The full 54D program in the 54D On app: your training, your
+            nutrition protocol, and a real coach in your corner. No gym, no
+            scheduling excuses.
           </p>
           <div className="hero-ctas">
             <Link to="/pricing" className="btn btn-primary">
@@ -1393,13 +1394,13 @@ export default function On() {
         </div>
       </section>
 
-      {/* ============ COMPARATIVA HONESTA ON VS STUDIOS ============ */}
+      {/* ============ WHICH 54D: ON VS STUDIOS SIN IGUALAR VALOR ============ */}
       <section className="section section-tight">
         <div className="section-inner" ref={vsStudios.ref}>
           <div className={vsStudios.className}>
-            <span className="day-marker">ON vs Studios</span>
+            <span className="day-marker">Which 54D</span>
             <h2 className="section-title">
-              The same method. <span style={solidAccent}>Two ways in.</span>
+              Which 54D is <span style={solidAccent}>for you?</span>
             </h2>
             {/* Texto y foto lado a lado: llena la mitad derecha vacía (on-desktop-2.png) */}
             <div
@@ -1412,9 +1413,11 @@ export default function On() {
               }}
             >
               <p style={{ maxWidth: "38rem", fontSize: "1.05rem", lineHeight: 1.6, color: "var(--c-mist)" }}>
-                No fine print: ON and Studios share the same program and the same
-                standard. What changes is where you train, and who you train
-                with.
+                One method, two very different programs. 54D ON is your
+                transformation, wherever you are, on your schedule. 54D Studios
+                is the flagship: in person, by application, with a dedicated
+                team. Neither is a lighter version of the other. They are built
+                for different lives.
               </p>
               <figure style={{ margin: 0 }}>
                 <img
@@ -1433,7 +1436,7 @@ export default function On() {
                 />
                 <figcaption style={photoCaption}>
                   <span style={captionTick} aria-hidden="true" />
-                  The studio floor. Same method, in person.
+                  One method. Two very different ways to live it.
                 </figcaption>
               </figure>
             </div>
@@ -1442,9 +1445,13 @@ export default function On() {
               rows={VS_STUDIOS}
               accentCol={1}
             />
-            <div style={{ marginTop: "2rem" }}>
+            {/* CTAs desiguales a proposito: ON a checkout, Studios a consulta */}
+            <div className="hero-ctas" style={{ marginTop: "2rem" }}>
+              <Link to="/pricing" className="btn btn-primary">
+                Start free. 7 days.
+              </Link>
               <Link to="/studios" className="btn btn-ghost">
-                Rather train in person? Explore the studios →
+                Request a consultation
               </Link>
             </div>
           </div>

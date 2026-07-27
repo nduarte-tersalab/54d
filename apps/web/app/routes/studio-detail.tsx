@@ -7,9 +7,13 @@ import { asset } from "../lib/asset";
 
 /* ============================================================
    /studios/:slug: detalle de sede (54D Studios)
-   Funnel: conversión presencial. Fase 1: lead → POST /leads
-   (Mindbody live en fase 2). Copy según SITE_STRATEGY.md y
-   COPY_V3.md (sin em/en dashes en copy visible).
+   Funnel: conversión presencial high-ticket. El form de leads
+   se mantiene (POST /leads, sync Mindbody) pero reencuadrado
+   como aplicación/consulta: todo CTA dice "Request a
+   consultation" (SEPARATION_SPEC §4). Copy según
+   SITE_STRATEGY.md y COPY_V3.md (sin em/en dashes en copy
+   visible). Local SEO: LOCAL_SEO.md §1 a §4 (metas, schema
+   ExerciseGym + BreadcrumbList, bloque local por sede).
    Fotos: galería real de Coral Gables (IMAGES_CG.md); resto de
    sedes con fotos de marca genéricas (IMAGES_BRAND.md).
    ============================================================ */
@@ -17,19 +21,56 @@ import { asset } from "../lib/asset";
 export async function loader({ params }: Route.LoaderArgs) {
   const studio = STUDIOS.find((s) => s.slug === params.slug);
   if (!studio) throw new Response("Not Found", { status: 404 });
-  return { studio };
+  /* Numeros placeholder (555) no viajan ni en el payload de hidratacion:
+     se vacian hasta que el cliente cargue los reales en data/studios.ts */
+  const whatsapp = studio.whatsapp.includes("555") ? "" : studio.whatsapp;
+  return { studio: { ...studio, whatsapp } };
 }
 
-/* Display de ciudad: el em dash del data ("Mexico City [u2014] Carso") se
-   convierte a middle dot ("Mexico City · Carso") en UI y a espacio simple
-   ("Mexico City Carso") en SEO/schema. Regla COPY_V3 §2. Escape unicode a
-   propósito: el caracter literal está prohibido en apps/web/app (CI grep). */
+/* Display de ciudad: el separador del data (middle dot actual, em dash
+   [u2014] legacy) se normaliza a "Mexico City · Carso" en UI y a espacio
+   simple ("Mexico City Carso") en SEO/schema, donde el middle dot tampoco
+   va (regla COPY_V3 §2: nunca en slugs ni SEO). Escape unicode a
+   propósito: el em dash literal está prohibido en apps/web/app (CI grep). */
 const cityLabel = (city: string) => city.replace(/\s*\u2014\s*/g, " · ");
-const cityPlain = (city: string) => city.replace(/\s*\u2014\s*/g, " ");
+const cityPlain = (city: string) =>
+  city.replace(/\s*(?:\u2014|\u00B7)\s*/g, " ");
+
+/* Title + meta description por sede: LOCAL_SEO.md §1 verbatim.
+   Excepción (SEPARATION_SPEC decisión 2): Hallandale cierra con
+   "Apply for the next Generation." en vez del cierre original con
+   verbo de carrito (border rule 5 de BRAND_SEPARATION). */
+const LOCAL_META: Record<string, { title: string; desc: string }> = {
+  "coral-gables": {
+    title: "Private Group Transformation Studio in Coral Gables | 54D",
+    desc: "54 days, small groups, coaches on the floor, nutrition and physiotherapy on Ponce de Leon Blvd. Join the next Generation at 54D Coral Gables.",
+  },
+  hallandale: {
+    title: "Small Group Transformation Studio in Hallandale Beach | 54D",
+    desc: "The 54D Method between Miami and Fort Lauderdale: 54 days, fixed groups, coaches, nutrition and physio on Hallandale Beach Blvd. Apply for the next Generation.",
+  },
+  "mexico-carso": {
+    title: "54 Day Transformation Program in Polanco | 54D CDMX",
+    desc: "Train the 54D Method steps from Plaza Carso in Nuevo Polanco: small groups, coaches, nutrition and physiotherapy. Next Generation starting soon.",
+  },
+  "mexico-santa-fe": {
+    title: "54 Day Transformation Program in Santa Fe | 54D CDMX",
+    desc: "The 54D Method in the corporate heart of Santa Fe, CDMX: fixed Generations, coaches on the floor, nutrition and physio. Limited spots per start.",
+  },
+  bogota: {
+    title: "54 Day Transformation Program in Bogota | 54D",
+    desc: "Train the 54D Method steps from Parque de la 93 in Chapinero: small groups, coaches, nutrition and physiotherapy. Join the next Generation.",
+  },
+};
 
 export function meta({ loaderData }: Route.MetaArgs) {
   if (!loaderData) return [{ title: "54D Studios" }];
   const { studio } = loaderData;
+  const local = LOCAL_META[studio.slug];
+  if (local) {
+    return [{ title: local.title }, { name: "description", content: local.desc }];
+  }
+  /* Fallback (formato previo) para slugs futuros sin metadata local */
   return [
     { title: `54D ${cityPlain(studio.city)}: Join the Next Generation` },
     {
@@ -38,6 +79,102 @@ export function meta({ loaderData }: Route.MetaArgs) {
     },
   ];
 }
+
+/* ============================================================
+   Schema.org JSON-LD: LOCAL_SEO.md §2 verbatim. ExerciseGym es
+   subtipo de LocalBusiness (la categoria que Google mapea a
+   "Gym"). Flagship: priceRange "$$$$", sin Offer ni precio.
+   Direcciones, telefonos y geo son DATO_PENDIENTE del cliente:
+   bloquean GBP y el pin exacto, no el deploy del schema.
+   El spec ubica este bloque en app/data/studio-schema.ts; queda
+   inline porque esta ruta es hoy su unico consumidor. Extraer
+   tal cual cuando otra ruta lo necesite.
+   ============================================================ */
+const ORG = { "@type": "Organization", name: "54D", url: "https://54d.com" };
+const HOURS = [
+  { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], opens: "05:30", closes: "21:00" },
+  { "@type": "OpeningHoursSpecification", dayOfWeek: "Saturday", opens: "07:00", closes: "12:00" },
+]; // Del SCHEDULE actual (PLACEHOLDER fase 1: confirmar por sede con Mindbody)
+
+const STUDIO_SCHEMA: Record<string, object> = {
+  "coral-gables": {
+    "@context": "https://schema.org", "@type": "ExerciseGym",
+    name: "54D Coral Gables", url: "https://54d.com/studios/coral-gables",
+    address: { "@type": "PostalAddress", streetAddress: "2222 Ponce de Leon Blvd", // DATO_PENDIENTE
+      addressLocality: "Coral Gables", addressRegion: "FL", postalCode: "33134", addressCountry: "US" },
+    geo: { "@type": "GeoCoordinates", latitude: 25.7509, longitude: -80.2577 },
+    /* telephone: DATO_PENDIENTE — no publicar NAP falso (jurado HT fix 1) */
+    openingHoursSpecification: HOURS, priceRange: "$$$$",
+    sameAs: ["https://www.instagram.com/54d"], // DATO_PENDIENTE: handle por sede si existe
+    parentOrganization: ORG,
+  },
+  hallandale: {
+    "@context": "https://schema.org", "@type": "ExerciseGym",
+    name: "54D Hallandale", url: "https://54d.com/studios/hallandale",
+    address: { "@type": "PostalAddress", streetAddress: "1000 E Hallandale Beach Blvd", // DATO_PENDIENTE
+      addressLocality: "Hallandale Beach", addressRegion: "FL", postalCode: "33009", addressCountry: "US" },
+    geo: { "@type": "GeoCoordinates", latitude: 25.9857, longitude: -80.13 },
+    /* telephone: DATO_PENDIENTE — no publicar NAP falso (jurado HT fix 1) */
+    openingHoursSpecification: HOURS, priceRange: "$$$$",
+    sameAs: ["https://www.instagram.com/54d"], parentOrganization: ORG,
+  },
+  "mexico-carso": {
+    "@context": "https://schema.org", "@type": "ExerciseGym",
+    name: "54D Mexico City Carso", url: "https://54d.com/studios/mexico-carso",
+    address: { "@type": "PostalAddress", streetAddress: "Lago Zurich 245, Ampliacion Granada", // DATO_PENDIENTE
+      addressLocality: "Miguel Hidalgo", addressRegion: "CDMX", postalCode: "11529", addressCountry: "MX" },
+    geo: { "@type": "GeoCoordinates", latitude: 19.4404, longitude: -99.2046 },
+    /* telephone: DATO_PENDIENTE — no publicar NAP falso (jurado HT fix 1) */
+    openingHoursSpecification: HOURS, priceRange: "$$$$",
+    sameAs: ["https://www.instagram.com/54d"], parentOrganization: ORG,
+  },
+  "mexico-santa-fe": {
+    "@context": "https://schema.org", "@type": "ExerciseGym",
+    name: "54D Mexico City Santa Fe", url: "https://54d.com/studios/mexico-santa-fe",
+    address: { "@type": "PostalAddress", streetAddress: "Av. Vasco de Quiroga 3800", // DATO_PENDIENTE
+      addressLocality: "Cuajimalpa", addressRegion: "CDMX", postalCode: "05348", addressCountry: "MX" },
+    geo: { "@type": "GeoCoordinates", latitude: 19.3599, longitude: -99.2743 },
+    /* telephone: DATO_PENDIENTE — no publicar NAP falso (jurado HT fix 1) */
+    openingHoursSpecification: HOURS, priceRange: "$$$$",
+    sameAs: ["https://www.instagram.com/54d"], parentOrganization: ORG,
+  },
+  bogota: {
+    "@context": "https://schema.org", "@type": "ExerciseGym",
+    name: "54D Bogota", url: "https://54d.com/studios/bogota",
+    address: { "@type": "PostalAddress", streetAddress: "Cra. 11 #93-10, Chapinero", // DATO_PENDIENTE
+      addressLocality: "Bogota", addressRegion: "Bogota D.C.", addressCountry: "CO" },
+    geo: { "@type": "GeoCoordinates", latitude: 4.6768, longitude: -74.0484 },
+    /* telephone: DATO_PENDIENTE — no publicar NAP falso (jurado HT fix 1) */
+    openingHoursSpecification: HOURS, priceRange: "$$$$",
+    sameAs: ["https://www.instagram.com/54d"], parentOrganization: ORG,
+  },
+};
+
+/* BreadcrumbList de 3 niveles por sede (LOCAL_SEO §4) */
+const BREADCRUMB_SCHEMA = (slug: string, name: string): object => ({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "54D", item: "https://54d.com/" },
+    { "@type": "ListItem", position: 2, name: "Studios", item: "https://54d.com/studios" },
+    { "@type": "ListItem", position: 3, name, item: `https://54d.com/studios/${slug}` },
+  ],
+});
+
+/* Bloque de contenido local por sede: LOCAL_SEO.md §3 verbatim
+   (zonas y vias reales, 60-72 palabras por sede) */
+const LOCAL_COPY: Record<string, string> = {
+  "coral-gables":
+    "Our Coral Gables studio sits on Ponce de Leon Blvd, minutes from Miracle Mile and the Douglas Road Metrorail station. Members drive in from Coconut Grove, South Miami and Brickell for one reason: a 54 day program you cannot get anywhere else in Miami. Street and garage parking are easy before the 5:30 AM sessions, and you can be back on US 1 before the city wakes up.",
+  hallandale:
+    "54D Hallandale sits on Hallandale Beach Blvd just off I-95, the halfway point between Miami and Fort Lauderdale. Members come from Aventura, Hollywood, Sunny Isles and Golden Beach, most within a ten minute drive. Morning Generations finish before the Gulfstream Park traffic starts, and the studio's location makes it the natural home for the method in Broward County.",
+  "mexico-carso":
+    "In Nuevo Polanco, steps from Plaza Carso and the Museo Soumaya, our studio serves the executives and families of Polanco, Granada and Irrigacion. Lago Zurich is minutes from Ejercito Nacional and Ferrocarril de Cuernavaca, with parking in the Carso complex. Early Generations let you train, shower and be at your office on Mariano Escobedo or Paseo de la Reforma before 8 AM.",
+  "mexico-santa-fe":
+    "Our Santa Fe studio sits on Av. Vasco de Quiroga, in the corporate district that runs from Centro Santa Fe to Parque La Mexicana. If you work in the towers of Santa Fe or live in Bosques de las Lomas, Interlomas or Contadero, your Generation trains here: before the office, or right after, without crossing the city.",
+  bogota:
+    "54D Bogota lives in Chapinero, steps from Parque de la 93 on Carrera 11. The studio draws members from Chico, Rosales and Usaquen, many walking over from the offices along the Calle 93 corridor. Sessions start at 5:30 AM, before the Septima fills up, and the neighborhood's cafes have adopted our Generations as their post workout ritual.",
+};
 
 /* Sub localizado del hero por sede (zona/barrio): PLACEHOLDER, confirmar con cliente */
 const ZONE: Record<string, string> = {
@@ -287,11 +424,11 @@ function LeadForm({ locationSlug }: { locationSlug: string }) {
     return (
       <div style={panelStyle} aria-live="polite">
         <div className="method-name" style={{ marginTop: 0 }}>
-          Done. Your spot is <span style={{ color: "var(--c-yellow)" }}>held.</span>
+          Application{" "}
+          <span style={{ color: "var(--c-yellow)" }}>received.</span>
         </div>
         <p className="method-desc" style={{ marginTop: "0.9rem" }}>
-          We got your details. We'll reach out on WhatsApp to confirm your
-          spot in the next Generation and answer any questions.
+          We will reach out on WhatsApp to schedule your consultation.
         </p>
       </div>
     );
@@ -332,7 +469,7 @@ function LeadForm({ locationSlug }: { locationSlug: string }) {
           opacity: status === "sending" ? 0.6 : 1,
         }}
       >
-        {status === "sending" ? "Sending…" : "Reserve your spot"}
+        {status === "sending" ? "Sending…" : "Request a consultation"}
       </button>
       {status === "error" && (
         <p
@@ -356,8 +493,8 @@ function LeadForm({ locationSlug }: { locationSlug: string }) {
           color: "var(--c-faint)",
         }}
       >
-        We contact you for one thing: confirming your spot. No spam, no
-        endless calls.
+        We contact you for one thing: scheduling your consultation. No spam,
+        no endless calls.
       </p>
     </form>
   );
@@ -366,10 +503,11 @@ function LeadForm({ locationSlug }: { locationSlug: string }) {
 export default function StudioDetail({ loaderData }: Route.ComponentProps) {
   const { studio } = loaderData;
   const generation = GENERATION[studio.slug];
-  const siblings = STUDIOS.filter(
-    (s) => s.countryCode === studio.countryCode && s.slug !== studio.slug
-  );
   const whatsappUrl = `https://wa.me/${studio.whatsapp.replace(/\D/g, "")}`;
+  /* Numeros reales pendientes del cliente (jurado HT fix 1): un WhatsApp
+     falso visible es grieta de credibilidad en un producto flagship.
+     Con numeros reales en data/studios.ts esto se enciende solo. */
+  const hasRealWhatsapp = studio.whatsapp.length > 0;
 
   const heroPhoto = HERO_PHOTO[studio.slug];
   const galleryRows = GALLERY_ROWS[studio.slug] ?? BRAND_ROWS;
@@ -394,18 +532,24 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
     <div>
       <Nav />
 
-      {/* Schema LocalBusiness/ExerciseGym: SEO local + AEO */}
+      {/* Schema LocalBusiness/ExerciseGym completo por sede (LOCAL_SEO §2):
+          PostalAddress + geo + horarios + priceRange. Si el slug no está en
+          el record no se emite nada: nunca el schema plano viejo. */}
+      {STUDIO_SCHEMA[studio.slug] && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(STUDIO_SCHEMA[studio.slug]),
+          }}
+        />
+      )}
+      {/* BreadcrumbList (LOCAL_SEO §4) */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "ExerciseGym",
-            name: `54D ${cityPlain(studio.city)}`,
-            address: studio.address,
-            telephone: studio.whatsapp,
-            url: `https://54d.com/studios/${studio.slug}`,
-          }),
+          __html: JSON.stringify(
+            BREADCRUMB_SCHEMA(studio.slug, `54D ${cityPlain(studio.city)}`)
+          ),
         }}
       />
 
@@ -422,6 +566,35 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
         <div className="hero-veil" />
         <div className="hero-content">
           <span className="day-marker">54D Studios · {studio.country}</span>
+          {/* Breadcrumb UI (LOCAL_SEO §4): espejo del BreadcrumbList JSON-LD */}
+          <nav
+            aria-label="Breadcrumb"
+            style={{
+              margin: "0.9rem 0 0.2rem",
+              fontSize: "0.82rem",
+              letterSpacing: "0.02em",
+              color: "var(--c-faint)",
+            }}
+          >
+            <Link to="/" style={{ color: "var(--c-mist)", textDecoration: "none" }}>
+              54D
+            </Link>
+            <span aria-hidden="true" style={{ margin: "0 0.45rem" }}>
+              /
+            </span>
+            <Link
+              to="/studios"
+              style={{ color: "var(--c-mist)", textDecoration: "none" }}
+            >
+              Studios
+            </Link>
+            <span aria-hidden="true" style={{ margin: "0 0.45rem" }}>
+              /
+            </span>
+            <span aria-current="page" style={{ color: "var(--c-white)" }}>
+              54D {cityLabel(studio.city)}
+            </span>
+          </nav>
           <h1 className="hero-title">
             54D
             <br />
@@ -433,18 +606,20 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
           </p>
           <div className="hero-ctas">
             <a href="#reserva" className="btn btn-primary">
-              Reserve your spot
+              Request a consultation
             </a>
             {/* Secundario ligero y más corto que el primario
                 (DESIGN_FIXES_V4 §5, studio-cg-desktop-0.png) */}
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="btn btn-ghost"
-            >
-              WhatsApp us
-            </a>
+            {hasRealWhatsapp && (
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="btn btn-ghost"
+              >
+                WhatsApp us
+              </a>
+            )}
           </div>
         </div>
       </header>
@@ -459,8 +634,8 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
             </h2>
             <p className="lead" style={{ marginTop: "1.4rem", maxWidth: "38rem" }}>
               {generation
-                ? `Yours starts ${generation.start}. Limited spots: when it's full, the next window is the next Generation.`
-                : "Limited spots per Generation: when it's full, the next window is the next Generation."}
+                ? `Yours starts ${generation.start}. Admission is by Generation: one start date, limited places, no rolling entry.`
+                : "Admission is by Generation: one start date, limited places, no rolling entry."}
             </p>
             {generation && (
               <div className="stat-row" style={{ maxWidth: "46rem" }}>
@@ -470,7 +645,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                 </div>
                 <div className="stat">
                   <div className="stat-value">{generation.spots}</div>
-                  <div className="stat-label">Spots per Generation</div>
+                  <div className="stat-label">Places per Generation</div>
                 </div>
                 <div className="stat">
                   <div className="stat-value">54</div>
@@ -480,7 +655,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
             )}
             <div className="hero-ctas" style={{ marginTop: "2.6rem" }}>
               <a href="#reserva" className="btn btn-primary">
-                Reserve your spot
+                Request a consultation
               </a>
             </div>
           </div>
@@ -564,7 +739,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
             </p>
             <div className="hero-ctas">
               <a href="#reserva" className="btn btn-primary">
-                Reserve your spot
+                Request a consultation
               </a>
             </div>
           </div>
@@ -615,8 +790,8 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                   ))}
                 </div>
                 <p className="method-desc" style={{ marginTop: "1.2rem" }}>
-                  Your group's schedule is confirmed when you reserve: each
-                  Generation trains in fixed blocks.
+                  Your group's schedule is confirmed in your consultation:
+                  each Generation trains in fixed blocks.
                 </p>
               </div>
               <div style={panelStyle}>
@@ -626,6 +801,10 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                 <p className="method-desc" style={{ marginTop: "1.4rem" }}>
                   {studio.address}
                 </p>
+                {/* Contenido local por sede (LOCAL_SEO §3, verbatim) */}
+                {LOCAL_COPY[studio.slug] && (
+                  <p className="method-desc">{LOCAL_COPY[studio.slug]}</p>
+                )}
                 <p className="method-desc">
                   Parking and public transit access in the area. Not sure how
                   to get here? Message us and we'll point the way.
@@ -638,31 +817,39 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                     flexWrap: "wrap",
                   }}
                 >
-                  <a
-                    href={whatsappUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="btn btn-ghost"
-                  >
-                    WhatsApp · {studio.whatsapp}
-                  </a>
+                  {hasRealWhatsapp && (
+                    <a
+                      href={whatsappUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="btn btn-ghost"
+                    >
+                      WhatsApp · {studio.whatsapp}
+                    </a>
+                  )}
                 </div>
-                {siblings.length > 0 && (
-                  <p className="method-desc" style={{ marginTop: "1.6rem" }}>
-                    Also in {studio.country}:{" "}
-                    {siblings.map((s, i) => (
-                      <span key={s.slug}>
-                        {i > 0 && " · "}
+                {/* Interlinking cross-country (LOCAL_SEO §4): las 5 sedes,
+                    la actual sin link. Reparte autoridad entre paises. */}
+                <p className="method-desc" style={{ marginTop: "1.6rem" }}>
+                  All 54D Studios:{" "}
+                  {STUDIOS.map((s, i) => (
+                    <span key={s.slug}>
+                      {i > 0 && " · "}
+                      {s.slug === studio.slug ? (
+                        <span style={{ color: "var(--c-white)" }}>
+                          {cityLabel(s.city)}
+                        </span>
+                      ) : (
                         <Link
                           to={`/studios/${s.slug}`}
                           style={{ color: "var(--c-yellow)", textDecoration: "none" }}
                         >
                           {cityLabel(s.city)}
                         </Link>
-                      </span>
-                    ))}
-                  </p>
-                )}
+                      )}
+                    </span>
+                  ))}
+                </p>
               </div>
             </div>
           </div>
@@ -674,15 +861,16 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
       <section className="section bloom-ember" id="reserva">
         <div className="section-inner" ref={lead.ref}>
           <div className={lead.className}>
-            <span className="day-marker">Reserve</span>
+            <span className="day-marker">Apply</span>
             <h2 className="section-title">
-              Reserve your spot in the next{" "}
+              Apply for your place in the next{" "}
               <span className="accent">Generation.</span>
             </h2>
+            {/* Guardrail high-ticket (SEPARATION_SPEC §4, verbatim) */}
             <p className="lead" style={{ marginTop: "1.4rem", maxWidth: "36rem" }}>
-              Leave your details and we'll reach out to confirm your spot,
-              your schedule, and your initial assessment at 54D{" "}
-              {cityLabel(studio.city)}.
+              54D Studios is our flagship tier, a private-client level
+              program. Your consultation covers fit, your Generation's start
+              date, and the investment.
             </p>
             <LeadForm locationSlug={studio.slug} />
           </div>

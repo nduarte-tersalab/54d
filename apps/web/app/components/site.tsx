@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, NavLink } from "react-router";
+import { Link, NavLink, useLocation } from "react-router";
 import { STUDIOS } from "../data/studios";
 import { asset } from "../lib/asset";
 import { AppStoreBadges } from "./badges";
@@ -54,6 +54,11 @@ const NAV_LINKS = [
    \u2014 = em dash del copy V4, escapado por el grep de CI. */
 const CTA_COPY = "Start free. 7 days.";
 
+/* SEPARATION_SPEC §5: en rutas /studios* el trial es lenguaje de
+   suscripcion de ON y no puede aparecer; nav y footer mutan solos via
+   pathname (toda ruta studio futura queda protegida por defecto). */
+const STUDIOS_CTA_COPY = "Request a consultation";
+
 const APP_STORE_URL = "https://apps.apple.com/us/app/54d-on/id1520445334";
 const GOOGLE_PLAY_URL =
   "https://play.google.com/store/apps/details?id=com.trainerize.fiftyfourdays";
@@ -65,6 +70,8 @@ const GOOGLE_PLAY_URL =
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const { pathname } = useLocation();
+  const inStudios = pathname.startsWith("/studios");
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -94,9 +101,15 @@ export function Nav() {
             {item.label}
           </NavLink>
         ))}
-        <Link to="/pricing" className="btn btn-primary btn-nav">
-          {CTA_COPY}
-        </Link>
+        {inStudios ? (
+          <Link to="/studios#sedes" className="btn btn-ghost btn-nav">
+            {STUDIOS_CTA_COPY}
+          </Link>
+        ) : (
+          <Link to="/pricing" className="btn btn-primary btn-nav">
+            {CTA_COPY}
+          </Link>
+        )}
       </div>
       <button
         type="button"
@@ -122,9 +135,19 @@ export function Nav() {
         <Link to="/contact" onClick={close}>
           Contact
         </Link>
-        <Link to="/pricing" className="btn btn-primary btn-nav" onClick={close}>
-          {CTA_COPY}
-        </Link>
+        {inStudios ? (
+          <Link
+            to="/studios#sedes"
+            className="btn btn-ghost btn-nav"
+            onClick={close}
+          >
+            {STUDIOS_CTA_COPY}
+          </Link>
+        ) : (
+          <Link to="/pricing" className="btn btn-primary btn-nav" onClick={close}>
+            {CTA_COPY}
+          </Link>
+        )}
       </div>
     </nav>
   );
@@ -136,8 +159,13 @@ export function Nav() {
 const cityLabel = (city: string): string =>
   city.replace(/\s*[\u2014\u2013]\s*/g, " · ");
 
-/** Footer global. Sedes desde app/data/studios.ts. */
+/** Footer global. Sedes desde app/data/studios.ts.
+ *  En /studios* (SEPARATION_SPEC §5): sin badges de la app 54D On (los
+ *  studios se administran por Mindbody, es OTRA app), sin trust bar de
+ *  suscripcion y sin link a Pricing (border rule 6). */
 export function Footer() {
+  const { pathname } = useLocation();
+  const inStudios = pathname.startsWith("/studios");
   return (
     <footer className="footer">
       <div className="footer-inner">
@@ -148,11 +176,26 @@ export function Footer() {
               The 54-day transformation method. Coral Gables · Hallandale
               · Mexico City · Bogotá · Online.
             </p>
-            <AppStoreBadges appStoreUrl={APP_STORE_URL} googlePlayUrl={GOOGLE_PLAY_URL} />
+            {!inStudios && (
+              <AppStoreBadges
+                appStoreUrl={APP_STORE_URL}
+                googlePlayUrl={GOOGLE_PLAY_URL}
+              />
+            )}
             <p className="footer-trust">
-              <span>7 days free</span>
-              <span>Cancel anytime</span>
-              <span>30-day guarantee</span>
+              {inStudios ? (
+                <>
+                  <span>By application</span>
+                  <span>Limited places per Generation</span>
+                  <span>Miami · Mexico City · Bogotá</span>
+                </>
+              ) : (
+                <>
+                  <span>7 days free</span>
+                  <span>Cancel anytime</span>
+                  <span>30-day guarantee</span>
+                </>
+              )}
             </p>
           </div>
           <div>
@@ -160,7 +203,7 @@ export function Footer() {
             <Link to="/method">Method</Link>
             <Link to="/on">54D ON</Link>
             <Link to="/studios">54D Studios</Link>
-            <Link to="/pricing">Pricing</Link>
+            {!inStudios && <Link to="/pricing">Pricing</Link>}
           </div>
           <div>
             <h4>Studios</h4>
