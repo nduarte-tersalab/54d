@@ -50,6 +50,7 @@ const INCLUDES = [
 type Program = {
   num: string;
   name: string;
+  slug: string; // landing /programs/{slug} (PROGRAM_LANDINGS.md)
   line: string;
   equipment: string;
   intensity: string;
@@ -64,14 +65,24 @@ type Program = {
 
 /* Tiers reales de la membresía (store.54d.com/packs, 25/07/2026).
    El precio POR MES es el protagonista: el total facturado va como
-   nota. Stripe PRICE_IDs pendientes de las keys del cliente. */
-const MEMBERSHIP_TIERS = [
+   nota (MEMBERSHIP_SALES §3.2). Orden del stack: featured al medio.
+   "Cancel anytime" vive en la riskline bajo cada CTA, no se triplica.
+   Stripe PRICE_IDs pendientes de las keys del cliente. */
+type MembershipTier = {
+  priceId: string;
+  plan: string;
+  perMonth: number;
+  regularPerMonth: number;
+  billed: string;
+  featured?: boolean;
+};
+const MEMBERSHIP_TIERS: MembershipTier[] = [
   {
     priceId: "PENDING_membership_monthly",
     plan: "Monthly",
     perMonth: 54,
     regularPerMonth: 99,
-    billed: "Billed monthly. Cancel anytime.",
+    billed: "Billed monthly",
   },
   {
     priceId: "PENDING_membership_quarterly",
@@ -79,14 +90,40 @@ const MEMBERSHIP_TIERS = [
     perMonth: 52,
     regularPerMonth: 89,
     billed: "$156 every 3 months",
+    featured: true,
   },
   {
     priceId: "PENDING_membership_yearly",
     plan: "Yearly",
     perMonth: 49,
     regularPerMonth: 79,
-    billed: "$588 a year",
-    featured: true,
+    billed: "$588 a year · lowest per month",
+  },
+];
+
+/* Punteos EXACTOS de la membresía (MEMBERSHIP_SALES §4), verbo primero.
+   Se usan 5 de 6: el de guarantee se omite de la lista y vive como
+   microcopy de riesgo junto a los CTA (§2). */
+const MEMBERSHIP_POINTS = [
+  {
+    strong: "Train every program",
+    rest: ": all 13, including 54D ON, with 650+ recorded sessions",
+  },
+  {
+    strong: "Get a real coach",
+    rest: " in your corner: unlimited chat, corrections, and follow-up",
+  },
+  {
+    strong: "Eat with a plan",
+    rest: ": 12+ nutrition protocols and 120+ recipes built by the team",
+  },
+  {
+    strong: "Start free",
+    rest: ": 7 full days with everything unlocked before you pay a cent",
+  },
+  {
+    strong: "Cancel in one click",
+    rest: ": from your account, no calls, no retention tricks",
   },
 ];
 
@@ -94,6 +131,7 @@ const PROGRAMS: Program[] = [
   {
     num: "01",
     name: "54D ON",
+    slug: "54d-on",
     tag: "Signature",
     line: "The signature program. 54 days to lose fat, build muscle, and rebuild your habits.",
     equipment: "Elastic bands suggested",
@@ -108,6 +146,7 @@ const PROGRAMS: Program[] = [
   {
     num: "02",
     name: "Step 2",
+    slug: "step-2",
     line: "You finished 54D ON. This is what comes after.",
     equipment: "Elastic bands suggested",
     intensity: "Extreme",
@@ -120,6 +159,7 @@ const PROGRAMS: Program[] = [
   {
     num: "03",
     name: "Emergency Kit",
+    slug: "emergency-kit",
     tag: "Most popular",
     line: "Two weeks. Up to 4 pounds down. Our most popular program.",
     equipment: "Resistance bands needed",
@@ -132,6 +172,7 @@ const PROGRAMS: Program[] = [
   {
     num: "04",
     name: "Max Burn",
+    slug: "max-burn",
     line: "Thirty minutes a day, built to burn. Nothing decorative about it.",
     equipment: "Resistance bands needed",
     intensity: "High",
@@ -143,6 +184,7 @@ const PROGRAMS: Program[] = [
   {
     num: "05",
     name: "Reset 7",
+    slug: "reset-7",
     line: "Don't let four days of excess define the next four months. Seven days to correct course.",
     equipment: "Elastic bands suggested",
     intensity: "Full body work, short format",
@@ -154,6 +196,7 @@ const PROGRAMS: Program[] = [
   {
     num: "06",
     name: "First Move",
+    slug: "first-move",
     line: "The first step. Low impact, daily discipline, zero assumptions.",
     equipment: "None",
     intensity: "Low impact",
@@ -165,6 +208,7 @@ const PROGRAMS: Program[] = [
   {
     num: "07",
     name: "Full Body",
+    slug: "full-body",
     line: "Don't do things halfway. Tone and strengthen every area of the body.",
     equipment: "Resistance bands needed",
     intensity: "Medium, mixed training",
@@ -176,6 +220,7 @@ const PROGRAMS: Program[] = [
   {
     num: "08",
     name: "Lower Body",
+    slug: "lower-body",
     line: "Turn on the power in your lower half.",
     equipment: "Resistance bands needed",
     intensity: "Focused strength work",
@@ -187,6 +232,7 @@ const PROGRAMS: Program[] = [
   {
     num: "09",
     name: "Upper Body",
+    slug: "upper-body",
     line: "Strong arms. A back that shows the work.",
     equipment: "Resistance bands needed",
     intensity: "Focused strength work",
@@ -198,6 +244,7 @@ const PROGRAMS: Program[] = [
   {
     num: "10",
     name: "Booty on Fire",
+    slug: "booty-on-fire",
     line: "Glute work that earns the name.",
     equipment: "Resistance bands needed",
     intensity: "Targeted, high effort",
@@ -209,6 +256,7 @@ const PROGRAMS: Program[] = [
   {
     num: "11",
     name: "Runners 5K",
+    slug: "runners-5k",
     line: "Your first 5K, or a faster one.",
     equipment: "Your running shoes",
     intensity: "Beginner, intermediate, or advanced tracks",
@@ -218,6 +266,7 @@ const PROGRAMS: Program[] = [
   {
     num: "12",
     name: "Runners 10K",
+    slug: "runners-10k",
     line: "The next distance. Take it seriously.",
     equipment: "Your running shoes",
     intensity: "Intermediate and advanced tracks",
@@ -227,6 +276,7 @@ const PROGRAMS: Program[] = [
   {
     num: "13",
     name: "Runner 21K",
+    slug: "runners-21k",
     line: "The half marathon. Prepare like you mean it.",
     equipment: "Your running shoes",
     intensity: "Single advanced track",
@@ -484,6 +534,121 @@ const tierBadge: CSSProperties = {
   borderRadius: "var(--r-control)",
   padding: "0.3rem 0.6rem",
 };
+/* ============ Membresía mini-pitch (MEMBERSHIP_SALES §2) ============
+   plans-split 5/7 replicado inline: flex-wrap apila en pantallas angostas
+   (pitch primero). check-list y btn-riskline replican §1.2 y §3.4. */
+const membSplit: CSSProperties = {
+  display: "flex",
+  flexWrap: "wrap",
+  alignItems: "stretch",
+  gap: "var(--space-block)",
+};
+const membPitch: CSSProperties = {
+  position: "relative",
+  overflow: "hidden",
+  flex: "1 1 20rem",
+  minWidth: 0,
+  minHeight: "26rem",
+  display: "flex",
+  borderRadius: "var(--r-card, 8px)",
+  border: "1px solid var(--hairline)",
+  background: "var(--c-ink)",
+};
+const membPitchImg: CSSProperties = {
+  position: "absolute",
+  inset: 0,
+  width: "100%",
+  height: "100%",
+  objectFit: "cover",
+  objectPosition: "center",
+  filter: "saturate(0.82) contrast(1.05)",
+};
+/* Veil negro 78%: la foto es contexto, los punteos mandan (§2) */
+const membPitchVeil: CSSProperties = {
+  position: "absolute",
+  inset: 0,
+  background: "rgba(7, 7, 7, 0.78)",
+};
+const membPitchInner: CSSProperties = {
+  position: "relative",
+  zIndex: 1,
+  flex: 1,
+  display: "flex",
+  flexDirection: "column",
+  padding: "clamp(1.8rem, 3.5vw, 2.8rem)",
+};
+const membStack: CSSProperties = {
+  flex: "1.4 1 24rem",
+  minWidth: 0,
+  display: "flex",
+  flexDirection: "column",
+  gap: "1.1rem",
+};
+const checkList: CSSProperties = {
+  listStyle: "none",
+  margin: "1.6rem 0 0",
+  padding: 0,
+  display: "grid",
+  gap: "0.55rem",
+};
+const checkItem: CSSProperties = {
+  display: "flex",
+  gap: "0.65rem",
+  fontSize: "0.95rem",
+  lineHeight: 1.45,
+  color: "var(--c-mist)",
+};
+/* ✓ amarillo sólido, sin círculo, sin fondo (nada de pills) */
+const checkTick: CSSProperties = {
+  color: "var(--c-yellow)",
+  fontWeight: 700,
+  flex: "none",
+};
+const checkStrong: CSSProperties = { color: "var(--c-white)", fontWeight: 600 };
+const membRisk: CSSProperties = {
+  marginTop: "auto",
+  paddingTop: "1.6rem",
+  fontSize: "0.8rem",
+  color: "var(--c-faint)",
+};
+/* btn-riskline (§3.4): microcopy de riesgo PEGADO al botón */
+const riskline: CSSProperties = {
+  display: "block",
+  marginTop: "0.55rem",
+  fontSize: "0.72rem",
+  letterSpacing: "0.02em",
+  textAlign: "center",
+  color: "var(--c-faint)",
+};
+/* Card compacta: plan+precio a la izquierda, CTA a la derecha; wrap en mobile */
+const tierRow: CSSProperties = {
+  display: "flex",
+  flexWrap: "wrap",
+  alignItems: "center",
+  gap: "1.1rem 2.2rem",
+};
+const tierInfo: CSSProperties = { flex: "1 1 13rem", minWidth: 0 };
+const tierAction: CSSProperties = { flex: "1 1 12rem", minWidth: 0 };
+const tierStrike: CSSProperties = {
+  fontSize: "0.5em",
+  color: "var(--c-faint)",
+  fontWeight: 500,
+  marginRight: "0.4em",
+};
+const tierPerMonth: CSSProperties = {
+  fontSize: "0.38em",
+  fontWeight: 700,
+  color: "var(--c-mist)",
+  marginLeft: "0.15em",
+};
+/* Nombre de programa → landing /programs/{slug}: dos caminos por fila */
+const progNameLink: CSSProperties = { color: "inherit", textDecoration: "none" };
+const progNameArrow: CSSProperties = {
+  color: "var(--c-yellow)",
+  fontSize: "0.62em",
+  marginLeft: "0.5rem",
+  verticalAlign: "0.14em",
+};
 const photoCaption: CSSProperties = {
   display: "flex",
   gap: "0.6rem",
@@ -708,7 +873,9 @@ export default function On() {
         </div>
       </section>
 
-      {/* ============ MEMBRESÍA (el modelo comercial, sin ambigüedad) ============ */}
+      {/* ============ MEMBRESÍA (mini-pitch, MEMBERSHIP_SALES §2) ============
+          Split 5/7: izquierda pitch con foto velada + punteos ✓, derecha los
+          3 tiers compactos apilados con riskline bajo cada CTA. */}
       <section
         className="section"
         id="membership"
@@ -716,59 +883,74 @@ export default function On() {
       >
         <div className="section-inner" ref={membresia.ref}>
           <div className={membresia.className}>
-            <span className="day-marker">The membership</span>
-            <div className="method-intro">
-              <h2 className="section-title">
-                One membership. <span style={solidAccent}>Everything.</span>
-              </h2>
-              <p>
-                Every program on this page, unlimited coaching, live sessions,
-                and the community. First week free. Cancel anytime.
-              </p>
-            </div>
-            <div className="pricing-grid" style={{ marginTop: "0.5rem" }}>
-              {MEMBERSHIP_TIERS.map((t) => (
-                <div
-                  className={t.featured ? "pricing-card featured" : "pricing-card"}
-                  key={t.plan}
-                >
-                  {t.featured && <span style={tierBadge}>Best value</span>}
-                  <div className="pricing-plan">{t.plan}</div>
-                  <div className="pricing-price">
-                    <s
-                      style={{
-                        fontSize: "0.5em",
-                        color: "var(--c-faint)",
-                        fontWeight: 500,
-                        marginRight: "0.4em",
-                      }}
-                    >
-                      ${t.regularPerMonth}
-                    </s>
-                    ${t.perMonth}
-                    <span
-                      style={{
-                        fontSize: "0.38em",
-                        fontWeight: 700,
-                        color: "var(--c-mist)",
-                        marginLeft: "0.15em",
-                      }}
-                    >
-                      /mo
-                    </span>
-                  </div>
-                  <div className="pricing-period">{t.billed}</div>
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    style={{ marginTop: "1.4rem", width: "100%" }}
-                    disabled={busy === t.priceId}
-                    onClick={() => buy(t.priceId)}
-                  >
-                    {busy === t.priceId ? "Opening checkout…" : "Start free trial"}
-                  </button>
+            <div style={membSplit}>
+              <div style={membPitch}>
+                <img
+                  src={asset("images/studios/hallandale/class-under-letters.jpg")}
+                  alt="Members training mid-class under the 54D letters at the Hallandale studio"
+                  loading="lazy"
+                  style={membPitchImg}
+                />
+                <div style={membPitchVeil} aria-hidden="true" />
+                <div style={membPitchInner}>
+                  <span className="day-marker">The membership</span>
+                  <h2 className="section-title">
+                    One membership. <span style={solidAccent}>Everything.</span>
+                  </h2>
+                  {/* Punteos §4: verbo en blanco, resto en mist */}
+                  <ul style={checkList}>
+                    {MEMBERSHIP_POINTS.map((pt) => (
+                      <li style={checkItem} key={pt.strong}>
+                        <span style={checkTick} aria-hidden="true">
+                          ✓
+                        </span>
+                        <span>
+                          <strong style={checkStrong}>{pt.strong}</strong>
+                          {pt.rest}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p style={membRisk}>
+                    30-day money-back guarantee · secure payment by Stripe
+                  </p>
                 </div>
-              ))}
+              </div>
+              <div style={membStack}>
+                {MEMBERSHIP_TIERS.map((t) => (
+                  <div
+                    className={t.featured ? "pricing-card featured" : "pricing-card"}
+                    key={t.plan}
+                  >
+                    {t.featured && <span style={tierBadge}>Most chosen</span>}
+                    <div style={tierRow}>
+                      <div style={tierInfo}>
+                        <div className="pricing-plan">{t.plan}</div>
+                        <div className="pricing-price">
+                          <s style={tierStrike}>${t.regularPerMonth}</s>
+                          ${t.perMonth}
+                          <span style={tierPerMonth}>/mo</span>
+                        </div>
+                        <div className="pricing-period">{t.billed}</div>
+                      </div>
+                      <div style={tierAction}>
+                        <button
+                          type="button"
+                          className="btn btn-primary"
+                          style={{ marginTop: 0, width: "100%" }}
+                          disabled={busy === t.priceId}
+                          onClick={() => buy(t.priceId)}
+                        >
+                          {busy === t.priceId
+                            ? "Opening checkout…"
+                            : "Start free trial"}
+                        </button>
+                        <span style={riskline}>7 days free · cancel anytime</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
             {checkoutErr && (
               <p
@@ -782,22 +964,39 @@ export default function On() {
                 {checkoutErr}
               </p>
             )}
-            <p
+            {/* Cierre: un solo CTA secundario a /pricing + ancla a #programs */}
+            <div
               style={{
-                marginTop: "1.6rem",
-                fontSize: "0.85rem",
-                color: "var(--c-faint)",
+                marginTop: "2.4rem",
+                display: "flex",
+                alignItems: "center",
+                gap: "1.4rem",
+                flexWrap: "wrap",
               }}
             >
-              7 days free on every plan. Prefer to pay once? Every program below
-              is also sold on its own.
-            </p>
+              <Link to="/pricing" className="btn btn-ghost">
+                Compare plans →
+              </Link>
+              <span style={{ fontSize: "0.85rem", color: "var(--c-faint)" }}>
+                Prefer to pay once?{" "}
+                <a
+                  href="#programs"
+                  style={{ color: "var(--c-yellow)", textDecoration: "none" }}
+                >
+                  Every program below is also sold on its own.
+                </a>
+              </span>
+            </div>
           </div>
         </div>
       </section>
 
       {/* ============ PROGRAMAS REALES (lista editorial) ============ */}
-      <section className="section section-tight" id="programs">
+      <section
+        className="section section-tight"
+        id="programs"
+        style={{ scrollMarginTop: "5rem" }}
+      >
         <div className="section-inner" ref={programas.ref}>
           <div className={programas.className}>
             <span className="day-marker">Programs</span>
@@ -807,7 +1006,8 @@ export default function On() {
               </h2>
               <p>
                 All of them come with the membership. Or buy just the one you
-                need: one payment, the full run, your coach included.
+                need: one payment, the full run, your coach included. Open any
+                program for the full breakdown.
               </p>
             </div>
             <div style={{ borderBottom: "1px solid var(--hairline)" }}>
@@ -815,7 +1015,17 @@ export default function On() {
                 <article className="prog-row" key={p.num}>
                   <div style={progHead}>
                     <span style={progNum}>{p.num}</span>
-                    <h3 style={progName}>{p.name}</h3>
+                    {/* Dos caminos por fila (PROGRAM_LANDINGS.md): el nombre
+                        abre la landing del programa; el botón de abajo sigue
+                        siendo checkout directo. Runners también linkean. */}
+                    <h3 style={progName}>
+                      <Link to={`/programs/${p.slug}`} style={progNameLink}>
+                        {p.name}
+                        <span aria-hidden="true" style={progNameArrow}>
+                          →
+                        </span>
+                      </Link>
+                    </h3>
                     {p.tag && <span style={progTag}>{p.tag}</span>}
                   </div>
                   <div style={progBody}>

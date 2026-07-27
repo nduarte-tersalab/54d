@@ -18,6 +18,63 @@ export function meta({}: Route.MetaArgs) {
 }
 
 /* ============================================================
+   MEMBERSHIP_SALES §1: clases nuevas del bloque de planes.
+   Viven en este archivo (no en app.css) porque solo /pricing
+   las usa: .plans-split, .plans-stack, .plans-photo,
+   .check-list, .btn-riskline. Todo lo demás reusa app.css.
+   ============================================================ */
+const PLANS_CSS = `
+/* §1.1 Split 5/7: foto vertical izquierda, planes apilados derecha */
+.plans-split { display: grid; grid-template-columns: 5fr 7fr; gap: var(--space-block); align-items: start; margin-top: var(--space-block); }
+.plans-photo { margin: 0; }
+.plans-photo .photo-card { position: relative; }
+/* Overlay: negro 60% desde abajo (patron photo-band) para que la foto
+   no compita en luminancia con el precio */
+.plans-photo .photo-card::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(7, 7, 7, 0) 40%, rgba(7, 7, 7, 0.6) 100%); }
+.plans-stack { display: grid; gap: 1.1rem; align-content: start; }
+.plans-stack .pricing-card > header { display: flex; flex-direction: column; gap: 0.4rem; }
+.plans-stack .pricing-card .check-list { margin-bottom: 1.5rem; }
+.plans-stack .pricing-card > footer { margin-top: auto; display: flex; flex-direction: column; }
+
+/* §1.2 Punteos con checkmarks duros: sin circulo, sin fondo, sin pills */
+.check-list { display: grid; gap: 0.55rem; margin-top: 1.1rem; list-style: none; padding: 0; }
+.check-list li { display: flex; gap: 0.65rem; font-size: 0.95rem; line-height: 1.45; color: var(--c-mist); }
+.check-list li::before { content: '\\2713'; color: var(--c-yellow); font-weight: 700; flex: none; }
+.check-list li strong { color: var(--c-white); font-weight: 600; }
+
+/* §3.4 Microcopy de riesgo pegado al boton */
+.btn-riskline { display: block; font-size: 0.72rem; color: var(--c-faint); text-align: center; margin-top: 0.55rem; letter-spacing: 0.02em; }
+
+/* §1.3.3 Lista de valor completa a 1.05rem en Everything included */
+.photo-grid .check-list { margin-top: 1.6rem; max-width: 36rem; }
+.photo-grid .check-list li { font-size: 1.05rem; gap: 0.75rem; }
+
+@media (min-width: 1081px) {
+  /* Foto sticky mientras se escanean los 3 precios */
+  .plans-photo { position: sticky; top: 6rem; }
+}
+@media (min-width: 1240px) {
+  /* §1.1 Cards apiladas pasan a layout horizontal interno (patron Peloton):
+     plan+precio izquierda, diferenciales centro, CTA derecha.
+     Un solo eje vertical de comparacion de precios. */
+  .plans-stack .pricing-card { display: grid; grid-template-columns: minmax(9rem, 10.5rem) 1fr minmax(11rem, 12.5rem); align-items: center; column-gap: 1.6rem; }
+  .plans-stack .pricing-card .check-list { margin: 0; }
+  .plans-stack .pricing-card > footer { margin-top: 0; }
+}
+@media (max-width: 1080px) {
+  /* Mobile/tablet: apila con la foto arriba, max 46vh */
+  .plans-split { grid-template-columns: 1fr; }
+  .plans-photo .photo-card { height: 46vh; }
+}
+@media (max-width: 900px) {
+  /* Replica del refuerzo featured de app.css (alli scoped a .pricing-grid):
+     la featured abre el stack en mobile commerce */
+  .plans-stack .pricing-card.featured { order: -1; background: var(--glass-hover); box-shadow: 0 16px 48px rgba(255, 200, 0, 0.10); }
+}
+`;
+
+/* ============================================================
    Planes 54D ON.
    priceId: PLACEHOLDER. Reemplazar por los price ids reales
    de Stripe cuando el cliente los confirme.
@@ -26,12 +83,12 @@ type Plan = {
   priceId: string;
   plan: string;
   price: string;
+  regular: string;
   period: string;
-  note: string;
-  features: string[];
+  /* §1.2: solo los 3 diferenciales del plan, verbo primero en <strong> */
+  features: { lead: string; rest: string }[];
   featured: boolean;
   badge?: string;
-  regular?: string;
 };
 
 /* Precios reales de store.54d.com/packs, verificados 25/07/2026.
@@ -44,11 +101,10 @@ const PLANS: Plan[] = [
     price: "$54",
     regular: "$99",
     period: "/ month · billed monthly",
-    note: "Start at your own pace. No strings.",
     features: [
-      "Full access to the method",
-      "No minimum commitment",
-      "Cancel anytime",
+      { lead: "Start", rest: " with everything unlocked from day 1" },
+      { lead: "Commit", rest: " to nothing: billed month to month" },
+      { lead: "Cancel", rest: " anytime from your account, one click" },
     ],
     featured: false,
   },
@@ -58,12 +114,11 @@ const PLANS: Plan[] = [
     price: "$52",
     regular: "$89",
     period: "/ month · $156 every 3 months",
-    note: "Three months: the full 54 days plus time to lock in the habit.",
     badge: "Most chosen",
     features: [
-      "Everything in the monthly plan",
-      "Covers your full transformation",
-      "Cheaper than monthly",
+      { lead: "Get", rest: " everything in the monthly plan" },
+      { lead: "Cover", rest: " the full 54 days, plus time to lock the habit" },
+      { lead: "Save", rest: " $2 every month vs the monthly plan" },
     ],
     featured: true,
   },
@@ -73,37 +128,41 @@ const PLANS: Plan[] = [
     price: "$49",
     regular: "$79",
     period: "/ month · $588 a year",
-    note: "For those going for more than one transformation.",
     features: [
-      "Everything in the monthly plan",
-      "The lowest monthly price",
-      "A full year of the method and your coach",
+      { lead: "Get", rest: " everything in the monthly plan" },
+      { lead: "Lock", rest: " the lowest monthly price all year" },
+      { lead: "Train", rest: " every new release at no extra cost" },
     ],
     featured: false,
   },
 ];
 
-/* Qué incluye TODO plan: lista única, sin letra chica */
-const INCLUDED = [
+/* §4 Punteos EXACTOS de la membresía: la lista de valor completa
+   vive UNA sola vez, en Everything included. Verbo primero. */
+const MEMBERSHIP_VALUE: { lead: string; rest: string }[] = [
   {
-    num: "01",
-    name: "Daily training",
-    desc: "Progressive video sessions, designed by coaches, not by an algorithm. With whatever you have at home.",
+    lead: "Train every program",
+    rest: ": all 13, including 54D ON, with 650+ recorded sessions",
   },
   {
-    num: "02",
-    name: "Nutrition protocol",
-    desc: "Built for your body and your goal from day 1. No generic diets: what you eat is part of the program.",
+    lead: "Get a real coach",
+    rest: " in your corner: unlimited chat, corrections, and follow-up",
   },
   {
-    num: "03",
-    name: "Live coach",
-    desc: "Real follow-up over chat. Writes to you, corrects you, demands more. Every day, all 54 of them.",
+    lead: "Eat with a plan",
+    rest: ": 12+ nutrition protocols and 120+ recipes built by the team",
   },
   {
-    num: "04",
-    name: "Community",
-    desc: "You train alone. You're not alone. Access from any device, in any country.",
+    lead: "Start free",
+    rest: ": 7 full days with everything unlocked before you pay a cent",
+  },
+  {
+    lead: "Cancel in one click",
+    rest: ": from your account, no calls, no retention tricks",
+  },
+  {
+    lead: "Keep your results covered",
+    rest: ": 30-day money-back guarantee if you do the work",
   },
 ];
 
@@ -198,9 +257,14 @@ const FAQ_SCHEMA = {
 };
 
 const MICROCOPY = "7 days free · cancel anytime · 30-day guarantee";
+/* §3.4: la riskline por card ya dice "7 days free · cancel anytime";
+   la línea central de la sección no lo triplica */
+const RISKLINE = "7 days free · cancel anytime";
+const PLANS_FOOTNOTE = "30-day guarantee · secure payment by Stripe";
 
 export default function Pricing() {
   const plans = useReveal();
+  const band = useReveal();
   const included = useReveal();
   const noRisk = useReveal();
   const proof = useReveal();
@@ -231,9 +295,10 @@ export default function Pricing() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_SCHEMA) }}
       />
+      <style dangerouslySetInnerHTML={{ __html: PLANS_CSS }} />
       <Nav />
 
-      {/* ============ HERO INTERIOR (landing de ads: corto y al grano) ============ */}
+      {/* ============ AIDA · A: HERO (promesa + 7 días gratis) ============ */}
       <header className="hero hero-inner">
         <div className="hero-media">
           <img
@@ -260,7 +325,7 @@ export default function Pricing() {
         </div>
       </header>
 
-      {/* ============ PLANES ============ */}
+      {/* ============ AIDA · I: PLANES CON FOTO (decisión arriba, el precio no se esconde) ============ */}
       {/* FIXES_V5 §3.2: único campo de gradiente de la página (bloom en #plans) */}
       <section
         className="section bloom"
@@ -282,75 +347,101 @@ export default function Pricing() {
                 color: "var(--c-mist)",
               }}
             >
-              One subscription. Every program: 650+ recorded sessions, 12+
-              nutrition protocols, 120+ recipes, new releases at no extra cost.{" "}
+              One subscription, every program. The method, the coach, and the
+              community are the same in all three: you only choose how you pay.{" "}
               <Link to="/on" style={{ color: "var(--c-yellow)", textDecoration: "none" }}>
                 See every program →
               </Link>
             </p>
-            <div className="pricing-grid">
-              {PLANS.map((p) => (
-                <div
-                  key={p.priceId}
-                  className={`pricing-card${p.featured ? " featured" : ""}`}
-                >
-                  {p.badge && (
-                    <span
-                      className="day-marker"
-                      style={{
-                        position: "absolute",
-                        top: "-0.95rem",
-                        right: "1.4rem",
-                        marginBottom: 0,
-                        background: "var(--c-ink)",
-                        fontSize: "0.68rem",
-                        letterSpacing: "var(--track-label, 0.14em)",
-                        whiteSpace: "nowrap",
-                        padding: "0.4rem 0.8rem",
-                      }}
-                    >
-                      {p.badge}
-                    </span>
-                  )}
-                  <span className="pricing-plan">{p.plan}</span>
-                  {/* PRECIO_PENDIENTE: confirmar precios con cliente */}
-                  <div className="pricing-price">
-                    {p.regular && (
-                      <s
+
+            {/* §1.1 Split 5/7: la foto es contexto emocional; el precio sigue
+                siendo el elemento de mayor contraste de la sección */}
+            <div className="plans-split">
+              <figure className="plans-photo">
+                <div className="photo-card">
+                  <img
+                    src={asset("images/hd/cg-mural-seated.jpg")}
+                    alt="A 54D generation seated on the training floor under the yellow 54D mural in Coral Gables"
+                    loading="lazy"
+                  />
+                </div>
+                <figcaption className="photo-caption">
+                  Gen 41 · Coral Gables
+                </figcaption>
+              </figure>
+
+              <div className="plans-stack">
+                {PLANS.map((p) => (
+                  <article
+                    key={p.priceId}
+                    className={`pricing-card${p.featured ? " featured" : ""}`}
+                  >
+                    {p.badge && (
+                      <span
+                        className="day-marker"
                         style={{
-                          fontSize: "0.45em",
-                          color: "var(--c-faint)",
-                          fontWeight: 500,
-                          marginRight: "0.4em",
+                          position: "absolute",
+                          top: "-0.95rem",
+                          right: "1.4rem",
+                          marginBottom: 0,
+                          background: "var(--c-ink)",
+                          fontSize: "0.68rem",
+                          letterSpacing: "var(--track-label, 0.14em)",
+                          whiteSpace: "nowrap",
+                          padding: "0.4rem 0.8rem",
                         }}
                       >
-                        {p.regular}
-                      </s>
+                        {p.badge}
+                      </span>
                     )}
-                    {p.price}
-                  </div>
-                  <span className="pricing-period">{p.period}</span>
-                  <p style={{ marginTop: "0.9rem", fontSize: "0.95rem", lineHeight: 1.5, color: "var(--c-mist)" }}>
-                    {p.note}
-                  </p>
-                  <ul className="pricing-features">
-                    {p.features.map((f) => (
-                      <li key={f}>{f}</li>
-                    ))}
-                  </ul>
-                  <button
-                    type="button"
-                    className={`btn ${p.featured ? "btn-primary" : "btn-ghost"}`}
-                    onClick={() => handleCheckout(p.priceId)}
-                    disabled={loadingPlan !== null}
-                    aria-busy={loadingPlan === p.priceId}
-                    style={loadingPlan && loadingPlan !== p.priceId ? { opacity: 0.5 } : undefined}
-                  >
-                    {loadingPlan === p.priceId ? "Connecting…" : "Start free trial"}
-                  </button>
-                </div>
-              ))}
+                    {/* §3.6 Un decisor por card: plan, precio, 3 diferenciales, CTA, riskline */}
+                    <header>
+                      <span className="pricing-plan">{p.plan}</span>
+                      {/* §3.1 ancla tachada + §3.2 per-month framing: el número
+                          grande es SIEMPRE el mensual */}
+                      <div className="pricing-price">
+                        <s
+                          style={{
+                            fontSize: "0.45em",
+                            color: "var(--c-faint)",
+                            fontWeight: 500,
+                            marginRight: "0.4em",
+                          }}
+                        >
+                          {p.regular}
+                        </s>
+                        {p.price}
+                      </div>
+                      <span className="pricing-period">{p.period}</span>
+                    </header>
+                    <ul className="check-list">
+                      {p.features.map((f) => (
+                        <li key={f.lead}>
+                          <strong>{f.lead}</strong>
+                          {f.rest}
+                        </li>
+                      ))}
+                    </ul>
+                    <footer>
+                      {/* §3.5 CTA verbo de inicio, nunca de pago */}
+                      <button
+                        type="button"
+                        className={`btn ${p.featured ? "btn-primary" : "btn-ghost"}`}
+                        onClick={() => handleCheckout(p.priceId)}
+                        disabled={loadingPlan !== null}
+                        aria-busy={loadingPlan === p.priceId}
+                        style={loadingPlan && loadingPlan !== p.priceId ? { opacity: 0.5 } : undefined}
+                      >
+                        {loadingPlan === p.priceId ? "Connecting…" : "Start free trial"}
+                      </button>
+                      {/* §3.4 riesgo pegado al botón */}
+                      <span className="btn-riskline">{RISKLINE}</span>
+                    </footer>
+                  </article>
+                ))}
+              </div>
             </div>
+
             {error && (
               <p
                 role="alert"
@@ -372,10 +463,10 @@ export default function Pricing() {
                 textAlign: "center",
               }}
             >
-              {MICROCOPY} · secure payment by Stripe
+              {PLANS_FOOTNOTE}
             </p>
 
-            {/* Trust bar */}
+            {/* Trust bar: cierra Plans, queda como está (§1.3.1) */}
             <div className="stat-row">
               <div className="stat">
                 <div className="stat-value">7</div>
@@ -398,7 +489,24 @@ export default function Pricing() {
         </div>
       </section>
 
-      {/* ============ QUÉ INCLUYE TODO PLAN ============ */}
+      {/* ============ AIDA · I: PHOTO-BAND SEPARADOR (emoción, descanso visual §1.3.2) ============ */}
+      <section className="photo-band band-tight">
+        <img
+          src={asset("images/hd/cg-highfive-euphoria.jpg")}
+          alt="Two 54D members leaping into a high five, celebrating the end of a session"
+          loading="lazy"
+        />
+        <div className="photo-band-content" ref={band.ref}>
+          <div className={band.className}>
+            <span className="photo-caption">The finish line</span>
+            <h2 className="section-title" style={{ marginTop: "1.4rem", maxWidth: "24ch" }}>
+              54 days from now, you won't recognize yourself.
+            </h2>
+          </div>
+        </div>
+      </section>
+
+      {/* ============ AIDA · D: QUÉ INCLUYE TODO PLAN (§1.3.3: punteos + foto coach) ============ */}
       <section className="section">
         <div className="section-inner" ref={included.ref}>
           <div className={included.className}>
@@ -413,21 +521,42 @@ export default function Pricing() {
                 stripped-down tiers, no locked features.
               </p>
             </div>
-            <div className="method-grid">
-              {INCLUDED.map((item) => (
-                <div className="method-card" key={item.num}>
-                  <div className="method-num">{item.num}</div>
-                  <div className="method-name">{item.name}</div>
-                  <p className="method-desc">{item.desc}</p>
+            {/* Split 2 columnas: la lista de valor completa (§4) vive UNA vez */}
+            <div className="photo-grid" style={{ alignItems: "center", gap: "var(--space-block)" }}>
+              <ul className="check-list">
+                {MEMBERSHIP_VALUE.map((item) => (
+                  <li key={item.lead}>
+                    <strong>{item.lead}</strong>
+                    {item.rest}
+                  </li>
+                ))}
+              </ul>
+              <figure style={{ margin: 0 }}>
+                <div className="photo-card">
+                  <img
+                    src={asset("images/studios/coral-gables/coach-with-headset-01.jpg")}
+                    alt="A 54D coach wearing a headset guiding the class from the training floor"
+                    loading="lazy"
+                  />
                 </div>
-              ))}
+                <figcaption className="photo-caption">
+                  Your coach · Every one of the 54 days
+                </figcaption>
+              </figure>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ============ SIN RIESGO (anti-objeción + garantía) ============ */}
-      <section className="section">
+      {/* ============ AIDA · D: SIN RIESGO (§1.3.4: única sección con fondo ink) ============ */}
+      <section
+        className="section"
+        style={{
+          background: "var(--c-ink)",
+          borderTop: "1px solid var(--hairline)",
+          borderBottom: "1px solid var(--hairline)",
+        }}
+      >
         <div className="section-inner" ref={noRisk.ref}>
           <div className={noRisk.className}>
             <span className="day-marker">Zero risk</span>
@@ -437,9 +566,15 @@ export default function Pricing() {
             <div className="pricing-grid">
               {NO_RISK.map((item) => (
                 <div className="method-card" key={item.name}>
+                  {/* La pregunta en amarillo (§1.3.4) */}
                   <div
                     className="method-num"
-                    style={{ fontSize: "1rem", letterSpacing: "var(--track-btn, 0.07em)" }}
+                    style={{
+                      fontSize: "1rem",
+                      letterSpacing: "var(--track-btn, 0.07em)",
+                      color: "var(--c-yellow)",
+                      opacity: 1,
+                    }}
                   >
                     {item.q}
                   </div>
@@ -452,7 +587,7 @@ export default function Pricing() {
         </div>
       </section>
 
-      {/* ============ PRUEBA SOCIAL (placeholder) ============ */}
+      {/* ============ AIDA · D: PRUEBA SOCIAL (placeholder) ============ */}
       {/* SOCIAL_PROOF_PLACEHOLDER: reemplazar con testimonios reales,
           fotos y generaciones confirmadas por el cliente */}
       <section className="section">
@@ -487,7 +622,7 @@ export default function Pricing() {
         </div>
       </section>
 
-      {/* ============ FAQ ============ */}
+      {/* ============ AIDA · A: FAQ (objeciones tardías) ============ */}
       <section className="section">
         <div className="section-inner" ref={faq.ref}>
           <div className={faq.className}>
@@ -528,7 +663,7 @@ export default function Pricing() {
         </div>
       </section>
 
-      {/* ============ CTA FINAL ============ */}
+      {/* ============ AIDA · A: CTA FINAL ============ */}
       <section className="section">
         <div className="section-inner" ref={cta.ref}>
           <div className={`final-wrap ${cta.className}`}>
