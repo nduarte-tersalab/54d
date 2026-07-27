@@ -74,6 +74,7 @@
   --space-block: clamp(3rem, 5vw, 3.5rem);       /* título → grid (unifica 3rem y 3.5rem) */
   --space-band: clamp(4rem, 8vw, 6.5rem);        /* interior de photo-band */
   --space-section: clamp(3.5rem, 7.5vw, 6.5rem); /* media frontera: 56→104px */
+  --space-section-tight: clamp(1.75rem, 3.75vw, 3.25rem); /* escalón: pares relacionados */
   --space-page: clamp(6rem, 10vw, 9rem);         /* despedida pre-footer */
   /* Hero (FIXES_V5 §1): clearance de cromo fijo + aire inferior único */
   --hero-pad-top: calc(var(--app-banner-h, 0px) + var(--nav-h) + clamp(1.5rem, 4vh, 3rem));
@@ -441,6 +442,13 @@ body {
 /* Única excepción a la media frontera: despedida pre-footer (FIXES_V5 §2.2) */
 .section:last-of-type { padding-bottom: var(--space-page); }
 
+/* Escalón de ritmo: una sección "tight" se acopla a su hermana anterior
+   (frontera 156px en vez de 208 @1440). Para pares relacionados:
+   membresía→programas, app→cómo funciona, tabla vs→tabla vs. */
+.section.section-tight { padding-block-start: var(--space-section-tight); }
+/* Photo-band que antecede a una sección hermana: comprime la salida */
+.photo-band.band-tight { margin-bottom: calc(var(--space-section-tight) - var(--space-section)); }
+
 /* Campos de gradiente de fondo (ATMOSPHERE §2): máx. 1 por página, pico
    ≤0.08, feather largo (72%) — el halo con borde es lo que delata "AI glow". */
 .bloom::before, .bloom-right::before, .bloom-ember::before {
@@ -738,7 +746,9 @@ body {
 .final-wrap {
   position: relative;
   border-radius: var(--r-card);
-  padding: clamp(3.5rem, 8vw, 7rem) clamp(2rem, 6vw, 5rem);
+  /* Vertical contenido: el box ya carga con la frontera de sección
+     afuera; 7rem internos duplicaban el aire (doble respiración) */
+  padding: clamp(2.75rem, 5vw, 4.5rem) clamp(2rem, 6vw, 5rem);
   overflow: hidden;
   background:
     radial-gradient(ellipse 75% 90% at 50% 115%, rgba(255, 200, 0, 0.20), transparent 65%),
@@ -1052,7 +1062,7 @@ figure:hover .photo-caption { color: var(--c-mist); }
   align-items: center; }
 @media (max-width: 860px) { .app-section { grid-template-columns: 1fr; } }
 /* 42/32px permitidos SOLO acá: geometría del mockup, no UI */
-.phone { width: min(290px, 74vw); aspect-ratio: 9 / 19.2; margin: 0 auto;
+.phone { width: min(250px, 70vw); aspect-ratio: 9 / 19.2; margin: 0 auto;
   border-radius: 42px; border: 1px solid var(--hairline); background: #101010;
   padding: 10px; box-shadow: 0 40px 90px rgba(0,0,0,0.6); position: relative; }
 .phone::before { content: ''; position: absolute; top: 20px; left: 50%; transform: translateX(-50%);

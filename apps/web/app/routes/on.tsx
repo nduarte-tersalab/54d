@@ -797,7 +797,7 @@ export default function On() {
       </section>
 
       {/* ============ PROGRAMAS REALES (lista editorial) ============ */}
-      <section className="section" id="programs">
+      <section className="section section-tight" id="programs">
         <div className="section-inner" ref={programas.ref}>
           <div className={programas.className}>
             <span className="day-marker">Programs</span>
@@ -1052,7 +1052,7 @@ export default function On() {
       </section>
 
       {/* ============ CÓMO FUNCIONA ============ */}
-      <section className="section">
+      <section className="section section-tight">
         <div className="section-inner" ref={pasos.ref}>
           <div className={pasos.className}>
             <span className="day-marker">How it works</span>
@@ -1095,7 +1095,7 @@ export default function On() {
       </section>
 
       {/* ============ COMPARATIVA HONESTA ON VS STUDIOS ============ */}
-      <section className="section">
+      <section className="section section-tight">
         <div className="section-inner" ref={vsStudios.ref}>
           <div className={vsStudios.className}>
             <span className="day-marker">ON vs Studios</span>
@@ -1125,6 +1125,9 @@ export default function On() {
                   style={{
                     width: "100%",
                     display: "block",
+                    aspectRatio: "21 / 9",
+                    objectFit: "cover",
+                    objectPosition: "center 22%",
                     borderRadius: "var(--r-media, 2px)",
                     filter: "saturate(0.82) contrast(1.05)",
                   }}
