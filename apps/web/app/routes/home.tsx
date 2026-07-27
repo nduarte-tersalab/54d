@@ -19,7 +19,7 @@ export function meta({}: Route.MetaArgs) {
 /* Video del hero: generado con Higgsfield (Seedance 2.0) desde la foto
    real de la rampa — 1080p, 8s, loop. Solo desktop; mobile usa la foto
    (9MB no se le impone a datos móviles). */
-const HERO_VIDEO_URL: string | null = asset("videos/hero-ramp.mp4");
+const HERO_VIDEO_URL: string | null = asset("videos/hero-ramp-v2.mp4");
 const HERO_POSTER_URL: string | null = asset("images/hd/cg-ramp-runners-wide.jpg");
 
 /* Links canónicos verificados (docs/marketing/APP_INFO.md). Solo 54D On:
