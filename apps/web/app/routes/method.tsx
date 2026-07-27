@@ -210,14 +210,73 @@ export default function Method() {
                 plan with nobody demanding it is just another PDF.
               </p>
             </div>
-            <div className="method-grid">
-              {PILLARS.map((p) => (
-                <div className="method-card" key={p.num}>
-                  <div className="method-num">{p.num}</div>
-                  <div className="method-name">{p.name}</div>
-                  <p className="method-desc">{p.desc}</p>
+            {/* Split cards/foto: pilares en 2×2 + columna lateral con el
+                coach en el piso (hd2, vertical 3:4). En pantallas angostas
+                la foto cae debajo de las cards como banda (minHeight). */}
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                alignItems: "stretch",
+                gap: "1.1rem",
+              }}
+            >
+              <div
+                style={{
+                  flex: "2 1 34rem",
+                  minWidth: 0,
+                  display: "grid",
+                  gridTemplateColumns:
+                    "repeat(auto-fit, minmax(min(100%, 300px), 1fr))",
+                  gap: "1.1rem",
+                }}
+              >
+                {PILLARS.map((p) => (
+                  <div className="method-card" key={p.num}>
+                    <div className="method-num">{p.num}</div>
+                    <div className="method-name">{p.name}</div>
+                    <p className="method-desc">{p.desc}</p>
+                  </div>
+                ))}
+              </div>
+              <figure
+                style={{
+                  margin: 0,
+                  flex: "1 1 19rem",
+                  minWidth: "min(100%, 16rem)",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <div
+                  style={{
+                    position: "relative",
+                    flex: "1 1 auto",
+                    minHeight: "24rem",
+                    overflow: "hidden",
+                    borderRadius: "var(--r-media, 2px)",
+                    background: "var(--c-ink)",
+                  }}
+                >
+                  <img
+                    src={asset("images/hd2/method-coach-lunge.jpg")}
+                    alt="A 54D coach with a barbell watching a member's stride mid-drill in front of the studio's 54D mural"
+                    loading="lazy"
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      objectPosition: "center 30%",
+                      filter: "saturate(0.85) contrast(1.05)",
+                    }}
+                  />
                 </div>
-              ))}
+                <figcaption className="photo-caption">
+                  A coach on the floor, every session
+                </figcaption>
+              </figure>
             </div>
           </div>
         </div>
@@ -226,7 +285,7 @@ export default function Method() {
       {/* ============ PHOTO BAND: LA CLASE EN TRABAJO ============ */}
       <section className="photo-band band-tight" aria-label="Inside a 54D class">
         <img
-          src={asset("images/hd/cg-effort-yellow-d.jpg")}
+          src={asset("images/studios/coral-gables/class-mural-wide.jpg")}
           alt="A full 54D class holding planks on the mats under the 54D mural"
           loading="lazy"
         />
@@ -269,23 +328,41 @@ export default function Method() {
         </div>
       </section>
 
-      {/* ============ GARANTÍA 30 DÍAS ============ */}
-      <section className="section" id="garantia">
-        <div className="section-inner" ref={guarantee.ref}>
+      {/* ============ GARANTÍA 30 DÍAS (photo-band) ============ */}
+      {/* Patrón de banda de method: day-marker + título sobre la foto de la
+          generación celebrando (hd2). Los stats glass leen bien sobre el velo. */}
+      <section
+        className="photo-band"
+        id="garantia"
+        aria-label="The 30-day 54D guarantee"
+      >
+        <img
+          src={asset("images/hd2/method-guarantee-celebration.jpg")}
+          alt="A full 54D generation flexing and celebrating in front of the yellow 54D wall at the end of the program"
+          loading="lazy"
+        />
+        <div className="photo-band-content" ref={guarantee.ref}>
           <div className={guarantee.className}>
             <span className="day-marker">The guarantee</span>
-            <div className="method-intro">
-              <h2 className="section-title">
-                If you do the work and it doesn't work,{" "}
-                <span className="accent">you don't pay.</span>
-              </h2>
-              <p>
-                You have 30 days. Follow the program: training, nutrition
-                protocol, and daily check-ins with your coach. If you don't
-                see results, we refund your money. No interrogation, no fine
-                print, no &ldquo;call us to cancel&rdquo;.
-              </p>
-            </div>
+            <h2 className="section-title" style={{ maxWidth: "24ch" }}>
+              If you do the work and it doesn't work,{" "}
+              <span className="accent">you don't pay.</span>
+            </h2>
+            <p
+              style={{
+                maxWidth: "34rem",
+                marginTop: "1.4rem",
+                fontSize: "var(--text-body)",
+                lineHeight: 1.65,
+                color: "var(--c-mist)",
+                textShadow: "0 1px 24px rgba(7,7,7,.6)",
+              }}
+            >
+              You have 30 days. Follow the program: training, nutrition
+              protocol, and daily check-ins with your coach. If you don't
+              see results, we refund your money. No interrogation, no fine
+              print, no &ldquo;call us to cancel&rdquo;.
+            </p>
             <div className="stat-row">
               <div className="stat">
                 <div className="stat-value">7</div>

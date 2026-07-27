@@ -4,6 +4,7 @@ import { Link } from "react-router";
 import type { Route } from "./+types/contact";
 import { Nav, Footer, useReveal } from "../components/site";
 import { STUDIOS } from "../data/studios";
+import { asset } from "../lib/asset";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -67,10 +68,13 @@ export default function Contact() {
       <Nav />
 
       {/* ============ HERO INTERIOR ============ */}
-      {/* hero-compact (FIXES_V5 §4): poster sin CTAs, 239px de contenido */}
+      {/* hero-compact (FIXES_V5 §4): foto real sin CTAs, 239px de contenido */}
       <header className="hero hero-inner hero-compact">
         <div className="hero-media">
-          <div className="hero-poster" />
+          <img
+            src={asset("images/hd2/blog-group-calm.jpg")}
+            alt="54D members relaxed and chatting together after a session"
+          />
         </div>
         <div className="hero-veil" />
         <div className="hero-content">
@@ -250,6 +254,21 @@ export default function Contact() {
                     Instagram · @54d.online
                   </a>
                 </div>
+
+                {/* Foto lateral: quién contesta del otro lado */}
+                <figure style={{ marginTop: "2.8rem", maxWidth: "27rem" }}>
+                  <div className="photo-card">
+                    <img
+                      src={asset("images/hd2/contact-laugh.jpg")}
+                      alt="A 54D member in a sweaty 54D tee laughing mid-conversation after training"
+                      loading="lazy"
+                      style={{ aspectRatio: "3 / 2", objectPosition: "50% 30%" }}
+                    />
+                  </div>
+                  <figcaption className="photo-caption">
+                    Real people answer. Usually the same day.
+                  </figcaption>
+                </figure>
               </div>
 
               {/* Columna derecha: formulario glass */}

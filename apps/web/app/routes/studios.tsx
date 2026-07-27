@@ -316,8 +316,8 @@ export default function Studios() {
       {/* ============ PHOTO BAND: COMUNIDAD (foto grupal real) ============ */}
       <section className="photo-band">
         <img
-          src={asset("images/hd/hl-laugh.jpg")}
-          alt="A 54D member laughing, drenched after finishing a session"
+          src={asset("images/hd/cg-highfive-euphoria.jpg")}
+          alt="54D members high-fiving, drenched and euphoric after finishing a session"
           loading="lazy"
         />
         <div className="photo-band-content">

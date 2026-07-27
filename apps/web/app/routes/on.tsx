@@ -816,8 +816,8 @@ export default function On() {
       <header className="hero hero-inner">
         <div className="hero-media">
           <img
-            src={asset("images/hd/cg-overhead-press.jpg")}
-            alt="Athlete pressing a barbell overhead against a clean dark background"
+            src={asset("images/hd2/blog-barbell-press.jpg")}
+            alt="Athlete pressing a loaded barbell during a 54D strength session"
           />
         </div>
         <div className="hero-veil" />
@@ -1269,14 +1269,48 @@ export default function On() {
             <h2 className="section-title">
               Three steps and you're <span style={solidAccent}>in.</span>
             </h2>
-            <div className="timeline">
-              {STEPS.map((s) => (
-                <div className="timeline-item" key={s.day}>
-                  <span className="timeline-day">{s.day}</span>
-                  <h3>{s.title}</h3>
-                  <p>{s.desc}</p>
-                </div>
-              ))}
+            {/* Split foto/pasos: el celular con el coach en pantalla ES el
+                producto (hd2, vertical 9:16) — protagonista junto a los pasos.
+                El mockup CSS de la sección app queda intacto. */}
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns:
+                  "repeat(auto-fit, minmax(min(100%, 320px), 1fr))",
+                gap: "clamp(2.5rem, 6vw, 5rem)",
+                alignItems: "center",
+                marginTop: "var(--space-block)",
+              }}
+            >
+              <figure style={{ margin: 0 }}>
+                <img
+                  src={asset("images/hd2/on-phone-coach.jpg")}
+                  alt="A member holding up a phone playing a 54D coach's video against the studio's yellow wall"
+                  loading="lazy"
+                  style={{
+                    width: "100%",
+                    display: "block",
+                    aspectRatio: "3 / 4",
+                    objectFit: "cover",
+                    objectPosition: "center 55%",
+                    borderRadius: "var(--r-media, 2px)",
+                    filter: "saturate(0.85) contrast(1.05)",
+                  }}
+                />
+                <figcaption style={photoCaption}>
+                  <span style={captionTick} aria-hidden="true" />
+                  A real coach on your screen. That's the product.
+                </figcaption>
+              </figure>
+              <div className="timeline" style={{ marginTop: 0 }}>
+                {STEPS.map((s) => (
+                  <div className="timeline-item" key={s.day}>
+                    <span className="timeline-day">{s.day}</span>
+                    <h3>{s.title}</h3>
+                    <p>{s.desc}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -1329,8 +1363,8 @@ export default function On() {
               </p>
               <figure style={{ margin: 0 }}>
                 <img
-                  src={asset("images/hd/hl-locker-space.jpg")}
-                  alt="Training floor at a 54D studio: wood beams, heavy bags, and a coach with a headset"
+                  src={asset("images/hd/cg-gym-wide.jpg")}
+                  alt="Wide view of the 54D training floor, equipment set and ready"
                   loading="lazy"
                   style={{
                     width: "100%",

@@ -77,6 +77,7 @@ export type ProgramLanding = {
 };
 
 const hd = (f: string) => `images/hd/${f}.jpg`;
+const hd2 = (f: string) => `images/hd2/${f}.jpg`;
 const cg = (f: string) => `images/studios/coral-gables/${f}.jpg`;
 const hl = (f: string) => `images/studios/hallandale/${f}.jpg`;
 
@@ -192,8 +193,8 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       alt: "Athlete driving a loaded barbell overhead under studio lights",
     },
     secondary: {
-      src: cg("barbell-press-class-01"),
-      alt: "Class pressing loaded barbells in sync at the Coral Gables studio",
+      src: hd2("spare-barbell-bags"),
+      alt: "Athlete shouldering a 54D barbell between rows of TITLE boxing bags",
     },
     stats: [
       { value: "9 wk", label: "Duration" },
@@ -264,6 +265,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       src: cg("boxer-closeup"),
       alt: "Close-up of a boxer mid combination, gloves up and eyes locked",
     },
+    secondary: {
+      src: hd2("v-boxing-guard"),
+      alt: "Boxer with fists up in a tight guard, class shadowboxing behind her",
+    },
     faq: [
       {
         q: "Is 14 days really enough?",
@@ -307,8 +312,8 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       alt: "Group cardio session at full intensity on the 54D training floor",
     },
     secondary: {
-      src: cg("spin-bikes-boxing-bags-01"),
-      alt: "Spin bikes and boxing bags lined up on the 54D training floor",
+      src: hd2("v-spin-rider"),
+      alt: "Rider out of the saddle on a spin bike, smiling through the effort",
     },
     faq: [
       {
@@ -388,8 +393,8 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       alt: "A 54D coach correcting an athlete's form mid movement",
     },
     secondary: {
-      src: hd("hl-laugh"),
-      alt: "Two athletes laughing between sets at the 54D studio",
+      src: hd2("spare-cyclist-sign"),
+      alt: "Member setting up her spin bike under the yellow wall that reads We train something more powerful than your body",
     },
     faq: [
       {
@@ -429,6 +434,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
     hero: {
       src: cg("group-squat-class-01"),
       alt: "Full class holding the bottom of a squat together at the studio",
+    },
+    secondary: {
+      src: hd2("v-squat-band"),
+      alt: "Athlete in a deep squat with a blue resistance band above her knees, class squatting behind her",
     },
     faq: [
       {
@@ -470,8 +479,8 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       alt: "Wide view of the 54D Coral Gables training floor mid session",
     },
     secondary: {
-      src: hd("cg-effort-yellow-d"),
-      alt: "Athlete at full effort beside the yellow 54D letters",
+      src: hd2("spare-class-jump"),
+      alt: "Whole class dropping into squats in front of the giant 54D wall, coach calling the round",
     },
     stats: [
       { value: "4 wk", label: "Duration" },
@@ -586,8 +595,8 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       alt: "Athlete bench pressing under the 54D letters at the Hallandale studio",
     },
     secondary: {
-      src: hl("dumbbell-press"),
-      alt: "Athlete pressing dumbbells overhead at the Hallandale studio",
+      src: hd2("v-biceps-plate"),
+      alt: "Athlete in profile mid biceps curl with a weight plate, studio stairs behind her",
     },
     stats: [
       { value: "9 wk", label: "Duration" },
@@ -648,6 +657,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       src: cg("runner-effort"),
       alt: "Runner at full effort, face set, mid stride on the studio floor",
     },
+    secondary: {
+      src: hd2("v-runner-smile"),
+      alt: "Smiling runner in a 54D tank striding up the studio ramp at an easy pace",
+    },
     stats: [
       { value: "5K", label: "The goal" },
       { value: "3/wk", label: "Runs" },
@@ -694,8 +707,8 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       alt: "Runner in full stride across the Coral Gables studio",
     },
     secondary: {
-      src: cg("sprint-vertical"),
-      alt: "Athlete sprinting flat out down the studio floor",
+      src: hd2("v-quad-stretch"),
+      alt: "Runner airborne mid plyometric jump over the floor ladder beside the studio stairs",
     },
     stats: [
       { value: "10K", label: "The goal" },
@@ -746,8 +759,8 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       alt: "Runners charging up the ramp together at the 54D Coral Gables studio",
     },
     secondary: {
-      src: hd("cg-stairs-group"),
-      alt: "Training group climbing the stairs together at first light",
+      src: hd2("spare-man-running"),
+      alt: "Runner grinding up the studio ramp, effort on his face, the group at his back",
     },
     stats: [
       { value: "21K", label: "The goal" },

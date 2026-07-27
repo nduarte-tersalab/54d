@@ -608,6 +608,20 @@ export default function Blog() {
                   One email a week. Cancel anytime.
                 </p>
               </form>
+              {/* Textura editorial lateral: detalle de hoodie STRONGER */}
+              <img
+                src={asset("images/hd2/newsletter-stronger.jpg")}
+                alt="Close-up of the STRONGER typography printed on a black 54D hoodie"
+                loading="lazy"
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  aspectRatio: "1 / 1",
+                  objectFit: "cover",
+                  borderRadius: "var(--r-media, 2px)",
+                  filter: "saturate(0.85) contrast(1.05)",
+                }}
+              />
             </div>
           </div>
         </div>

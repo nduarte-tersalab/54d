@@ -382,13 +382,42 @@ export default function Home() {
       <section className="section">
         <div className="section-inner" ref={cta.ref}>
           <div className={`final-wrap ${cta.className}`}>
-            <h2 className="final-title">
-              Day 1 <span style={solidAccent}>is today.</span>
-            </h2>
-            <div className="hero-ctas">
-              <Link to="/pricing" className="btn btn-primary">
-                Start free. 7 days.
-              </Link>
+            {/* Fondo: pelotón de frente por el pasillo oscuro (hd2) bajo un
+                velo negro 78% — la foto empuja, el texto manda. */}
+            <img
+              src={asset("images/hd2/spare-class-jump.jpg")}
+              alt="A full 54D class jumping in unison at the peak of a session"
+              loading="lazy"
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                objectPosition: "center 42%",
+                filter: "saturate(0.85) contrast(1.05)",
+                zIndex: 0,
+              }}
+            />
+            <div
+              aria-hidden="true"
+              style={{
+                position: "absolute",
+                inset: 0,
+                background:
+                  "linear-gradient(180deg, rgba(7,7,7,0.78) 0%, rgba(7,7,7,0.78) 100%)",
+                zIndex: 0,
+              }}
+            />
+            <div style={{ position: "relative", zIndex: 1 }}>
+              <h2 className="final-title">
+                Day 1 <span style={solidAccent}>is today.</span>
+              </h2>
+              <div className="hero-ctas">
+                <Link to="/pricing" className="btn btn-primary">
+                  Start free. 7 days.
+                </Link>
+              </div>
             </div>
           </div>
         </div>

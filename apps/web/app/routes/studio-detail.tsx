@@ -233,8 +233,8 @@ const BRAND_ROWS: GalleryRow[] = [
 /* Banda fotográfica emocional por sede */
 const BAND_PHOTO: Record<string, { src: string; alt: string }> = {
   "coral-gables": {
-    src: cg("graduation-celebration-01.jpg"),
-    alt: "Emotional group hug at a 54D graduation with golden balloons and the 54D mural",
+    src: "images/hd2/method-guarantee-celebration.jpg",
+    alt: "Emotional group celebration at a 54D graduation",
   },
   hallandale: {
     src: hl("bench-press-54d.jpg"),
