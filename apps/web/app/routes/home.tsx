@@ -29,30 +29,6 @@ const CHOOSER_CSS = `
 }
 `;
 
-function Ticker() {
-  const items = [
-    "Coral Gables",
-    "Hallandale",
-    "Mexico City",
-    "Bogotá",
-    "Online worldwide",
-    "54 days",
-  ];
-  // Duplicado para el loop infinito del marquee
-  const track = [...items, ...items];
-  return (
-    <div className="ticker" aria-hidden="true">
-      <div className="ticker-track">
-        {track.map((item, i) => (
-          <span key={i}>
-            {item} <span className="dot">●</span>
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export default function Home() {
 
   return (
@@ -61,7 +37,7 @@ export default function Home() {
       <Nav />
 
       {/* ============ HERO ============ */}
-      <header className="hero" style={{ minHeight: "min(82svh, 860px)" }}>
+      <header className="hero" style={{ minHeight: "100svh", display: "flex", flexDirection: "column", justifyContent: "flex-end", paddingBottom: "clamp(1.25rem, 3vh, 2.5rem)" }}>
         <div className="hero-media">
           {HERO_VIDEO_URL ? (
             <>
@@ -99,37 +75,19 @@ export default function Home() {
           )}
         </div>
         <div className="hero-veil" />
-        <div className="hero-content">
-          <h1 className="hero-title">
+        <div className="hero-content" style={{ marginBottom: 0 }}>
+          <h1 className="hero-title" style={{ fontSize: "clamp(1.9rem, 4.6vw, 4.4rem)" }}>
             54 days.
             <br />
             <span className="accent">One transformation.</span>
           </h1>
-          <p
-            className="hero-sub lead"
-            style={{ textShadow: "0 1px 24px rgba(7,7,7,.6)" }}
-          >
-            High-intensity training, personalized nutrition, and a coach who
-            demands more of you, every day for 54 days.
-          </p>
-          {/* Una sola puerta en el hero (SEPARATION_SPEC §1): el hero no
-              vende ninguno de los dos productos, te manda a elegir. Cero
-              CTAs de checkout antes del chooser. */}
-          <div className="hero-ctas" id="empezar">
-            <a href="#choose" className="btn btn-primary">
-              Choose how you do it
-            </a>
-          </div>
         </div>
-        <Ticker />
-      </header>
-
       {/* ============ EL CHOOSER: dos puertas NO equivalentes ============
           Studios primero y con mas peso (3fr, CHOOSER_CSS): flagship por
           aplicacion, sin precio ni trial en su panel. ON con su precio y
           su trial: son productos distintos, hasta la app es distinta. */}
-      <section className="split" id="choose" style={{ scrollMarginTop: "6rem" }}>
-        <div className="split-panel split-studios split-flagship">
+      <section className="split" id="choose" style={{ position: "relative", zIndex: 2, width: "100%", marginTop: "clamp(1rem, 2vh, 1.6rem)" }}>
+        <div className="split-panel split-studios split-flagship" style={{ minHeight: 0, padding: "clamp(1.6rem, 2.8vh, 2.6rem) clamp(1.6rem, 2.5vw, 2.8rem)" }}>
           <img
             src={asset("images/studios/coral-gables/class-mural-wide.jpg")}
             alt=""
@@ -172,7 +130,7 @@ export default function Home() {
             </span>
           </div>
         </div>
-        <div className="split-panel split-on">
+        <div className="split-panel split-on" style={{ minHeight: 0, padding: "clamp(1.6rem, 2.8vh, 2.6rem) clamp(1.6rem, 2.5vw, 2.8rem)" }}>
           <div>
             <span className="split-label">Online, wherever you are</span>
             <h2 className="split-title">54D ON</h2>
@@ -190,6 +148,8 @@ export default function Home() {
           </div>
         </div>
       </section>
+      </header>
+
 
       {/* ============ FOOTER ============ */}
       <Footer />
