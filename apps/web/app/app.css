@@ -359,7 +359,11 @@ body {
   z-index: 2;
   padding: 0 var(--gutter);
   width: 100%;
-  max-width: var(--container);
+  /* GRILLA: el gutter va DENTRO de este box, así que el max-width lo
+     compensa (container + 2·gutter). Sin esto el texto del hero queda
+     corrido +gutter respecto a las secciones (que llevan el gutter en
+     el padre y el container pelado adentro). Medido: 104 vs 56 @1440. */
+  max-width: calc(var(--container) + 2 * var(--gutter));
   /* UNA sola regla de aire inferior (FIXES_V5 §2.1; antes 4vh home / clamp interiores) */
   margin: 0 auto var(--hero-pad-bottom);
 }
@@ -1030,7 +1034,10 @@ body {
   linear-gradient(180deg, rgba(7,7,7,0) 78%, rgba(7,7,7,0.55) 92%, #070707 100%),
   linear-gradient(0deg,   rgba(7,7,7,0) 78%, rgba(7,7,7,0.55) 92%, #070707 100%),
   linear-gradient(90deg, rgba(7,7,7,0.82) 0%, rgba(7,7,7,0.35) 55%, rgba(7,7,7,0.1) 100%); }
-.photo-band-content { position: relative; z-index: 1; max-width: var(--container);
+.photo-band-content { position: relative; z-index: 1;
+  /* Mismo patrón que .hero-content: gutter interno compensado para
+     que el texto caiga en la grilla de las secciones */
+  max-width: calc(var(--container) + 2 * var(--gutter));
   margin: 0 auto; padding: var(--space-band) var(--gutter); }
 .photo-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 1rem;
   align-items: stretch; }
