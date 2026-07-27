@@ -75,6 +75,9 @@ type MembershipTier = {
   regularPerMonth: number;
   billed: string;
   featured?: boolean;
+  photo: string;
+  photoAlt: string;
+  tagline: string;
 };
 const MEMBERSHIP_TIERS: MembershipTier[] = [
   {
@@ -83,6 +86,9 @@ const MEMBERSHIP_TIERS: MembershipTier[] = [
     perMonth: 54,
     regularPerMonth: 99,
     billed: "Billed monthly",
+    photo: "images/hd2/spare-man-running.jpg",
+    photoAlt: "Athlete running with visible effort on the 54D floor",
+    tagline: "Start at your pace",
   },
   {
     priceId: "PENDING_membership_quarterly",
@@ -91,6 +97,9 @@ const MEMBERSHIP_TIERS: MembershipTier[] = [
     regularPerMonth: 89,
     billed: "$156 every 3 months",
     featured: true,
+    photo: "images/hd/cg-effort-yellow-d.jpg",
+    photoAlt: "Athlete grimacing with effort in front of the yellow 54D letter",
+    tagline: "The full 54 days",
   },
   {
     priceId: "PENDING_membership_yearly",
@@ -98,6 +107,9 @@ const MEMBERSHIP_TIERS: MembershipTier[] = [
     perMonth: 49,
     regularPerMonth: 79,
     billed: "$588 a year · lowest per month",
+    photo: "images/hd2/blog-spin-smile.jpg",
+    photoAlt: "Member smiling mid ride on a spin bike at 54D",
+    tagline: "Make it your life",
   },
 ];
 
@@ -921,7 +933,50 @@ export default function On() {
                   <div
                     className={t.featured ? "pricing-card featured" : "pricing-card"}
                     key={t.plan}
+                    style={{ overflow: "hidden" }}
                   >
+                    {/* Cabecera fotográfica del plan: cada tier con su
+                        significado (arrancar / el esfuerzo / el largo plazo) */}
+                    <div style={{ position: "relative", margin: "-2.2rem -1.9rem 1.4rem" }}>
+                      <img
+                        src={asset(t.photo)}
+                        alt={t.photoAlt}
+                        loading="lazy"
+                        style={{
+                          width: "100%",
+                          maxWidth: "none",
+                          height: "120px",
+                          objectFit: "cover",
+                          objectPosition: "center 30%",
+                          display: "block",
+                          filter: "saturate(0.85) contrast(1.05)",
+                        }}
+                      />
+                      <div
+                        aria-hidden="true"
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          background:
+                            "linear-gradient(180deg, rgba(7,7,7,0.1) 40%, rgba(7,7,7,0.82) 100%)",
+                        }}
+                      />
+                      <span
+                        style={{
+                          position: "absolute",
+                          left: "1.9rem",
+                          bottom: "0.55rem",
+                          fontFamily: "var(--font-label)",
+                          fontWeight: 700,
+                          fontSize: "0.7rem",
+                          letterSpacing: "var(--track-label, 0.14em)",
+                          textTransform: "uppercase",
+                          color: "var(--c-mist)",
+                        }}
+                      >
+                        {t.tagline}
+                      </span>
+                    </div>
                     {t.featured && <span style={tierBadge}>Most chosen</span>}
                     <div style={tierRow}>
                       <div style={tierInfo}>
