@@ -165,7 +165,8 @@ export default function Studios() {
       </header>
 
       {/* ============ MAPA CONCEPTUAL DE SEDES (grid de cards) ============ */}
-      <section className="section" id="sedes">
+      {/* FIXES_V5 §3.2: único campo de luz de la página */}
+      <section className="section bloom-right" id="sedes">
         <div className="section-inner" ref={map.ref}>
           <div className={map.className}>
             <span className="day-marker">Studios</span>
@@ -339,7 +340,7 @@ export default function Studios() {
       </section>
 
       {/* ============ CTA FINAL: CRUCE A ON ============ */}
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section">
         <div className="section-inner" ref={cta.ref}>
           <div className={`final-wrap ${cta.className}`}>
             <h2 className="final-title">

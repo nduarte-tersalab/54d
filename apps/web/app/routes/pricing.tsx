@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router";
 import type { Route } from "./+types/pricing";
 import { Nav, Footer, useReveal } from "../components/site";
+import { StickyCta } from "../components/sticky-cta";
 import { startCheckout } from "../lib/attribution";
 import { asset } from "../lib/asset";
 
@@ -209,25 +210,6 @@ export default function Pricing() {
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  /* Sticky bar mobile al 50% de scroll (DESIGN_FIXES_V4 §5) */
-  const [showStickyBar, setShowStickyBar] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 900px)");
-    const update = () => {
-      const doc = document.documentElement;
-      const max = doc.scrollHeight - window.innerHeight;
-      setShowStickyBar(mq.matches && max > 0 && window.scrollY / max >= 0.5);
-    };
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
-    return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
-    };
-  }, []);
-
   async function handleCheckout(priceId: string) {
     if (loadingPlan) return;
     setError(null);
@@ -279,7 +261,12 @@ export default function Pricing() {
       </header>
 
       {/* ============ PLANES ============ */}
-      <section className="section" id="plans" style={{ scrollMarginTop: "5rem" }}>
+      {/* FIXES_V5 §3.2: único campo de gradiente de la página (bloom en #plans) */}
+      <section
+        className="section bloom"
+        id="plans"
+        style={{ scrollMarginTop: "5rem" }}
+      >
         <div className="section-inner" ref={plans.ref}>
           <div className={plans.className}>
             <span className="day-marker">Plans</span>
@@ -412,7 +399,7 @@ export default function Pricing() {
       </section>
 
       {/* ============ QUÉ INCLUYE TODO PLAN ============ */}
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section">
         <div className="section-inner" ref={included.ref}>
           <div className={included.className}>
             <span className="day-marker">Everything included</span>
@@ -440,7 +427,7 @@ export default function Pricing() {
       </section>
 
       {/* ============ SIN RIESGO (anti-objeción + garantía) ============ */}
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section">
         <div className="section-inner" ref={noRisk.ref}>
           <div className={noRisk.className}>
             <span className="day-marker">Zero risk</span>
@@ -468,7 +455,7 @@ export default function Pricing() {
       {/* ============ PRUEBA SOCIAL (placeholder) ============ */}
       {/* SOCIAL_PROOF_PLACEHOLDER: reemplazar con testimonios reales,
           fotos y generaciones confirmadas por el cliente */}
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section">
         <div className="section-inner" ref={proof.ref}>
           <div className={proof.className}>
             <span className="day-marker">Results</span>
@@ -501,7 +488,7 @@ export default function Pricing() {
       </section>
 
       {/* ============ FAQ ============ */}
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section">
         <div className="section-inner" ref={faq.ref}>
           <div className={faq.className}>
             <span className="day-marker">Questions</span>
@@ -542,7 +529,7 @@ export default function Pricing() {
       </section>
 
       {/* ============ CTA FINAL ============ */}
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section">
         <div className="section-inner" ref={cta.ref}>
           <div className={`final-wrap ${cta.className}`}>
             <h2 className="final-title">
@@ -563,31 +550,9 @@ export default function Pricing() {
         </div>
       </section>
 
-      {/* ============ STICKY BAR MOBILE (visible al 50% de scroll) ============ */}
-      {showStickyBar && (
-        <div
-          style={{
-            position: "fixed",
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 60,
-            padding: "0.8rem 1rem calc(0.8rem + env(safe-area-inset-bottom))",
-            background: "rgba(7, 7, 7, 0.92)",
-            backdropFilter: "blur(12px)",
-            WebkitBackdropFilter: "blur(12px)",
-            borderTop: "1px solid var(--hairline)",
-          }}
-        >
-          <a
-            href="#plans"
-            className="btn btn-primary"
-            style={{ display: "block", width: "100%", textAlign: "center" }}
-          >
-            Start free. 7 days.
-          </a>
-        </div>
-      )}
+      {/* Sticky CTA mobile compartida (umbral 25%, compensa el footer):
+          extraída a components/sticky-cta.tsx — FIXES_V5 §4 / MOBILE_COMMERCE F5 */}
+      <StickyCta href="#plans" label="Start free. 7 days." />
 
       <Footer />
     </div>

@@ -67,7 +67,8 @@ export default function Contact() {
       <Nav />
 
       {/* ============ HERO INTERIOR ============ */}
-      <header className="hero hero-inner">
+      {/* hero-compact (FIXES_V5 §4): poster sin CTAs, 239px de contenido */}
+      <header className="hero hero-inner hero-compact">
         <div className="hero-media">
           <div className="hero-poster" />
         </div>
@@ -85,7 +86,7 @@ export default function Contact() {
       </header>
 
       {/* ============ DOS CAMINOS: ON / STUDIOS ============ */}
-      <section className="section bloom" style={{ paddingBottom: "2.5rem" }}>
+      <section className="section bloom">
         <div className="section-inner" ref={caminos.ref}>
           <div className={caminos.className}>
             <span className="day-marker">Choose your path</span>
@@ -400,7 +401,7 @@ export default function Contact() {
       </section>
 
       {/* ============ CTA FINAL ============ */}
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section">
         <div className="section-inner" ref={cierre.ref}>
           <div className={`final-wrap ${cierre.className}`}>
             <h2 className="final-title">

@@ -174,12 +174,11 @@ export default function Home() {
             </a>
           </div>
         </div>
-        <div style={{ height: "6vh" }} />
         <Ticker />
       </header>
 
       {/* ============ EL MÉTODO (glass cards) ============ */}
-      <section className="section" id="metodo">
+      <section className="section seam-warm" id="metodo">
         <div className="section-inner" ref={method.ref}>
           <div className={method.className}>
             <span className="day-marker">The method</span>
@@ -380,7 +379,7 @@ export default function Home() {
       </section>
 
       {/* ============ CTA FINAL ============ */}
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section">
         <div className="section-inner" ref={cta.ref}>
           <div className={`final-wrap ${cta.className}`}>
             <h2 className="final-title">

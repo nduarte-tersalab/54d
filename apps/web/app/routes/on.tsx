@@ -4,6 +4,7 @@ import { Link } from "react-router";
 import type { Route } from "./+types/on";
 import { Nav, Footer, useReveal } from "../components/site";
 import { AppStoreBadges } from "../components/badges";
+import { StickyCta } from "../components/sticky-cta";
 import { asset } from "../lib/asset";
 import { startCheckout } from "../lib/attribution";
 
@@ -332,7 +333,7 @@ const FAQ = [
 /* ============ Estilos puntuales (tablas, lista editorial, app) ============ */
 
 const tableWrap: CSSProperties = {
-  marginTop: "3rem",
+  marginTop: "var(--space-block)",
   borderRadius: "var(--r-card, 8px)",
   border: "1px solid var(--hairline)",
   background: "var(--glass)",
@@ -375,14 +376,9 @@ const td: CSSProperties = {
 };
 const tdOn: CSSProperties = { ...td, color: "var(--c-white)" };
 
-/* Lista editorial de programas: filas duras con hairline, sin cards */
-const progRow: CSSProperties = {
-  display: "flex",
-  flexWrap: "wrap",
-  gap: "0.7rem 2.8rem",
-  padding: "1.8rem 0",
-  borderTop: "1px solid var(--hairline)",
-};
+/* Lista editorial de programas: filas duras con hairline, sin cards.
+   El layout de fila, meta y precio vive en .prog-row/.prog-meta/.prog-price
+   (app.css) para poder responder a ≤640px — FIXES_V5 §4 / MOBILE_COMMERCE F4. */
 const progHead: CSSProperties = {
   flex: "0 1 17rem",
   minWidth: "13rem",
@@ -454,17 +450,6 @@ const progFollowUp: CSSProperties = {
   letterSpacing: "var(--track-label, 0.14em)",
   color: "var(--c-yellow)",
 };
-/* Columna de precio individual (derecha de cada fila de programa) */
-const progPrice: CSSProperties = {
-  flex: "0 0 auto",
-  marginLeft: "auto",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "flex-end",
-  gap: "0.15rem",
-  minWidth: "8.5rem",
-  textAlign: "right",
-};
 const progDuration: CSSProperties = {
   fontFamily: "var(--font-label)",
   fontWeight: 700,
@@ -529,7 +514,8 @@ function CompareTable({
   accentCol: 1 | 2;
 }) {
   return (
-    <div style={tableWrap}>
+    /* .table-wrap: affordance de scroll horizontal (fade mask 88%, F7) */
+    <div style={tableWrap} className="table-wrap">
       <table style={table}>
         <thead>
           <tr>
@@ -723,7 +709,11 @@ export default function On() {
       </section>
 
       {/* ============ MEMBRESÍA (el modelo comercial, sin ambigüedad) ============ */}
-      <section className="section" style={{ paddingTop: 0 }} id="membership">
+      <section
+        className="section"
+        id="membership"
+        style={{ scrollMarginTop: "5rem" }}
+      >
         <div className="section-inner" ref={membresia.ref}>
           <div className={membresia.className}>
             <span className="day-marker">The membership</span>
@@ -807,7 +797,7 @@ export default function On() {
       </section>
 
       {/* ============ PROGRAMAS REALES (lista editorial) ============ */}
-      <section className="section" style={{ paddingTop: 0 }} id="programs">
+      <section className="section" id="programs">
         <div className="section-inner" ref={programas.ref}>
           <div className={programas.className}>
             <span className="day-marker">Programs</span>
@@ -822,7 +812,7 @@ export default function On() {
             </div>
             <div style={{ borderBottom: "1px solid var(--hairline)" }}>
               {PROGRAMS.map((p) => (
-                <article style={progRow} key={p.num}>
+                <article className="prog-row" key={p.num}>
                   <div style={progHead}>
                     <span style={progNum}>{p.num}</span>
                     <h3 style={progName}>{p.name}</h3>
@@ -830,19 +820,29 @@ export default function On() {
                   </div>
                   <div style={progBody}>
                     <p style={progLine}>{p.line}</p>
-                    <p style={progMeta}>
+                    {/* Pares key/valor en <span> propios: en ≤640px .prog-meta
+                        pasa a grid apilado y los puntos se ocultan (F4) */}
+                    <p style={progMeta} className="prog-meta">
                       <span style={metaKey}>Equipment</span>
-                      {p.equipment}
-                      <span style={metaDot} aria-hidden="true">
+                      <span>{p.equipment}</span>
+                      <span
+                        style={metaDot}
+                        className="meta-dot"
+                        aria-hidden="true"
+                      >
                         ·
                       </span>
                       <span style={metaKey}>Intensity</span>
-                      {p.intensity}
-                      <span style={metaDot} aria-hidden="true">
+                      <span>{p.intensity}</span>
+                      <span
+                        style={metaDot}
+                        className="meta-dot"
+                        aria-hidden="true"
+                      >
                         ·
                       </span>
                       <span style={metaKey}>For</span>
-                      {p.audience}
+                      <span>{p.audience}</span>
                     </p>
                     {p.followUp && (
                       <span style={progFollowUp}>
@@ -850,18 +850,20 @@ export default function On() {
                       </span>
                     )}
                   </div>
-                  <div style={progPrice}>
+                  <div className="prog-price">
                     <span style={progDuration}>{p.duration}</span>
                     {p.oneTime && p.priceId ? (
                       <>
                         <span style={progAmount}>${p.oneTime}</span>
+                        {/* Target ≥44px: antes 168×35px con font 11.5px (F2) */}
                         <button
                           type="button"
                           className="btn btn-ghost"
                           style={{
-                            padding: "0.5rem 1.1rem",
-                            fontSize: "0.72rem",
-                            marginTop: "0.4rem",
+                            padding: "0.8rem 1.5rem",
+                            fontSize: "0.8rem",
+                            minHeight: "44px",
+                            marginTop: "0.6rem",
                           }}
                           disabled={busy === p.priceId}
                           onClick={() => buy(p.priceId!)}
@@ -901,7 +903,7 @@ export default function On() {
       </section>
 
       {/* ============ LA APP (vehículo de entrega del producto) ============ */}
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section">
         <div className="section-inner" ref={app.ref}>
           <div className={app.className}>
             <span className="day-marker">The app</span>
@@ -914,7 +916,7 @@ export default function On() {
                 gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))",
                 gap: "clamp(2.5rem, 6vw, 5rem)",
                 alignItems: "center",
-                marginTop: "3rem",
+                marginTop: "var(--space-block)",
               }}
             >
               <AppPhone />
@@ -1050,7 +1052,7 @@ export default function On() {
       </section>
 
       {/* ============ CÓMO FUNCIONA ============ */}
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section">
         <div className="section-inner" ref={pasos.ref}>
           <div className={pasos.className}>
             <span className="day-marker">How it works</span>
@@ -1071,7 +1073,7 @@ export default function On() {
       </section>
 
       {/* ============ DIFERENCIALES VS APPS GENÉRICAS ============ */}
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section">
         <div className="section-inner" ref={difApps.ref}>
           <div className={difApps.className}>
             <span className="day-marker">The difference</span>
@@ -1093,7 +1095,7 @@ export default function On() {
       </section>
 
       {/* ============ COMPARATIVA HONESTA ON VS STUDIOS ============ */}
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section">
         <div className="section-inner" ref={vsStudios.ref}>
           <div className={vsStudios.className}>
             <span className="day-marker">ON vs Studios</span>
@@ -1148,7 +1150,8 @@ export default function On() {
       </section>
 
       {/* ============ FAQ ============ */}
-      <section className="section" style={{ paddingTop: 0 }}>
+      {/* FIXES_V5 §3.2: único campo de gradiente de la página (bloom-ember pre-CTA) */}
+      <section className="section bloom-ember">
         <div className="section-inner" ref={faq.ref}>
           <div className={faq.className}>
             <span className="day-marker">FAQ</span>
@@ -1170,7 +1173,7 @@ export default function On() {
       {/* ============ CTA FINAL ============ */}
       {/* Suscripción: /pricing presenta los planes y dispara startCheckout(priceId).
           Los montos ($54/mes, $156/trim, $588/año) viven allá. PRECIO_PENDIENTE. */}
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section">
         <div className="section-inner" ref={cta.ref}>
           <div className={`final-wrap ${cta.className}`}>
             <h2 className="final-title">
@@ -1187,6 +1190,9 @@ export default function On() {
           </div>
         </div>
       </section>
+
+      {/* Página de 15.458px sin CTA persistente → sticky compartida (FIXES_V5 §4) */}
+      <StickyCta href="#membership" label="Start free trial" />
 
       <Footer />
     </div>

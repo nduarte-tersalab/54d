@@ -116,6 +116,12 @@ export function Nav() {
             {item.label}
           </Link>
         ))}
+        {/* Contact solo en el drawer (FIXES_V5 §4 / MOBILE_NAV H4): destino de
+            primer nivel en mobile (WhatsApp por sede); el nav desktop se
+            mantiene corto y Contact vive en el footer. */}
+        <Link to="/contact" onClick={close}>
+          Contact
+        </Link>
         <Link to="/pricing" className="btn btn-primary btn-nav" onClick={close}>
           {CTA_COPY}
         </Link>

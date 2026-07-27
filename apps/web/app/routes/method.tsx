@@ -196,7 +196,7 @@ export default function Method() {
       </section>
 
       {/* ============ LOS 4 PILARES ============ */}
-      <section className="section bloom-right" id="pilares">
+      <section className="section" id="pilares">
         <div className="section-inner" ref={pillars.ref}>
           <div className={pillars.className}>
             <span className="day-marker">The 4 pillars</span>
@@ -242,7 +242,7 @@ export default function Method() {
       </section>
 
       {/* ============ TIMELINE D01 → D54 ============ */}
-      <section className="section bloom" id="timeline">
+      <section className="section" id="timeline">
         <div className="section-inner" ref={timeline.ref}>
           <div className={timeline.className}>
             <span className="day-marker">D01 → D54</span>
@@ -270,7 +270,7 @@ export default function Method() {
       </section>
 
       {/* ============ GARANTÍA 30 DÍAS ============ */}
-      <section className="section bloom-right" id="garantia">
+      <section className="section" id="garantia">
         <div className="section-inner" ref={guarantee.ref}>
           <div className={guarantee.className}>
             <span className="day-marker">The guarantee</span>
@@ -305,13 +305,8 @@ export default function Method() {
       </section>
 
       {/* ============ PARA QUIÉN ES / PARA QUIÉN NO ============ */}
-      {/* paddingBottom 0: cierra el vacío de ~350px antes del FAQ
-          (DESIGN_FIXES_V4 §5, evidencia method-desktop-2.png) */}
-      <section
-        className="section bloom"
-        id="para-quien"
-        style={{ paddingBottom: 0 }}
-      >
+      {/* FIXES_V5 §4: sin hacks de padding — el ritmo lo pone --space-section */}
+      <section className="section" id="para-quien">
         <div className="section-inner" ref={fit.ref}>
           <div className={fit.className}>
             <span className="day-marker">An honest filter</span>
@@ -323,7 +318,7 @@ export default function Method() {
                 display: "grid",
                 gridTemplateColumns: "repeat(auto-fit, minmax(290px, 1fr))",
                 gap: "1.1rem",
-                marginTop: "3rem",
+                marginTop: "var(--space-block)",
               }}
             >
               <div className="method-card">
@@ -350,7 +345,7 @@ export default function Method() {
       </section>
 
       {/* ============ FAQ (con schema FAQPage) ============ */}
-      <section className="section bloom-right" id="faq">
+      <section className="section" id="faq">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: FAQ_JSONLD }}

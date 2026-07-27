@@ -256,7 +256,8 @@ export default function Blog() {
       <Nav />
 
       {/* ============ HERO INTERIOR (editorial) ============ */}
-      <header className="hero hero-inner">
+      {/* hero-compact (FIXES_V5 §4): poster sin CTAs, ~280px de contenido */}
+      <header className="hero hero-inner hero-compact">
         <div className="hero-media">
           <div className="hero-poster" />
         </div>
@@ -276,6 +277,7 @@ export default function Blog() {
       </header>
 
       {/* ============ ARTÍCULO DESTACADO ============ */}
+      {/* FIXES_V5 §3.2: único campo de luz de la página */}
       <section className="section bloom">
         <div className="section-inner" ref={destacado.ref}>
           <div className={destacado.className}>
@@ -388,7 +390,7 @@ export default function Blog() {
       </section>
 
       {/* ============ TODOS LOS ARTÍCULOS (strip de categorías + grid) ============ */}
-      <section className="section bloom-right">
+      <section className="section">
         <div className="section-inner" ref={articulos.ref}>
           <div className={articulos.className}>
             <span className="day-marker">All articles</span>
@@ -492,7 +494,7 @@ export default function Blog() {
       </section>
 
       {/* ============ NEWSLETTER (solo UI por ahora) ============ */}
-      <section className="section bloom">
+      <section className="section">
         <div className="section-inner" ref={newsletter.ref}>
           <div className={newsletter.className}>
             <div
@@ -577,7 +579,7 @@ export default function Blog() {
       </section>
 
       {/* ============ CTA FINAL ============ */}
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section">
         <div className="section-inner" ref={cierre.ref}>
           <div className={`final-wrap ${cierre.className}`}>
             <h2 className="final-title">

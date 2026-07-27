@@ -670,7 +670,8 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
       </section>
 
       {/* ============ FORMULARIO DE LEAD ============ */}
-      <section className="section" id="reserva">
+      {/* FIXES_V5 §3.2: único campo de luz de la página (ember pre-CTA) */}
+      <section className="section bloom-ember" id="reserva">
         <div className="section-inner" ref={lead.ref}>
           <div className={lead.className}>
             <span className="day-marker">Reserve</span>
@@ -689,7 +690,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
       </section>
 
       {/* ============ CTA FINAL: CRUCE A ON ============ */}
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="section">
         <div className="section-inner" ref={cta.ref}>
           <div className={`final-wrap ${cta.className}`}>
             <h2 className="final-title">
