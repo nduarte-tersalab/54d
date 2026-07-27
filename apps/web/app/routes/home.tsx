@@ -1,8 +1,6 @@
 import { Link } from "react-router";
 import type { Route } from "./+types/home";
-import { Nav, Footer, useReveal } from "../components/site";
-import { AppStoreBadges } from "../components/badges";
-import { STUDIOS } from "../data/studios";
+import { Nav, Footer } from "../components/site";
 import { asset } from "../lib/asset";
 
 export function meta({}: Route.MetaArgs) {
@@ -22,15 +20,6 @@ export function meta({}: Route.MetaArgs) {
 const HERO_VIDEO_URL: string | null = asset("videos/hero-ramp-v2.mp4");
 const HERO_POSTER_URL: string | null = asset("images/hd/cg-ramp-runners-wide.jpg");
 
-/* Links canónicos verificados (docs/marketing/APP_INFO.md). Solo 54D On:
-   nunca las apps legacy FitMetrix/Mindbody. */
-const APP_STORE_URL = "https://apps.apple.com/us/app/54d-on/id1520445334";
-const GOOGLE_PLAY_URL =
-  "https://play.google.com/store/apps/details?id=com.trainerize.fiftyfourdays";
-
-/* Acento sólido (regla de de-IA-ificación: gradient text solo en el hero) */
-const solidAccent = { color: "var(--c-yellow)" } as const;
-
 /* Chooser flagship (SEPARATION_SPEC §1): en desktop Studios pesa mas
    que ON (3fr vs 2fr). Scoped via :has() para no tocar app.css; bajo
    900px manda el 1fr de app.css y Studios queda arriba por orden DOM. */
@@ -39,53 +28,6 @@ const CHOOSER_CSS = `
   .split:has(.split-flagship) { grid-template-columns: 3fr 2fr; }
 }
 `;
-
-const METHOD = [
-  {
-    num: "D01",
-    name: "Training",
-    desc: "Daily high-intensity sessions designed by coaches, not by an algorithm. Every day of the program has a purpose.",
-  },
-  {
-    num: "D07",
-    name: "Nutrition",
-    desc: "A nutrition protocol built for your body and your goal. No generic diets. What you eat is part of the program.",
-  },
-  {
-    num: "D21",
-    name: "Real coaching",
-    desc: "Daily follow-up from a live coach. Writes to you, corrects you, pushes you. The difference between an app and a method.",
-  },
-  {
-    num: "D54",
-    name: "The result",
-    desc: "54 days later, you don't finish a challenge. You finish someone new, with the tools to stay that way.",
-  },
-];
-
-/* Features verificadas de la ficha (APP_INFO.md / COPY_V3.md §4) */
-const APP_FEATURES = [
-  {
-    name: "A real coach, every day",
-    desc: "Guidance, corrections, and daily personalized follow-up from a human.",
-  },
-  {
-    name: "A 360° plan built for you",
-    desc: "Your level, your goals, your life.",
-  },
-  {
-    name: "On-demand and live workouts",
-    desc: "Dozens of programs: strength, cardio, mobility, Pilates, yoga, wellness.",
-  },
-  {
-    name: "Nutrition plans and tools",
-    desc: "Built for energy, focus, and consistency.",
-  },
-  {
-    name: "Apple Health and Apple Watch",
-    desc: "Activity, energy, and heart rate, shared with your coach. iOS only.",
-  },
-];
 
 function Ticker() {
   const items = [
@@ -112,11 +54,6 @@ function Ticker() {
 }
 
 export default function Home() {
-  const method = useReveal();
-  const community = useReveal();
-  const app = useReveal();
-  const studios = useReveal();
-  const cta = useReveal();
 
   return (
     <div>
@@ -124,7 +61,7 @@ export default function Home() {
       <Nav />
 
       {/* ============ HERO ============ */}
-      <header className="hero">
+      <header className="hero" style={{ minHeight: "min(82svh, 860px)" }}>
         <div className="hero-media">
           {HERO_VIDEO_URL ? (
             <>
@@ -250,208 +187,6 @@ export default function Home() {
               Start free. 7 days.
             </Link>
             <span className="split-price">Cancel anytime</span>
-          </div>
-        </div>
-      </section>
-
-      {/* ============ EL MÉTODO (glass cards) ============ */}
-      <section className="section seam-warm" id="metodo">
-        <div className="section-inner" ref={method.ref}>
-          <div className={method.className}>
-            <span className="day-marker">The method</span>
-            <div className="method-intro">
-              <h2 className="section-title">
-                Not a gym. A program with a start.{" "}
-                <span style={solidAccent}>And an end.</span>
-              </h2>
-              <p className="lead">
-                54D started with a simple question: what happens when you treat
-                your transformation like a professional project, with dates, a
-                method, and someone who demands more of you? This is what
-                happens.
-              </p>
-            </div>
-            <div className="method-grid">
-              {METHOD.map((m) => (
-                <div className="method-card" key={m.num}>
-                  <div className="method-num">{m.num}</div>
-                  <div className="method-name">{m.name}</div>
-                  <p className="method-desc">{m.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ============ PHOTO BAND: comunidad ============ */}
-      <section className="photo-band">
-        <img
-          src={asset("images/hd/cg-highfive-euphoria.jpg")}
-          alt="A 54D class celebrating with arms up and high fives after finishing a session"
-          loading="lazy"
-        />
-        <div className="photo-band-content" ref={community.ref}>
-          <div className={community.className}>
-            <span className="photo-caption">Generation after generation</span>
-            <h2 className="section-title" style={{ marginTop: "1.4rem" }}>
-              You don't finish alone.
-            </h2>
-            <p
-              className="lead"
-              style={{
-                maxWidth: "32rem",
-                marginTop: "1.4rem",
-                textShadow: "0 1px 24px rgba(7,7,7,.6)",
-              }}
-            >
-              Every program runs as a generation: same start date, same finish
-              line. The people in this photo started as strangers.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ============ THE APP: 54D On ============ */}
-      <section className="section" id="app">
-        <div className="section-inner" ref={app.ref}>
-          <div className={app.className}>
-            <div className="app-section">
-              <div className="phone" aria-hidden="true">
-                <div className="phone-screen">
-                  <img
-                    src={asset("images/brand/coach-stretch-demo-vertical.jpg")}
-                    alt=""
-                    loading="lazy"
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      objectPosition: "43% 30%",
-                    }}
-                  />
-                </div>
-              </div>
-              <div>
-                <span className="day-marker">54D ON · The app</span>
-                <h2 className="section-title">The method lives in the app.</h2>
-                <p
-                  className="lead"
-                  style={{ maxWidth: "34rem", marginTop: "1.4rem" }}
-                >
-                  Training, nutrition, and a real coach in one place. Rated 4.9
-                  on the App Store.
-                </p>
-                <ol className="app-features">
-                  {APP_FEATURES.map((f) => (
-                    <li key={f.name}>
-                      <div>
-                        <strong>{f.name}</strong>
-                        <span>{f.desc}</span>
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-                <AppStoreBadges
-                  appStoreUrl={APP_STORE_URL}
-                  googlePlayUrl={GOOGLE_PLAY_URL}
-                />
-                <div
-                  className="app-rating"
-                  style={{
-                    fontSize: "var(--text-body)",
-                    color: "var(--c-white)",
-                  }}
-                >
-                  <span>
-                    <b>4.9</b>App Store
-                  </span>
-                  <span>
-                    <b>4.9</b>Google Play
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ============ STUDIOS (index tipográfico) ============ */}
-      <section className="section" id="studios">
-        <div className="section-inner" ref={studios.ref}>
-          <div className={studios.className}>
-            <span className="day-marker">Studios</span>
-            <h2 className="section-title">
-              Three countries. <span style={solidAccent}>Five studios.</span>
-            </h2>
-            <p className="lead" style={{ maxWidth: "34rem", marginTop: "1.4rem" }}>
-              Our flagship program runs in five studios across three
-              countries.
-            </p>
-            <div className="studios-list">
-              {STUDIOS.map((s) => (
-                <Link
-                  key={s.slug}
-                  to={`/studios/${s.slug}`}
-                  className="studio-row"
-                  aria-label={`54D ${s.city} transformation program`}
-                >
-                  <span className="studio-city">{s.city}</span>
-                  <span className="studio-country">{s.country}</span>
-                  {/* Sin verbos de carrito en contexto Studios (rule 5) */}
-                  <span className="studio-cta">Explore →</span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ============ CTA FINAL ============ */}
-      <section className="section">
-        <div className="section-inner" ref={cta.ref}>
-          <div className={`final-wrap ${cta.className}`}>
-            {/* Fondo: pelotón de frente por el pasillo oscuro (hd2) bajo un
-                velo negro 78% — la foto empuja, el texto manda. */}
-            <img
-              src={asset("images/hd2/spare-class-jump.jpg")}
-              alt="A full 54D class jumping in unison at the peak of a session"
-              loading="lazy"
-              style={{
-                position: "absolute",
-                inset: 0,
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                objectPosition: "center 42%",
-                filter: "saturate(0.85) contrast(1.05)",
-                zIndex: 0,
-              }}
-            />
-            <div
-              aria-hidden="true"
-              style={{
-                position: "absolute",
-                inset: 0,
-                background:
-                  "linear-gradient(180deg, rgba(7,7,7,0.78) 0%, rgba(7,7,7,0.78) 100%)",
-                zIndex: 0,
-              }}
-            />
-            <div style={{ position: "relative", zIndex: 1 }}>
-              <h2 className="final-title">
-                Day 1 <span style={solidAccent}>is today.</span>
-              </h2>
-              {/* Dos puertas chicas, misma separacion que el chooser */}
-              <div className="hero-ctas">
-                <Link to="/pricing" className="btn btn-primary">
-                  Start ON free
-                </Link>
-                <Link to="/studios" className="btn btn-ghost">
-                  Request a Studios consultation
-                </Link>
-              </div>
-            </div>
           </div>
         </div>
       </section>
