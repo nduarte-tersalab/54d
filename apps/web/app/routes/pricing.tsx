@@ -39,16 +39,18 @@ const PLANS_CSS = `
 
 /* §1.2 Punteos con checkmarks duros: sin circulo, sin fondo, sin pills */
 .check-list { display: grid; gap: 0.55rem; margin-top: 1.1rem; list-style: none; padding: 0; }
-.check-list li { display: flex; gap: 0.65rem; font-size: 0.95rem; line-height: 1.45; color: var(--c-mist); }
-.check-list li::before { content: '\\2713'; color: var(--c-yellow); font-weight: 700; flex: none; }
+/* li en bloque con check absoluto: el <strong> fluye INLINE con el
+   resto (el flex anterior partia lead/rest en columnas rotas) */
+.check-list li { position: relative; padding-left: 1.5rem; font-size: 0.95rem; line-height: 1.5; color: var(--c-mist); }
+.check-list li::before { content: '\\2713'; position: absolute; left: 0; top: 0; color: var(--c-yellow); font-weight: 700; }
 .check-list li strong { color: var(--c-white); font-weight: 600; }
 
 /* §3.4 Microcopy de riesgo pegado al boton */
 .btn-riskline { display: block; font-size: 0.72rem; color: var(--c-faint); text-align: center; margin-top: 0.55rem; letter-spacing: 0.02em; }
 
 /* §1.3.3 Lista de valor completa a 1.05rem en Everything included */
-.photo-grid .check-list { margin-top: 1.6rem; max-width: 36rem; }
-.photo-grid .check-list li { font-size: 1.05rem; gap: 0.75rem; }
+.photo-grid .check-list { margin-top: 1.6rem; max-width: 36rem; display: grid; gap: 0.9rem; }
+.photo-grid .check-list li { font-size: 1.05rem; padding-left: 1.7rem; }
 
 @media (min-width: 1081px) {
   /* Foto sticky mientras se escanean los 3 precios */
@@ -522,7 +524,7 @@ export default function Pricing() {
               </p>
             </div>
             {/* Split 2 columnas: la lista de valor completa (§4) vive UNA vez */}
-            <div className="photo-grid" style={{ alignItems: "center", gap: "var(--space-block)" }}>
+            <div className="photo-grid" style={{ alignItems: "start", gap: "var(--space-block)" }}>
               <ul className="check-list">
                 {MEMBERSHIP_VALUE.map((item) => (
                   <li key={item.lead}>

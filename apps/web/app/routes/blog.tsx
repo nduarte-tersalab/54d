@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router";
 import type { Route } from "./+types/blog";
 import { Nav, Footer, useReveal } from "../components/site";
+import { asset } from "../lib/asset";
 
 /* ============================================================
    /blog: Index del blog (awareness · SEO/AEO top-funnel).
@@ -44,11 +45,15 @@ interface Post {
   date: string; // display placeholder
   dateISO: string;
   readTime: string;
+  cover: string;
+  coverAlt: string;
 }
 
 const POSTS: Post[] = [
   {
     slug: "how-long-to-transform-your-body",
+    cover: "images/studios/coral-gables/jump-training-54d-wall-01.jpg",
+    coverAlt: "Athlete mid jump during plyometric training in front of the 54 mural",
     title:
       "How Long Does It Really Take to Transform Your Body? What 54 Days of Data Show",
     excerpt:
@@ -63,6 +68,8 @@ const POSTS: Post[] = [
   },
   {
     slug: "training-at-home-vs-gym",
+    cover: "images/studios/coral-gables/group-cardio-session-01.jpg",
+    coverAlt: "Group cardio session in full movement on the 54D training floor",
     title: "Training at Home vs. the Gym: What Works Better for Your Goal",
     excerpt:
       "The gym isn't mandatory, and your living room isn't a plan B. We compare results, adherence, and real cost so you choose by your goal, not the myth.",
@@ -76,6 +83,8 @@ const POSTS: Post[] = [
   },
   {
     slug: "what-to-eat-before-after-training",
+    cover: "images/studios/coral-gables/training-floor-recovery-01.jpg",
+    coverAlt: "Athletes recovering on the training floor after a 54D session",
     title:
       "What to Eat Before and After Training: A Practical Guide, No Miracle Supplements",
     excerpt:
@@ -167,8 +176,22 @@ function PostCard({ post }: { post: Post }) {
         textDecoration: "none",
         color: "inherit",
         height: "100%",
+        overflow: "hidden",
       }}
     >
+      <img
+        src={asset(post.cover)}
+        alt={post.coverAlt}
+        loading="lazy"
+        style={{
+          margin: "-1.8rem -1.6rem 1.3rem",
+          width: "calc(100% + 3.2rem)",
+          maxWidth: "none",
+          aspectRatio: "3 / 2",
+          objectFit: "cover",
+          filter: "saturate(0.85) contrast(1.05)",
+        }}
+      />
       <div
         style={{
           position: "relative",
@@ -310,6 +333,18 @@ export default function Blog() {
                   pointerEvents: "none",
                   background:
                     "radial-gradient(ellipse 55% 75% at 88% 0%, rgba(255, 210, 0, 0.10), transparent 62%)",
+                }}
+              />
+              <img
+                src={asset(featured.cover)}
+                alt={featured.coverAlt}
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  aspectRatio: "4 / 3",
+                  objectFit: "cover",
+                  borderRadius: "var(--r-media, 2px)",
+                  filter: "saturate(0.85) contrast(1.05)",
                 }}
               />
               <div style={{ position: "relative", minWidth: 0 }}>

@@ -920,19 +920,29 @@ body {
   padding: 2.2rem 1.9rem; border-radius: var(--r-card); background: var(--glass);
   border: 1px solid var(--hairline); backdrop-filter: blur(10px);
   transition: border-color var(--transition), background var(--transition), box-shadow var(--transition); }
-/* Ignición de borde + regla inferior que se dibuja (ATMOSPHERE §3.2); sin translateY */
-.pricing-card:hover { border-color: var(--line-accent-strong); }
+/* Ignición de RECUADRO COMPLETO (feedback cliente 27/07: el efecto de
+   línea inferior debía ser todo el marco): el borde entero se enciende
+   en dorado y la card gana un glow suave. Sin translateY. */
 .pricing-card::after {
   content: '';
   position: absolute;
-  left: 1.9rem; right: 1.9rem; bottom: 0;
-  height: 2px;
-  background: var(--grad-sun);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform var(--transition-slow);
+  inset: -1px;
+  border-radius: var(--r-card);
+  border: 1px solid transparent;
+  background: linear-gradient(115deg, rgba(255, 228, 92, 0.9), rgba(255, 210, 0, 0.9) 45%, rgba(232, 155, 0, 0.9)) border-box;
+  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity var(--transition-slow);
+  pointer-events: none;
 }
-.pricing-card:hover::after { transform: scaleX(1); }
+.pricing-card:hover::after { opacity: 1; }
+.pricing-card:hover {
+  background: var(--glass-hover);
+  box-shadow: 0 12px 44px rgba(255, 200, 0, 0.09);
+}
 .pricing-card:hover .pricing-price { filter: brightness(1.08); }
 /* featured se marca con borde, no con fondo (SYSTEM §2.3) */
 .pricing-card.featured { background: var(--glass); border-color: var(--line-accent-strong); }
