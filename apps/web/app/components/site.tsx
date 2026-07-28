@@ -72,6 +72,10 @@ export function Nav() {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
   const inStudios = pathname.startsWith("/studios");
+  /* Gateway (crítica de diseño): la nav no contesta la pregunta antes de
+     hacerla. En "/" queda logo + burger; la card de ON pasa a ser el único
+     objeto amarillo del fold. */
+  const isGateway = pathname === "/";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -91,7 +95,7 @@ export function Nav() {
   const close = () => setOpen(false);
 
   return (
-    <nav className={`nav${scrolled ? " scrolled" : ""}`}>
+    <nav className={`nav${scrolled ? " scrolled" : ""}${isGateway ? " nav-minimal" : ""}`}>
       <Link to="/" className="nav-logo" onClick={close} aria-label="54D home">
         <img src={asset("images/brand/logo-54d.png")} alt="54D" width={52} height={52} />
       </Link>

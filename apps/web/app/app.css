@@ -184,6 +184,9 @@ body {
   .nav-links { display: none; }
   .nav-burger { display: block; }
 }
+/* Gateway: nav reducida a logo + burger en todos los anchos */
+.nav.nav-minimal .nav-links { display: none; }
+.nav.nav-minimal .nav-burger { display: block; }
 
 /* ---------- Smart App Banner (Android + iOS no-Safari) ---------- */
 .app-banner {

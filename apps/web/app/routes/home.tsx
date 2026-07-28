@@ -27,6 +27,19 @@ const CHOOSER_CSS = `
 @media (min-width: 901px) {
   .split:has(.split-flagship) { grid-template-columns: 3fr 2fr; }
 }
+.split-flagship > img { transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1); }
+.split-flagship:hover > img { transform: scale(1.045); }
+/* Mobile: la decision completa en el fold (critica H1). Dieta del chooser. */
+@media (max-width: 820px) {
+  .hero:has(#choose) { padding-top: calc(var(--app-banner-h, 0px) + 56px + 0.75rem); }
+  .split:has(.split-flagship) .split-title { font-size: 1.8rem; }
+  .split:has(.split-flagship) .split-desc {
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden; margin-top: 0.6rem; font-size: 0.95rem;
+  }
+  .split:has(.split-flagship) .split-panel { padding: 1rem 1.25rem !important; }
+  .split:has(.split-flagship) .split-footer { margin-top: 0.8rem; }
+}
 /* Gateway de un solo screen: internos de puerta compactos */
 .split:has(.split-flagship) .split-footer { margin-top: 1.2rem; }
 .split:has(.split-flagship) .split-desc { margin-top: 0.9rem; }
@@ -47,6 +60,7 @@ export default function Home() {
               {/* Desktop: video. Mobile: foto vertical (clase .hero-media-mobile). */}
               <video
                 className="hero-media-desktop"
+                style={{ objectPosition: "center 24%" }}
                 autoPlay
                 muted
                 loop
@@ -106,7 +120,7 @@ export default function Home() {
             alt="54D"
             fetchPriority="high"
             style={{
-              width: "clamp(130px, 13.5vw, 180px)",
+              width: "clamp(88px, 11.5vw, 156px)",
               height: "auto",
               filter: "drop-shadow(0 8px 44px rgba(0,0,0,0.55))",
             }}
@@ -116,10 +130,27 @@ export default function Home() {
           Studios primero y con mas peso (3fr, CHOOSER_CSS): flagship por
           aplicacion, sin precio ni trial en su panel. ON con su precio y
           su trial: son productos distintos, hasta la app es distinta. */}
-      <section className="split" id="choose" style={{ position: "relative", zIndex: 2, width: "100%", marginTop: "clamp(0.8rem, 1.4vh, 1.2rem)" }}>
+      <p
+        style={{
+          position: "relative",
+          zIndex: 2,
+          textAlign: "center",
+          fontFamily: "var(--font-label)",
+          fontWeight: 700,
+          fontSize: "0.72rem",
+          letterSpacing: "var(--track-eyebrow, 0.22em)",
+          textTransform: "uppercase",
+          color: "var(--c-mist)",
+          textShadow: "0 1px 18px rgba(7,7,7,0.9)",
+          marginBottom: "0.6rem",
+        }}
+      >
+        One method. Two very different ways to live it.
+      </p>
+      <section className="split" id="choose" style={{ position: "relative", zIndex: 2, width: "100%", marginTop: "clamp(0.5rem, 1vh, 0.8rem)" }}>
         <div className="split-panel split-studios split-flagship" style={{ minHeight: 0, padding: "clamp(1.6rem, 2.8vh, 2.6rem) clamp(1.6rem, 2.5vw, 2.8rem)" }}>
           <img
-            src={asset("images/studios/coral-gables/class-mural-wide.jpg")}
+            src={asset("images/hd/cg-gym-wide.jpg")}
             alt=""
             loading="lazy"
             style={{
@@ -128,7 +159,7 @@ export default function Home() {
               width: "100%",
               height: "100%",
               objectFit: "cover",
-              filter: "saturate(0.82) contrast(1.05)",
+              filter: "saturate(0.8) contrast(1.06) brightness(0.94)",
             }}
           />
           <div
@@ -137,7 +168,7 @@ export default function Home() {
               position: "absolute",
               inset: 0,
               background:
-                "linear-gradient(180deg, rgba(7,7,7,0.62) 0%, rgba(7,7,7,0.88) 100%)",
+                "linear-gradient(90deg, rgba(7,7,7,0.92) 0%, rgba(7,7,7,0.55) 45%, rgba(7,7,7,0.15) 100%)",
             }}
           />
           <div style={{ position: "relative", zIndex: 1 }}>
@@ -145,21 +176,24 @@ export default function Home() {
             {/* h2: primer heading tras el h1 del hero (outline sin saltos) */}
             <h2 className="split-title">54D Studios</h2>
             <p className="split-desc">
-              The complete method, in person, with a dedicated team of
-              coaches, a nutritionist, and a physiotherapist. Admission by
-              Generation: one start date, limited places.
+              The complete method, in person. Coaches, nutrition,
+              physiotherapy. One Generation: one start date, limited places.
             </p>
           </div>
           <div className="split-footer" style={{ position: "relative", zIndex: 1 }}>
-            <Link to="/studios" className="btn btn-ghost">
-              Request a consultation
+            <Link
+              to="/studios"
+              className="btn btn-ghost"
+              style={{ borderColor: "rgba(255,255,255,0.85)" }}
+            >
+              Apply for admission
             </Link>
             <span className="split-price">
               By application · Limited places per Generation
             </span>
           </div>
         </div>
-        <div className="split-panel split-on" style={{ minHeight: 0, padding: "clamp(1.6rem, 2.8vh, 2.6rem) clamp(1.6rem, 2.5vw, 2.8rem)" }}>
+        <div className="split-panel split-on" style={{ background: "var(--c-yellow)", minHeight: 0, padding: "clamp(1.6rem, 2.8vh, 2.6rem) clamp(1.6rem, 2.5vw, 2.8rem)" }}>
           <div>
             <span className="split-label">Online, wherever you are</span>
             <h2 className="split-title">54D ON</h2>

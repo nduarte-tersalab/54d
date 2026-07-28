@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router";
 import { asset } from "../lib/asset";
 
 /* ============================================================
@@ -19,6 +20,9 @@ const BANNER_H = "56px";
 
 export function SmartAppBanner() {
   const [platform, setPlatform] = useState<"android" | "ios" | null>(null);
+  /* En el gateway no: la decisión ON/Studios va primero (crítica de diseño);
+     el banner aparece al navegar a cualquier otra página. */
+  const { pathname } = useLocation();
 
   useEffect(() => {
     if (localStorage.getItem(DISMISS_KEY)) return;
@@ -39,7 +43,7 @@ export function SmartAppBanner() {
     };
   }, [platform]);
 
-  if (!platform) return null;
+  if (!platform || pathname === "/") return null;
 
   const dismiss = () => {
     localStorage.setItem(DISMISS_KEY, "1");
