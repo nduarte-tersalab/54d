@@ -111,21 +111,6 @@ export default function Home() {
               filter: "drop-shadow(0 8px 44px rgba(0,0,0,0.55))",
             }}
           />
-          {/* Prensa real (del sitio live): social proof tipográfico, sin logos ajenos */}
-          <p
-            style={{
-              marginTop: "0.8rem",
-              fontFamily: "var(--font-label)",
-              fontWeight: 700,
-              fontSize: "0.66rem",
-              letterSpacing: "var(--track-eyebrow, 0.22em)",
-              textTransform: "uppercase",
-              color: "var(--c-mist)",
-              textShadow: "0 1px 18px rgba(7,7,7,0.9)",
-            }}
-          >
-            Featured on Men's Health · Forbes · Business Insider · New York Post · Haute Living
-          </p>
         </div>
       {/* ============ EL CHOOSER: dos puertas NO equivalentes ============
           Studios primero y con mas peso (3fr, CHOOSER_CSS): flagship por
@@ -193,6 +178,54 @@ export default function Home() {
         </div>
       </section>
       </header>
+
+      {/* ============ PRENSA (logos blancos del CDN del cliente) ============ */}
+      <section
+        aria-label="Featured on"
+        style={{
+          padding: "clamp(1.8rem, 4vh, 3rem) var(--gutter)",
+          borderBottom: "1px solid var(--hairline)",
+        }}
+      >
+        <div
+          className="section-inner"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "clamp(1.4rem, 3.5vw, 3.2rem)",
+            flexWrap: "wrap",
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "var(--font-label)",
+              fontWeight: 700,
+              fontSize: "0.64rem",
+              letterSpacing: "var(--track-eyebrow, 0.22em)",
+              textTransform: "uppercase",
+              color: "var(--c-faint)",
+            }}
+          >
+            Featured on
+          </span>
+          {[
+            ["mens-health.png", "Men's Health", 20],
+            ["forbes.png", "Forbes", 22],
+            ["business-insider.png", "Business Insider", 17],
+            ["new-york-post.png", "New York Post", 19],
+            ["haute-living.png", "Haute Living", 16],
+          ].map(([file, name, h]) => (
+            <img
+              key={file as string}
+              src={asset(`images/press/${file}`)}
+              alt={name as string}
+              loading="lazy"
+              style={{ height: h as number, width: "auto", opacity: 0.62 }}
+            />
+          ))}
+        </div>
+      </section>
 
 
       {/* ============ FOOTER ============ */}
