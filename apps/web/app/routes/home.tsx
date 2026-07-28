@@ -40,6 +40,16 @@ const CHOOSER_CSS = `
   .split:has(.split-flagship) .split-panel { padding: 1rem 1.25rem !important; }
   .split:has(.split-flagship) .split-footer { margin-top: 0.8rem; }
 }
+/* Media-on-media resuelto: el video ocupa solo la zona alta del gateway
+   y se funde a negro ANTES de las puertas. La foto de Studios ya no
+   compite con un fondo en movimiento. */
+.hero:has(#choose) .hero-media { height: 58%; }
+@media (min-width: 821px) { .press-below { display: none; } }
+@media (max-width: 820px) { .press-inhero { display: none; } }
+.hero:has(#choose) .hero-media::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 46%;
+  background: linear-gradient(180deg, rgba(7,7,7,0) 0%, rgba(7,7,7,0.5) 45%, #070707 100%);
+}
 /* Gateway de un solo screen: internos de puerta compactos */
 .split:has(.split-flagship) .split-footer { margin-top: 1.2rem; }
 .split:has(.split-flagship) .split-desc { margin-top: 0.9rem; }
@@ -211,11 +221,64 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+        {/* Prensa dentro del fold (desktop): label arriba de los logos */}
+        <div
+          className="press-inhero"
+          style={{
+            position: "relative",
+            zIndex: 2,
+            marginTop: "clamp(0.8rem, 1.6vh, 1.3rem)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "0.55rem",
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "var(--font-label)",
+              fontWeight: 700,
+              fontSize: "0.6rem",
+              letterSpacing: "var(--track-eyebrow, 0.22em)",
+              textTransform: "uppercase",
+              color: "var(--c-faint)",
+            }}
+          >
+            Featured on
+          </span>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "clamp(1.2rem, 2.6vw, 2.6rem)",
+              flexWrap: "wrap",
+            }}
+          >
+            {[
+              ["mens-health.png", "Men's Health", 16],
+              ["forbes.png", "Forbes", 18],
+              ["business-insider.png", "Business Insider", 14],
+              ["new-york-post.png", "New York Post", 15],
+              ["haute-living.png", "Haute Living", 13],
+            ].map(([file, name, h]) => (
+              <img
+                key={file as string}
+                src={asset(`images/press/${file}`)}
+                alt={name as string}
+                loading="lazy"
+                style={{ height: h as number, width: "auto", opacity: 0.58 }}
+              />
+            ))}
+          </div>
+        </div>
       </header>
 
       {/* ============ PRENSA (logos blancos del CDN del cliente) ============ */}
       <section
         aria-label="Featured on"
+        className="press-below"
         style={{
           padding: "clamp(1.8rem, 4vh, 3rem) var(--gutter)",
           borderBottom: "1px solid var(--hairline)",
