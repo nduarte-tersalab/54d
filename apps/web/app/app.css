@@ -291,12 +291,11 @@ body {
   padding-top: var(--hero-pad-top);
 }
 .hero-media { position: absolute; inset: 0; z-index: 0; }
-/* Video de hero solo en desktop; mobile ve la foto vertical */
+/* Video de hero en todos los breakpoints (pedido cliente 29/07);
+   poster + preload metadata amortiguan datos móviles */
+.hero-media-video { display: block; }
 .hero-media-mobile { display: none; }
-@media (max-width: 640px) {
-  .hero-media-desktop { display: none; }
-  .hero-media-mobile { display: block; }
-}
+.hero-media-desktop { display: block; }
 .hero-media video, .hero-media img {
   width: 100%; height: 100%;
   object-fit: cover;

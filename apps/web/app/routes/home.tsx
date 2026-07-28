@@ -45,6 +45,9 @@ const CHOOSER_CSS = `
   content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 46%;
   background: linear-gradient(180deg, rgba(7,7,7,0) 0%, rgba(7,7,7,0.5) 45%, #070707 100%);
 }
+/* Gateway de un solo screen: el padding de seccion de .split cede 15px
+   por lado para que el aire nuevo bajo la prensa quepa en 100svh */
+.hero .split { padding-block: calc(var(--space-section) - 15px); }
 /* Gateway de un solo screen: internos de puerta compactos */
 .split:has(.split-flagship) .split-footer { margin-top: 1.2rem; }
 .split:has(.split-flagship) .split-desc { margin-top: 0.9rem; }
@@ -55,55 +58,48 @@ export default function Home() {
   return (
     <div>
       <style dangerouslySetInnerHTML={{ __html: CHOOSER_CSS }} />
-      {/* Gate puro (crítica r2): cero cromo. Un solo utilitario: LOG IN. */}
-      <a
-        href="https://selector.54d.com/login-page/"
-        target="_blank"
-        rel="noreferrer"
-        style={{
-          position: "fixed",
-          top: "18px",
-          right: "clamp(1.25rem, 4vw, 3.5rem)",
-          zIndex: 110,
-          fontFamily: "var(--font-label)",
-          fontWeight: 700,
-          fontSize: "11px",
-          letterSpacing: "0.12em",
-          textTransform: "uppercase",
-          color: "rgba(255,255,255,0.55)",
-          textDecoration: "none",
-          padding: "12px",
-          margin: "-12px",
-        }}
-      >
-        Log in
-      </a>
 
       {/* ============ HERO ============ */}
-      <header className="hero" style={{ minHeight: "100svh", display: "flex", flexDirection: "column", justifyContent: "flex-end", paddingBottom: "clamp(0.75rem, 1.2vh, 1rem)" }}>
+      <header className="hero" style={{ minHeight: "100svh", display: "flex", flexDirection: "column", justifyContent: "flex-end", paddingBottom: "clamp(2rem, 3.6vh, 3.25rem)" }}>
         <div className="hero-media">
+          {/* Video en todos los breakpoints (pedido cliente); poster +
+              preload=metadata cuidan datos móviles hasta que arranca. */}
           {HERO_VIDEO_URL ? (
-            <>
-              {/* Desktop: video. Mobile: foto vertical (clase .hero-media-mobile). */}
-              <video
-                className="hero-media-desktop"
-                style={{ objectPosition: "center 24%" }}
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="metadata"
-                poster={HERO_POSTER_URL ?? undefined}
-              >
-                <source src={HERO_VIDEO_URL} type="video/mp4" />
-              </video>
-              <img
-                className="hero-media-mobile"
-                src={asset("images/hd/cg-runner-vertical.jpg")}
-                alt="Runner climbing the yellow stairs at a 54D studio"
-                fetchPriority="high"
-              />
-            </>
+            <video
+              className="hero-media-video"
+              style={{ objectPosition: "center 24%" }}
+              /* React no serializa `muted` en el SSR, asi que Chrome evalua el
+                 autoplay como video "con sonido" y lo bloquea; ademas el primer
+                 play() puede abortarse durante la hidratacion. Forzar por
+                 propiedad y reintentar hasta que arranque. */
+              ref={(el) => {
+                if (!el) return;
+                el.muted = true;
+                let tries = 0;
+                const kick = () => {
+                  if (!el.paused || tries++ > 8) return;
+                  el.play().catch(() => setTimeout(kick, 350));
+                };
+                kick();
+                /* Donde el autoplay este duro-bloqueado (iOS Low Power Mode,
+                   Data Saver): el primer toque en la pagina lo arranca */
+                const onTouch = () => {
+                  if (el.isConnected && el.paused) el.play().catch(() => {});
+                };
+                document.addEventListener("pointerdown", onTouch, {
+                  once: true,
+                  passive: true,
+                });
+              }}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              poster={HERO_POSTER_URL ?? undefined}
+            >
+              <source src={HERO_VIDEO_URL} type="video/mp4" />
+            </video>
           ) : (
             <picture>
               <source
@@ -368,7 +364,7 @@ export default function Home() {
         aria-label="Featured on"
         className="press-below"
         style={{
-          padding: "40px var(--gutter) 44px",
+          padding: "40px var(--gutter) 64px",
           borderBottom: "1px solid var(--hairline)",
         }}
       >
