@@ -271,8 +271,7 @@ export default function Home() {
               style={{ maxWidth: "36ch", marginInline: "auto", textWrap: "balance" }}
             >
               The 54-day digital program in the 54D On app: daily training,
-              your nutrition protocol, and a real coach in your corner. From
-              $54 a month.
+              your nutrition protocol, and a real coach in your corner.
             </p>
             <div style={{ marginTop: "1.4rem" }}>
               <Link
