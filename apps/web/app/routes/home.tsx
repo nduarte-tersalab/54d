@@ -27,6 +27,9 @@ const CHOOSER_CSS = `
 @media (min-width: 901px) {
   .split:has(.split-flagship) { grid-template-columns: 3fr 2fr; }
 }
+/* Gateway de un solo screen: internos de puerta compactos */
+.split:has(.split-flagship) .split-footer { margin-top: 1.2rem; }
+.split:has(.split-flagship) .split-desc { margin-top: 0.9rem; }
 `;
 
 export default function Home() {
@@ -37,7 +40,7 @@ export default function Home() {
       <Nav />
 
       {/* ============ HERO ============ */}
-      <header className="hero" style={{ minHeight: "100svh", display: "flex", flexDirection: "column", justifyContent: "flex-end", paddingBottom: "clamp(1.25rem, 3vh, 2.5rem)" }}>
+      <header className="hero" style={{ minHeight: "100svh", display: "flex", flexDirection: "column", justifyContent: "flex-end", paddingBottom: "clamp(1rem, 1.8vh, 1.5rem)" }}>
         <div className="hero-media">
           {HERO_VIDEO_URL ? (
             <>
@@ -75,18 +78,60 @@ export default function Home() {
           )}
         </div>
         <div className="hero-veil" />
-        <div className="hero-content" style={{ marginBottom: 0 }}>
-          <h1 className="hero-title" style={{ fontSize: "clamp(1.9rem, 4.6vw, 4.4rem)" }}>
-            54 days.
-            <br />
-            <span className="accent">One transformation.</span>
+        <div
+          className="hero-content"
+          style={{
+            marginBottom: 0,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            textAlign: "center",
+          }}
+        >
+          {/* Brand-first como el sitio live del cliente: el logo ES el titular.
+              h1 oculto para SEO/a11y. */}
+          <h1
+            style={{
+              position: "absolute",
+              width: 1,
+              height: 1,
+              overflow: "hidden",
+              clipPath: "inset(50%)",
+            }}
+          >
+            54D. 54 days. One transformation.
           </h1>
+          <img
+            src={asset("images/brand/logo-54d.png")}
+            alt="54D"
+            fetchPriority="high"
+            style={{
+              width: "clamp(130px, 13.5vw, 180px)",
+              height: "auto",
+              filter: "drop-shadow(0 8px 44px rgba(0,0,0,0.55))",
+            }}
+          />
+          {/* Prensa real (del sitio live): social proof tipográfico, sin logos ajenos */}
+          <p
+            style={{
+              marginTop: "0.8rem",
+              fontFamily: "var(--font-label)",
+              fontWeight: 700,
+              fontSize: "0.66rem",
+              letterSpacing: "var(--track-eyebrow, 0.22em)",
+              textTransform: "uppercase",
+              color: "var(--c-mist)",
+              textShadow: "0 1px 18px rgba(7,7,7,0.9)",
+            }}
+          >
+            Featured on Men's Health · Forbes · Business Insider · New York Post · Haute Living
+          </p>
         </div>
       {/* ============ EL CHOOSER: dos puertas NO equivalentes ============
           Studios primero y con mas peso (3fr, CHOOSER_CSS): flagship por
           aplicacion, sin precio ni trial en su panel. ON con su precio y
           su trial: son productos distintos, hasta la app es distinta. */}
-      <section className="split" id="choose" style={{ position: "relative", zIndex: 2, width: "100%", marginTop: "clamp(1rem, 2vh, 1.6rem)" }}>
+      <section className="split" id="choose" style={{ position: "relative", zIndex: 2, width: "100%", marginTop: "clamp(0.8rem, 1.4vh, 1.2rem)" }}>
         <div className="split-panel split-studios split-flagship" style={{ minHeight: 0, padding: "clamp(1.6rem, 2.8vh, 2.6rem) clamp(1.6rem, 2.5vw, 2.8rem)" }}>
           <img
             src={asset("images/studios/coral-gables/class-mural-wide.jpg")}
@@ -117,8 +162,7 @@ export default function Home() {
             <p className="split-desc">
               The complete method, in person, with a dedicated team of
               coaches, a nutritionist, and a physiotherapist. Admission by
-              Generation: one start date, limited places. Miami, Mexico
-              City, Bogotá.
+              Generation: one start date, limited places.
             </p>
           </div>
           <div className="split-footer" style={{ position: "relative", zIndex: 1 }}>
