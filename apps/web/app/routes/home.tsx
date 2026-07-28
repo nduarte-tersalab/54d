@@ -28,6 +28,13 @@ const CHOOSER_CSS = `
 }
 .split-flagship > img { transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1); }
 .split-flagship:hover > img { transform: scale(1.045); }
+/* Mobile apilado: la foto propia de Studios recortaba el video de fondo
+   (feedback cliente). La puerta queda transparente y el video pasa a
+   traves; un velo suave sostiene la legibilidad sobre el movimiento. */
+@media (max-width: 900px) {
+  .split-flagship { background: rgba(7, 7, 7, 0.30); box-shadow: none; }
+  .split-flagship > img, .split-flagship .flagship-scrim { display: none; }
+}
 /* Mobile: sin cromo el fold gana ~120px; copy COMPLETO, jamas truncado. */
 @media (max-width: 820px) {
   .hero:has(#choose) { padding-top: 3.5rem; }
@@ -200,6 +207,7 @@ export default function Home() {
           />
           <div
             aria-hidden="true"
+            className="flagship-scrim"
             style={{
               position: "absolute",
               inset: 0,
