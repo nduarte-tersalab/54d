@@ -1,6 +1,5 @@
 import { Link } from "react-router";
 import type { Route } from "./+types/home";
-import { Nav, Footer } from "../components/site";
 import { asset } from "../lib/asset";
 
 export function meta({}: Route.MetaArgs) {
@@ -29,16 +28,12 @@ const CHOOSER_CSS = `
 }
 .split-flagship > img { transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1); }
 .split-flagship:hover > img { transform: scale(1.045); }
-/* Mobile: la decision completa en el fold (critica H1). Dieta del chooser. */
+/* Mobile: sin cromo el fold gana ~120px; copy COMPLETO, jamas truncado. */
 @media (max-width: 820px) {
-  .hero:has(#choose) { padding-top: calc(var(--app-banner-h, 0px) + 56px + 0.75rem); }
-  .split:has(.split-flagship) .split-title { font-size: 1.8rem; }
-  .split:has(.split-flagship) .split-desc {
-    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-    overflow: hidden; margin-top: 0.6rem; font-size: 0.95rem;
-  }
-  .split:has(.split-flagship) .split-panel { padding: 1rem 1.25rem !important; }
-  .split:has(.split-flagship) .split-footer { margin-top: 0.8rem; }
+  .hero:has(#choose) { padding-top: 3.5rem; }
+  .split:has(.split-flagship) .split-title { font-size: 1.9rem; }
+  .split:has(.split-flagship) .split-desc { margin-top: 0.6rem; font-size: 0.95rem; }
+  .bridge-line { max-width: 30ch; margin-inline: auto; font-size: 12px !important; letter-spacing: 0.18em !important; }
 }
 /* Media-on-media resuelto: el video ocupa solo la zona alta del gateway
    y se funde a negro ANTES de las puertas. La foto de Studios ya no
@@ -60,10 +55,32 @@ export default function Home() {
   return (
     <div>
       <style dangerouslySetInnerHTML={{ __html: CHOOSER_CSS }} />
-      <Nav />
+      {/* Gate puro (crítica r2): cero cromo. Un solo utilitario: LOG IN. */}
+      <a
+        href="https://selector.54d.com/login-page/"
+        target="_blank"
+        rel="noreferrer"
+        style={{
+          position: "fixed",
+          top: "18px",
+          right: "clamp(1.25rem, 4vw, 3.5rem)",
+          zIndex: 110,
+          fontFamily: "var(--font-label)",
+          fontWeight: 700,
+          fontSize: "11px",
+          letterSpacing: "0.12em",
+          textTransform: "uppercase",
+          color: "rgba(255,255,255,0.55)",
+          textDecoration: "none",
+          padding: "12px",
+          margin: "-12px",
+        }}
+      >
+        Log in
+      </a>
 
       {/* ============ HERO ============ */}
-      <header className="hero" style={{ minHeight: "100svh", display: "flex", flexDirection: "column", justifyContent: "flex-end", paddingBottom: "clamp(1rem, 1.8vh, 1.5rem)" }}>
+      <header className="hero" style={{ minHeight: "100svh", display: "flex", flexDirection: "column", justifyContent: "flex-end", paddingBottom: "clamp(0.75rem, 1.2vh, 1rem)" }}>
         <div className="hero-media">
           {HERO_VIDEO_URL ? (
             <>
@@ -130,16 +147,17 @@ export default function Home() {
             alt="54D"
             fetchPriority="high"
             style={{
-              width: "clamp(88px, 11.5vw, 156px)",
+              width: "clamp(84px, 10vw, 136px)",
               height: "auto",
               filter: "drop-shadow(0 8px 44px rgba(0,0,0,0.55))",
             }}
           />
         </div>
       {/* ============ EL CHOOSER: dos puertas NO equivalentes ============
-          Studios primero y con mas peso (3fr, CHOOSER_CSS): flagship por
-          aplicacion, sin precio ni trial en su panel. ON con su precio y
-          su trial: son productos distintos, hasta la app es distinta. */}
+          Crítica ronda 2: interiores CENTRADOS en ambos paneles (la espina
+          de la página es central), microcopy DEBAJO del CTA, CTAs en
+          paridad de tamaño, copy con ancho tope y text-wrap balance.
+          Studios 3fr flagship / ON 2fr: la asimetría es jerarquía. */}
       <p
         style={{
           position: "relative",
@@ -152,15 +170,27 @@ export default function Home() {
           textTransform: "uppercase",
           color: "var(--c-mist)",
           textShadow: "0 1px 18px rgba(7,7,7,0.9)",
-          marginBottom: "0.6rem",
+          marginBottom: "0.4rem",
         }}
+        className="bridge-line"
       >
         One method. Two very different ways to live it.
       </p>
-      <section className="split" id="choose" style={{ position: "relative", zIndex: 2, width: "100%", marginTop: "clamp(0.5rem, 1vh, 0.8rem)" }}>
-        <div className="split-panel split-studios split-flagship" style={{ minHeight: 0, padding: "clamp(1.6rem, 2.8vh, 2.6rem) clamp(1.6rem, 2.5vw, 2.8rem)" }}>
+      <section className="split" id="choose" style={{ position: "relative", zIndex: 2, width: "100%", marginTop: "clamp(0.8rem, 1.4vh, 1.2rem)" }}>
+        <div
+          className="split-panel split-studios split-flagship"
+          style={{
+            minHeight: "315px",
+            padding: "clamp(1.8rem, 3.8vh, 2.8rem) clamp(1.5rem, 3vw, 3.5rem)",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            textAlign: "center",
+          }}
+        >
           <img
-            src={asset("images/hd/cg-gym-wide.jpg")}
+            src={asset("images/brand/gym-structure-heavy-bags-wide.jpg")}
             alt=""
             loading="lazy"
             style={{
@@ -169,7 +199,7 @@ export default function Home() {
               width: "100%",
               height: "100%",
               objectFit: "cover",
-              filter: "saturate(0.8) contrast(1.06) brightness(0.94)",
+              filter: "saturate(0.55) brightness(0.82) contrast(1.05)",
             }}
           />
           <div
@@ -178,46 +208,104 @@ export default function Home() {
               position: "absolute",
               inset: 0,
               background:
-                "linear-gradient(90deg, rgba(7,7,7,0.92) 0%, rgba(7,7,7,0.55) 45%, rgba(7,7,7,0.15) 100%)",
+                "linear-gradient(180deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.35) 45%, rgba(0,0,0,0.72) 100%)",
             }}
           />
           <div style={{ position: "relative", zIndex: 1 }}>
             <span className="split-label">The flagship experience</span>
-            {/* h2: primer heading tras el h1 del hero (outline sin saltos) */}
-            <h2 className="split-title">54D Studios</h2>
-            <p className="split-desc">
+            <h2 className="split-title" style={{ textWrap: "balance" }}>54D Studios</h2>
+            <p
+              className="split-desc"
+              style={{ maxWidth: "42ch", marginInline: "auto", textWrap: "balance" }}
+            >
               The complete method, in person. Coaches, nutrition,
               physiotherapy. One Generation: one start date, limited places.
             </p>
-          </div>
-          <div className="split-footer" style={{ position: "relative", zIndex: 1 }}>
-            <Link
-              to="/studios"
-              className="btn btn-ghost"
-              style={{ borderColor: "rgba(255,255,255,0.85)" }}
-            >
-              Apply for admission
-            </Link>
-            <span className="split-price">
-              By application · Limited places per Generation
-            </span>
+            <div style={{ marginTop: "1.4rem" }}>
+              <Link
+                to="/studios"
+                className="btn btn-ghost"
+                style={{
+                  height: "56px",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  padding: "0 2.2rem",
+                  fontSize: "0.875rem",
+                  letterSpacing: "0.12em",
+                  background: "rgba(0,0,0,0.35)",
+                  backdropFilter: "blur(6px)",
+                  border: "1px solid rgba(255,255,255,0.85)",
+                }}
+              >
+                Apply for admission
+              </Link>
+              <span
+                style={{
+                  display: "block",
+                  marginTop: "14px",
+                  fontSize: "12px",
+                  fontWeight: 500,
+                  letterSpacing: "0.06em",
+                  color: "rgba(255,255,255,0.65)",
+                }}
+              >
+                By application · Limited places per Generation
+              </span>
+            </div>
           </div>
         </div>
-        <div className="split-panel split-on" style={{ background: "var(--c-yellow)", minHeight: 0, padding: "clamp(1.6rem, 2.8vh, 2.6rem) clamp(1.6rem, 2.5vw, 2.8rem)" }}>
+        <div
+          className="split-panel split-on"
+          style={{
+            background: "var(--c-yellow)",
+            minHeight: "315px",
+            padding: "clamp(1.8rem, 3.8vh, 2.8rem) clamp(1.5rem, 3vw, 3rem)",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            textAlign: "center",
+          }}
+        >
           <div>
             <span className="split-label">Online, wherever you are</span>
-            <h2 className="split-title">54D ON</h2>
-            <p className="split-desc">
+            <h2 className="split-title" style={{ textWrap: "balance" }}>54D ON</h2>
+            <p
+              className="split-desc"
+              style={{ maxWidth: "36ch", marginInline: "auto", textWrap: "balance" }}
+            >
               The 54-day digital program in the 54D On app: daily training,
               your nutrition protocol, and a real coach in your corner. From
               $54 a month.
             </p>
-          </div>
-          <div className="split-footer">
-            <Link to="/pricing" className="btn btn-on">
-              Start free. 7 days.
-            </Link>
-            <span className="split-price">Cancel anytime</span>
+            <div style={{ marginTop: "1.4rem" }}>
+              <Link
+                to="/pricing"
+                className="btn btn-on"
+                style={{
+                  height: "56px",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  padding: "0 2.2rem",
+                  fontSize: "0.875rem",
+                  letterSpacing: "0.12em",
+                }}
+              >
+                Start free. 7 days.
+              </Link>
+              <span
+                style={{
+                  display: "block",
+                  marginTop: "14px",
+                  fontSize: "12px",
+                  fontWeight: 500,
+                  letterSpacing: "0.06em",
+                  color: "rgba(0,0,0,0.65)",
+                }}
+              >
+                Cancel anytime
+              </span>
+            </div>
           </div>
         </div>
       </section>
@@ -228,11 +316,11 @@ export default function Home() {
           style={{
             position: "relative",
             zIndex: 2,
-            marginTop: "clamp(0.8rem, 1.6vh, 1.3rem)",
+            marginTop: "clamp(0.6rem, 1.2vh, 1rem)",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            gap: "0.55rem",
+            gap: "0.5rem",
           }}
         >
           <span
@@ -280,7 +368,7 @@ export default function Home() {
         aria-label="Featured on"
         className="press-below"
         style={{
-          padding: "clamp(1.8rem, 4vh, 3rem) var(--gutter)",
+          padding: "40px var(--gutter) 44px",
           borderBottom: "1px solid var(--hairline)",
         }}
       >
@@ -325,8 +413,18 @@ export default function Home() {
       </section>
 
 
-      {/* ============ FOOTER ============ */}
-      <Footer />
+      {/* Microlínea legal (Meta Ads exige privacy accesible; el footer completo no vuelve) */}
+      <p
+        style={{
+          textAlign: "center",
+          padding: "0 var(--gutter) 16px",
+          fontSize: "10px",
+          letterSpacing: "0.08em",
+          color: "rgba(255,255,255,0.35)",
+        }}
+      >
+        © 2026 54D · <Link to="/privacy" style={{ color: "inherit" }}>Privacy</Link> · <Link to="/terms" style={{ color: "inherit" }}>Terms</Link>
+      </p>
     </div>
   );
 }
