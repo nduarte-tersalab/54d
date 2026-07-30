@@ -119,10 +119,18 @@ body {
 /* ---------- Nav (barra sólida full-width, ART_DIRECTION_V3 §1) ---------- */
 .nav {
   position: fixed; top: var(--app-banner-h, 0px); left: 0; right: 0; z-index: 100;
-  display: flex; align-items: center; justify-content: space-between;
-  height: var(--nav-h); padding: 0 var(--gutter);
+  height: var(--nav-h);
   background: transparent; border-bottom: 1px solid transparent;
   transition: background var(--transition), border-color var(--transition);
+}
+/* El interior de la nav pisa la MISMA grilla que las secciones (container
+   + gutter compensado): el logo alinea con el contenido en todo ancho */
+.nav-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 100%;
+  padding: 0 var(--gutter);
+  max-width: calc(var(--container) + 2 * var(--gutter));
+  margin: 0 auto;
 }
 .nav.scrolled { background: var(--c-black); border-bottom-color: var(--hairline); }
 .nav-logo {

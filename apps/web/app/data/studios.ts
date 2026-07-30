@@ -3,8 +3,9 @@
    5 active locations: Coral Gables, Hallandale, Mexico City
    Carso, Mexico City Santa Fe, Bogotá. NYC was removed: do
    not add it back.
-   Addresses and WhatsApp numbers are PLACEHOLDER: confirm
-   with the client before launch.
+   NAP de Coral Gables y Hallandale VERIFICADO contra sus
+   perfiles de Google Business (30/07/2026, links del cliente).
+   MX y CO siguen PLACEHOLDER: confirmar antes de publicarlos.
    Display naming (COPY_V3.md §2): "{City} · {Area}" with a
    middle dot, only when a city has more than one studio. The
    dot is display-only: never in slugs or SEO titles.
@@ -18,12 +19,19 @@ export interface Studio {
   city: string;
   country: string;
   countryCode: CountryCode;
-  /** PLACEHOLDER: address pending client confirmation */
   address: string;
-  /** PLACEHOLDER: WhatsApp number pending client confirmation */
+  /** WhatsApp number: PLACEHOLDER hasta confirmar linea por sede */
   whatsapp: string;
   /** IANA timezone of the location */
   timezone: string;
+  /** Telefono publico verificado (Google Business Profile) — tel: y schema */
+  phone?: string;
+  /** Coordenadas del perfil de Google (schema GeoCoordinates) */
+  geo?: { lat: number; lng: number };
+  /** Link corto oficial de Google Maps (schema hasMap + CTA directions) */
+  mapsUrl?: string;
+  /** true solo cuando dirección y teléfono salieron del GBP real */
+  napVerified?: boolean;
 }
 
 export const STUDIOS: Studio[] = [
@@ -32,18 +40,26 @@ export const STUDIOS: Studio[] = [
     city: "Coral Gables",
     country: "United States",
     countryCode: "US",
-    address: "2222 Ponce de Leon Blvd, Coral Gables, FL 33134", // PLACEHOLDER
-    whatsapp: "+1 305 555 0154", // PLACEHOLDER
+    address: "4210 Ponce de Leon Blvd, Coral Gables, FL 33146",
+    whatsapp: "+1 305 555 0154", // PLACEHOLDER: confirmar linea WhatsApp
     timezone: "America/New_York",
+    phone: "+1 786-817-7008",
+    geo: { lat: 25.7327988, lng: -80.2587469 },
+    mapsUrl: "https://maps.app.goo.gl/b2uZ1n7XQJv75em86",
+    napVerified: true,
   },
   {
     slug: "hallandale",
     city: "Hallandale",
     country: "United States",
     countryCode: "US",
-    address: "1000 E Hallandale Beach Blvd, Hallandale Beach, FL 33009", // PLACEHOLDER
-    whatsapp: "+1 954 555 0154", // PLACEHOLDER
+    address: "601 N Federal Hwy, Hallandale Beach, FL 33009",
+    whatsapp: "+1 954 555 0154", // PLACEHOLDER: confirmar linea WhatsApp
     timezone: "America/New_York",
+    phone: "+1 786-583-4387",
+    geo: { lat: 25.9927944, lng: -80.1433381 },
+    mapsUrl: "https://maps.app.goo.gl/7y6WxPq2zHR8G473A",
+    napVerified: true,
   },
   {
     slug: "mexico-carso",

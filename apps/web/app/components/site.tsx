@@ -96,6 +96,7 @@ export function Nav() {
 
   return (
     <nav className={`nav${scrolled ? " scrolled" : ""}${isGateway ? " nav-minimal" : ""}`}>
+      <div className="nav-inner">
       <Link to="/" className="nav-logo" onClick={close} aria-label="54D home">
         <img src={asset("images/brand/logo-54d.png")} alt="54D" width={52} height={52} />
       </Link>
@@ -152,6 +153,7 @@ export function Nav() {
             {CTA_COPY}
           </Link>
         )}
+      </div>
       </div>
     </nav>
   );

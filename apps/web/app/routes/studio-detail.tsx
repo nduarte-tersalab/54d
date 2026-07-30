@@ -47,7 +47,7 @@ const LOCAL_META: Record<string, { title: string; desc: string }> = {
   },
   hallandale: {
     title: "Small Group Transformation Studio in Hallandale Beach | 54D",
-    desc: "The 54D Method between Miami and Fort Lauderdale: 54 days, fixed groups, coaches, nutrition and physio on Hallandale Beach Blvd. Apply for the next Generation.",
+    desc: "The 54D Method between Miami and Fort Lauderdale: 54 days, fixed groups, coaches, nutrition and physio at 601 N Federal Hwy. Apply for the next Generation.",
   },
   "mexico-carso": {
     title: "54 Day Transformation Program in Polanco | 54D CDMX",
@@ -97,25 +97,31 @@ const HOURS = [
 ]; // Del SCHEDULE actual (PLACEHOLDER fase 1: confirmar por sede con Mindbody)
 
 const STUDIO_SCHEMA: Record<string, object> = {
+  /* CG + Hallandale: NAP VERIFICADO contra el Google Business Profile real
+     (30/07/2026, links de Maps del cliente). Los horarios se omiten hasta
+     tener la tabla semanal completa: un schema de horas que contradice al
+     GBP resta consistencia local, no suma. */
   "coral-gables": {
     "@context": "https://schema.org", "@type": "ExerciseGym",
     name: "54D Coral Gables", url: "https://54d.com/studios/coral-gables",
-    address: { "@type": "PostalAddress", streetAddress: "2222 Ponce de Leon Blvd", // DATO_PENDIENTE
-      addressLocality: "Coral Gables", addressRegion: "FL", postalCode: "33134", addressCountry: "US" },
-    geo: { "@type": "GeoCoordinates", latitude: 25.7509, longitude: -80.2577 },
-    /* telephone: DATO_PENDIENTE — no publicar NAP falso (jurado HT fix 1) */
-    openingHoursSpecification: HOURS, priceRange: "$$$$",
+    address: { "@type": "PostalAddress", streetAddress: "4210 Ponce de Leon Blvd",
+      addressLocality: "Coral Gables", addressRegion: "FL", postalCode: "33146", addressCountry: "US" },
+    geo: { "@type": "GeoCoordinates", latitude: 25.7327988, longitude: -80.2587469 },
+    telephone: "+17868177008",
+    hasMap: "https://maps.app.goo.gl/b2uZ1n7XQJv75em86",
+    priceRange: "$$$$",
     sameAs: ["https://www.instagram.com/54d"], // DATO_PENDIENTE: handle por sede si existe
     parentOrganization: ORG,
   },
   hallandale: {
     "@context": "https://schema.org", "@type": "ExerciseGym",
     name: "54D Hallandale", url: "https://54d.com/studios/hallandale",
-    address: { "@type": "PostalAddress", streetAddress: "1000 E Hallandale Beach Blvd", // DATO_PENDIENTE
+    address: { "@type": "PostalAddress", streetAddress: "601 N Federal Hwy",
       addressLocality: "Hallandale Beach", addressRegion: "FL", postalCode: "33009", addressCountry: "US" },
-    geo: { "@type": "GeoCoordinates", latitude: 25.9857, longitude: -80.13 },
-    /* telephone: DATO_PENDIENTE — no publicar NAP falso (jurado HT fix 1) */
-    openingHoursSpecification: HOURS, priceRange: "$$$$",
+    geo: { "@type": "GeoCoordinates", latitude: 25.9927944, longitude: -80.1433381 },
+    telephone: "+17865834387",
+    hasMap: "https://maps.app.goo.gl/7y6WxPq2zHR8G473A",
+    priceRange: "$$$$",
     sameAs: ["https://www.instagram.com/54d"], parentOrganization: ORG,
   },
   "mexico-carso": {
@@ -165,9 +171,9 @@ const BREADCRUMB_SCHEMA = (slug: string, name: string): object => ({
    (zonas y vias reales, 60-72 palabras por sede) */
 const LOCAL_COPY: Record<string, string> = {
   "coral-gables":
-    "Our Coral Gables studio sits on Ponce de Leon Blvd, minutes from Miracle Mile and the Douglas Road Metrorail station. Members drive in from Coconut Grove, South Miami and Brickell for one reason: a 54 day program you cannot get anywhere else in Miami. Street and garage parking are easy before the 5:30 AM sessions, and you can be back on US 1 before the city wakes up.",
+    "Our Coral Gables studio sits at 4210 Ponce de Leon Blvd, a few blocks from the Shops at Merrick Park and the Douglas Road Metrorail station. Members drive in from Coconut Grove, South Miami and Brickell for one reason: a 54 day program you cannot get anywhere else in Miami. First sessions start at 6 AM, and you can be back on US 1 before the city wakes up.",
   hallandale:
-    "54D Hallandale sits on Hallandale Beach Blvd just off I-95, the halfway point between Miami and Fort Lauderdale. Members come from Aventura, Hollywood, Sunny Isles and Golden Beach, most within a ten minute drive. Morning Generations finish before the Gulfstream Park traffic starts, and the studio's location makes it the natural home for the method in Broward County.",
+    "54D Hallandale sits at 601 N Federal Hwy (US 1), minutes from the beach and the halfway point between Miami and Fort Lauderdale. Members come from Aventura, Hollywood, Sunny Isles and Golden Beach, most within a ten minute drive. Morning Generations finish before the Gulfstream Park traffic starts, and the studio's location makes it the natural home for the method in Broward County.",
   "mexico-carso":
     "In Nuevo Polanco, steps from Plaza Carso and the Museo Soumaya, our studio serves the executives and families of Polanco, Granada and Irrigacion. Lago Zurich is minutes from Ejercito Nacional and Ferrocarril de Cuernavaca, with parking in the Carso complex. Early Generations let you train, shower and be at your office on Mariano Escobedo or Paseo de la Reforma before 8 AM.",
   "mexico-santa-fe":
@@ -179,7 +185,7 @@ const LOCAL_COPY: Record<string, string> = {
 /* Sub localizado del hero por sede (zona/barrio): PLACEHOLDER, confirmar con cliente */
 const ZONE: Record<string, string> = {
   "coral-gables": "In the heart of Coral Gables, on Ponce de Leon Blvd.",
-  hallandale: "Between Miami and Fort Lauderdale, on Hallandale Beach Blvd.",
+  hallandale: "Between Miami and Fort Lauderdale, on N Federal Hwy.",
   "mexico-carso": "In Nuevo Polanco, right by Plaza Carso.",
   "mexico-santa-fe": "In the corporate heart of Santa Fe.",
   bogota: "In Chapinero, steps from Parque de la 93.",
@@ -806,8 +812,8 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                   <p className="method-desc">{LOCAL_COPY[studio.slug]}</p>
                 )}
                 <p className="method-desc">
-                  Parking and public transit access in the area. Not sure how
-                  to get here? Message us and we'll point the way.
+                  Not sure how to get here? Message us and we'll point the
+                  way.
                 </p>
                 <div
                   style={{
@@ -817,6 +823,24 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                     flexWrap: "wrap",
                   }}
                 >
+                  {studio.mapsUrl && (
+                    <a
+                      href={studio.mapsUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="btn btn-ghost"
+                    >
+                      Get directions
+                    </a>
+                  )}
+                  {studio.phone && (
+                    <a
+                      href={`tel:${studio.phone.replace(/[^+\d]/g, "")}`}
+                      className="btn btn-ghost"
+                    >
+                      Call · {studio.phone.replace("+1 ", "")}
+                    </a>
+                  )}
                   {hasRealWhatsapp && (
                     <a
                       href={whatsappUrl}
