@@ -338,7 +338,7 @@ export default function Pricing() {
           <div className={plans.className}>
             <span className="day-marker">Plans</span>
             <h2 className="section-title">
-              One method. <span style={{ color: "var(--c-yellow)" }}>Three ways to start.</span>
+              One method. Three ways to start.
             </h2>
             <p
               style={{

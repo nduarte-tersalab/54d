@@ -139,8 +139,8 @@ export default function Studios() {
       <header className="hero hero-inner">
         <div className="hero-media">
           <img
-            src={asset("images/hd/cg-gym-wide.jpg")}
-            alt="Wide view of the 54D training floor: heavy bags, lights and yellow signage"
+            src={asset("images/brand/gym-structure-heavy-bags-wide.jpg")}
+            alt="The 54D training floor: architectural steel structure and heavy bags"
           />
         </div>
         <div className="hero-veil" />

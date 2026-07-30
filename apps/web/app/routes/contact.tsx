@@ -287,9 +287,8 @@ export default function Contact() {
                     <h3
                       style={{
                         fontFamily: "var(--font-display)",
-                        fontWeight: 800,
+                        fontWeight: 700,
                         fontSize: "1.8rem",
-                        textTransform: "uppercase",
                         color: "var(--c-white)",
                       }}
                     >

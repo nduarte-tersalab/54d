@@ -447,17 +447,16 @@ const progHead: CSSProperties = {
 };
 const progNum: CSSProperties = {
   fontFamily: "var(--font-display)",
-  fontWeight: 800,
-  fontSize: "0.82rem",
-  letterSpacing: "var(--track-label, 0.14em)",
-  color: "var(--c-yellow)",
+  fontWeight: 600,
+  fontSize: "0.8rem",
+  letterSpacing: "var(--track-label, 0.12em)",
+  color: "var(--c-faint)",
 };
 const progName: CSSProperties = {
   fontFamily: "var(--font-display)",
-  fontWeight: 800,
+  fontWeight: 700,
   fontSize: "clamp(1.35rem, 2.4vw, 1.7rem)",
   lineHeight: 1.05,
-  textTransform: "uppercase",
   color: "var(--c-white)",
   marginTop: "0.35rem",
 };
@@ -522,7 +521,7 @@ const progDuration: CSSProperties = {
 };
 const progAmount: CSSProperties = {
   fontFamily: "var(--font-display)",
-  fontWeight: 800,
+  fontWeight: 700,
   fontSize: "1.5rem",
   lineHeight: 1,
   color: "var(--c-white)",
@@ -679,7 +678,9 @@ const captionTick: CSSProperties = {
   background: "var(--c-yellow)",
   flex: "none",
 };
-const solidAccent: CSSProperties = { color: "var(--c-yellow)" };
+/* QUIET v6b: acentos de display en blanco; el amarillo quedo en CTAs,
+   reglas de eyebrow y micro-marcas */
+const solidAccent: CSSProperties = { color: "inherit" };
 
 function CompareTable({
   columns,

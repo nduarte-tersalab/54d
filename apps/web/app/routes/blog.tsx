@@ -372,10 +372,9 @@ export default function Blog() {
                 <h3
                   style={{
                     fontFamily: "var(--font-display)",
-                    fontWeight: 800,
+                    fontWeight: 700,
                     fontSize: "clamp(1.5rem, 3vw, 2.4rem)",
                     lineHeight: 1.04,
-                    textTransform: "uppercase",
                     color: "var(--c-white)",
                     marginTop: "1.4rem",
                     maxWidth: "26ch",
@@ -510,15 +509,13 @@ export default function Blog() {
               <p
                 style={{
                   fontFamily: "var(--font-display)",
-                  fontWeight: 800,
+                  fontWeight: 700,
                   fontSize: "clamp(1.15rem, 2.4vw, 1.6rem)",
                   lineHeight: 1.05,
-                  textTransform: "uppercase",
                   color: "var(--c-white)",
                 }}
               >
-                Done reading?{" "}
-                <span style={{ color: "var(--c-yellow)" }}>Start doing.</span>
+                Done reading? Start doing.
               </p>
               <Link to="/pricing" className="btn btn-primary">
                 Start free. 7 days.
