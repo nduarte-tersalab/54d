@@ -269,16 +269,16 @@ const GALLERY_ROWS: Record<string, GalleryRow[]> = {
     {
       photos: [
         {
-          src: cg("boxing-focus.jpg"),
-          alt: "Athlete in white boxing gloves working the heavy bag at 54D Coral Gables",
-          ratio: "1 / 1",
-          caption: "Boxing, coached",
-        },
-        {
           src: cg("barbell-press-gaze-vertical.jpg"),
           alt: "Athlete pressing a barbell overhead, eyes on the bar, at 54D Coral Gables",
-          ratio: "2 / 3",
+          ratio: "1 / 1",
           caption: "Strength, rep by rep",
+        },
+        {
+          src: cg("cardio-jump-mural-vertical.jpg"),
+          alt: "Athlete mid jump during the cardio block under the 54 mural",
+          ratio: "2 / 3",
+          caption: "Cardio, coached",
         },
       ],
     },
@@ -292,10 +292,10 @@ const GALLERY_ROWS: Record<string, GalleryRow[]> = {
           caption: "The yellow stairs",
         },
         {
-          src: cg("coach-boxing-pads.jpg"),
-          alt: "A 54D coach holding the bag for an athlete mid boxing round",
+          src: cg("runner-smile-vertical.jpg"),
+          alt: "A member smiling mid run across the training floor",
           ratio: "1 / 1",
-          caption: "Coaches on the floor",
+          caption: "Cardio with the group",
         },
       ],
     },
@@ -312,6 +312,23 @@ const GALLERY_ROWS: Record<string, GalleryRow[]> = {
           alt: "Athlete pressing a dumbbell overhead in natural window light",
           ratio: "1 / 1",
           caption: "54D iron, every rep",
+        },
+      ],
+    },
+    {
+      flip: true,
+      photos: [
+        {
+          src: cg("nutrition-spread-vertical.jpg"),
+          alt: "Fresh nutrition spread: salmon, tuna, vegetables and fruit on the 54D table",
+          ratio: "2 / 3",
+          caption: "Nutrition, part of the method",
+        },
+        {
+          src: cg("generation-hug.jpg"),
+          alt: "Two 54D members embracing after a session, both smiling",
+          ratio: "1 / 1",
+          caption: "Fifty-four days together",
         },
       ],
     },
@@ -338,7 +355,7 @@ const GALLERY_ROWS: Record<string, GalleryRow[]> = {
       photos: [
         {
           src: hl("coach-headset.jpg"),
-          alt: "54D coach with a headset leading cardio between the boxing bags",
+          alt: "54D coach with a headset leading the cardio block",
           ratio: "2 / 3",
           caption: "Coaches on the floor",
         },
@@ -364,10 +381,10 @@ const BRAND_ROWS: GalleryRow[] = [
         caption: "The 54D method on the floor",
       },
       {
-        src: "images/brand/coach-class-boxing-bags-vertical.jpg",
-        alt: "54D coach standing over a mat class in front of hanging boxing bags",
+        src: "images/studios/coral-gables/generation-hug.jpg",
+        alt: "Two 54D members embracing after a session, both smiling",
         ratio: "1 / 1",
-        caption: "Small groups, coached live",
+        caption: "The Generation, together",
       },
     ],
   },

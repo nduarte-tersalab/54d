@@ -92,16 +92,16 @@ const FLOOR_ROWS: { flip?: boolean; photos: [FloorPhoto, FloorPhoto] }[] = [
   {
     photos: [
       {
-        src: "images/brand/gym-structure-heavy-bags-wide.jpg",
-        alt: "Industrial 54D gym structure with heavy bags hanging from chains over the training floor",
+        src: "images/studios/coral-gables/bike-floor-laughter.jpg",
+        alt: "Two athletes laughing between rounds on the 54D bike floor",
         ratio: "3 / 2",
-        caption: "The floor, the rig, the bags",
+        caption: "The bike floor",
       },
       {
-        src: "images/brand/coach-class-boxing-bags-vertical.jpg",
-        alt: "54D coach standing over a mat class in front of a row of hanging boxing bags",
+        src: "images/studios/coral-gables/cardio-jump-mural-vertical.jpg",
+        alt: "Athlete mid jump during the cardio block under the 54D mural",
         ratio: "1 / 1",
-        caption: "Coaches in the room",
+        caption: "Cardio, coached live",
       },
     ],
   },
@@ -139,8 +139,8 @@ export default function Studios() {
       <header className="hero hero-inner">
         <div className="hero-media">
           <img
-            src={asset("images/brand/gym-structure-heavy-bags-wide.jpg")}
-            alt="The 54D training floor: architectural steel structure and heavy bags"
+            src={asset("images/brand/generation-line-54d-mural-wide.jpg")}
+            alt="A 54D Generation arm in arm with their coach under the 54D mural"
           />
         </div>
         <div className="hero-veil" />
