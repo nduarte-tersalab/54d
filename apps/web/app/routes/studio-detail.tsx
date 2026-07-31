@@ -255,8 +255,8 @@ const hl = (file: string) => `images/studios/hallandale/${file}`;
    (HD de las galerías pic-time del cliente, 25/07/2026) */
 const HERO_PHOTO: Record<string, { src: string; alt: string }> = {
   "coral-gables": {
-    src: cg("class-mural-wide.jpg"),
-    alt: "Full class training under dramatic light in front of the giant 54D mural at Coral Gables",
+    src: cg("mural-54d-editorial-wide.jpg"),
+    alt: "An athlete mid drill in front of the giant 54D mural at the Coral Gables studio",
   },
   hallandale: {
     src: hl("class-under-letters.jpg"),
@@ -269,16 +269,16 @@ const GALLERY_ROWS: Record<string, GalleryRow[]> = {
     {
       photos: [
         {
-          src: cg("boxer-closeup.jpg"),
-          alt: "Close-up of a boxer in guard with white gloves, sweat visible, at 54D Coral Gables",
+          src: cg("boxing-focus.jpg"),
+          alt: "Athlete in white boxing gloves working the heavy bag at 54D Coral Gables",
           ratio: "1 / 1",
           caption: "Boxing, coached",
         },
         {
-          src: cg("sprint-vertical.jpg"),
-          alt: "Athlete sprinting through the cone corridor at 54D Coral Gables",
+          src: cg("barbell-press-gaze-vertical.jpg"),
+          alt: "Athlete pressing a barbell overhead, eyes on the bar, at 54D Coral Gables",
           ratio: "2 / 3",
-          caption: "Speed and agility work",
+          caption: "Strength, rep by rep",
         },
       ],
     },
@@ -286,32 +286,32 @@ const GALLERY_ROWS: Record<string, GalleryRow[]> = {
       flip: true,
       photos: [
         {
-          src: cg("ramp-climb-vertical.jpg"),
-          alt: "Athlete climbing the yellow ramp mid stride at 54D Coral Gables",
+          src: cg("yellow-stairs-run-vertical.jpg"),
+          alt: "An athlete in a 54D tank descending the signature yellow stairs at Coral Gables",
           ratio: "2 / 3",
-          caption: "The yellow ramp",
+          caption: "The yellow stairs",
         },
         {
-          src: cg("coach-correction.jpg"),
-          alt: "54D coach talking face to face with an athlete during the session",
+          src: cg("coach-boxing-pads.jpg"),
+          alt: "A 54D coach holding the bag for an athlete mid boxing round",
           ratio: "1 / 1",
-          caption: "Every rep, watched",
+          caption: "Coaches on the floor",
         },
       ],
     },
     {
       photos: [
         {
-          src: cg("runner-effort.jpg"),
-          alt: "Runner mid stride with visible effort on the dark training floor",
+          src: cg("bike-floor-laughter.jpg"),
+          alt: "Two athletes laughing between rounds on the bike floor at 54D Coral Gables",
           ratio: "3 / 2",
-          caption: "Cardio with the group",
+          caption: "The bike floor",
         },
         {
-          src: cg("barbell-press-class-01.jpg"),
-          alt: "Group class pressing barbells with the 54D mural in the background",
+          src: cg("dumbbell-strength-light.jpg"),
+          alt: "Athlete pressing a dumbbell overhead in natural window light",
           ratio: "1 / 1",
-          caption: "Strength, coached live",
+          caption: "54D iron, every rep",
         },
       ],
     },
@@ -376,8 +376,8 @@ const BRAND_ROWS: GalleryRow[] = [
 /* Banda fotográfica emocional por sede */
 const BAND_PHOTO: Record<string, { src: string; alt: string }> = {
   "coral-gables": {
-    src: "images/hd2/method-guarantee-celebration.jpg",
-    alt: "Emotional group celebration at a 54D graduation",
+    src: cg("generation-graduation-mural.jpg"),
+    alt: "A full Coral Gables Generation celebrating graduation under the 54D mural",
   },
   hallandale: {
     src: hl("bench-press-54d.jpg"),
