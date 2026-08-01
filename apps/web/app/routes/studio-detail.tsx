@@ -1033,25 +1033,6 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
         </div>
       </section>
 
-      {/* ============ CTA FINAL: CRUCE A ON ============ */}
-      <section className="section">
-        <div className="section-inner" ref={cta.ref}>
-          <div className={`final-wrap ${cta.className}`}>
-            <h2 className="final-title">
-              Not close by? Do the method{" "}
-              <span className="accent">online.</span>
-            </h2>
-            <div className="hero-ctas">
-              <Link to="/on" className="btn btn-primary">
-                Explore 54D ON
-              </Link>
-              <Link to="/method" className="btn btn-ghost">
-                See the method
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
 
       <Footer />
     </div>

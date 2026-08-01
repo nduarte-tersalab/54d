@@ -159,9 +159,6 @@ export default function Studios() {
             <a href="#sedes" className="btn btn-primary">
               Find your studio
             </a>
-            <Link to="/on" className="btn btn-ghost">
-              Explore 54D ON
-            </Link>
           </div>
           {/* Guardrail high-ticket (SEPARATION_SPEC §3, verbatim) */}
           <p className="method-desc" style={{ marginTop: "1.6rem", maxWidth: "36rem" }}>
@@ -352,22 +349,19 @@ export default function Studios() {
         </div>
       </section>
 
-      {/* ============ CTA FINAL: CRUCE A ON ============ */}
+      {/* ============ CTA FINAL: CONSULTA (separacion dura: sin cruce a ON) ============ */}
       <section className="section">
         <div className="section-inner" ref={cta.ref}>
           <div className={`final-wrap ${cta.className}`}>
             <h2 className="final-title">
-              No studio in your city?
+              One consultation.
               <br />
-              The full method lives <span className="accent">online.</span>
+              One decision that holds 54 days.
             </h2>
             <div className="hero-ctas">
-              <Link to="/on" className="btn btn-primary">
-                Explore 54D ON
-              </Link>
-              <Link to="/method" className="btn btn-ghost">
-                See the method
-              </Link>
+              <a href="#sedes" className="btn btn-primary">
+                Choose your studio
+              </a>
             </div>
           </div>
         </div>

@@ -72,6 +72,11 @@ export function Nav() {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
   const inStudios = pathname.startsWith("/studios");
+  /* SEPARACION DURA (cliente 01/08): en contexto Studios el nav no ofrece
+     ON — high ticket presencial y low ticket online no se cruzan */
+  const links = inStudios
+    ? NAV_LINKS.filter((l) => l.to !== "/on")
+    : NAV_LINKS;
   /* Gateway (crítica de diseño): la nav no contesta la pregunta antes de
      hacerla. En "/" queda logo + burger; la card de ON pasa a ser el único
      objeto amarillo del fold. */
@@ -101,7 +106,7 @@ export function Nav() {
         <img src={asset("images/brand/logo-54d.png")} alt="54D" width={52} height={52} />
       </Link>
       <div className="nav-links">
-        {NAV_LINKS.map((item) => (
+        {links.map((item) => (
           <NavLink key={item.to} to={item.to}>
             {item.label}
           </NavLink>
@@ -129,7 +134,7 @@ export function Nav() {
         <span />
       </button>
       <div id="nav-drawer" className={`nav-drawer${open ? " open" : ""}`}>
-        {NAV_LINKS.map((item) => (
+        {links.map((item) => (
           <Link key={item.to} to={item.to} onClick={close}>
             {item.label}
           </Link>
@@ -207,7 +212,7 @@ export function Footer() {
           <div>
             <h4>Programs</h4>
             <Link to="/method">Method</Link>
-            <Link to="/on">54D ON</Link>
+            {!inStudios && <Link to="/on">54D ON</Link>}
             <Link to="/studios">54D Studios</Link>
             {!inStudios && <Link to="/pricing">Pricing</Link>}
           </div>
