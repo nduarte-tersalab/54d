@@ -18,13 +18,47 @@ import { asset } from "../lib/asset";
    sedes con fotos de marca genéricas (IMAGES_BRAND.md).
    ============================================================ */
 
+/* Clase de schedule live (shape del endpoint /mindbody/classes de la API) */
+type LiveClass = {
+  id: number;
+  name: string;
+  staff: string;
+  start: string;
+  end: string;
+  location: string;
+  locationId: number;
+};
+
 export async function loader({ params }: Route.LoaderArgs) {
   const studio = STUDIOS.find((s) => s.slug === params.slug);
   if (!studio) throw new Response("Not Found", { status: 404 });
   /* Numeros placeholder (555) no viajan ni en el payload de hidratacion:
      se vacian hasta que el cliente cargue los reales en data/studios.ts */
   const whatsapp = studio.whatsapp.includes("555") ? "" : studio.whatsapp;
-  return { studio: { ...studio, whatsapp } };
+
+  /* Schedule live desde Mindbody via nuestra API (cacheada 10 min en el
+     edge). Fail-soft SIEMPRE: sin go-live, sin red o sin match de sede
+     devuelve [] y la UI cae a los horarios estaticos. El match por
+     nombre ("54D Coral Gables" contiene la ciudad) activa la grilla
+     sola cuando el site productivo se encienda. */
+  let liveClasses: LiveClass[] = [];
+  try {
+    const apiUrl = import.meta.env.VITE_API_URL ?? "http://localhost:8788";
+    const res = await fetch(`${apiUrl}/mindbody/classes?days=7`, {
+      signal: AbortSignal.timeout(3500),
+    });
+    if (res.ok) {
+      const data = (await res.json()) as { classes?: LiveClass[] };
+      const city = cityPlain(studio.city).toLowerCase();
+      liveClasses = (data.classes ?? [])
+        .filter((k) => k.location.toLowerCase().includes(city))
+        .slice(0, 60);
+    }
+  } catch {
+    /* silencio: los horarios estaticos cubren */
+  }
+
+  return { studio: { ...studio, whatsapp }, liveClasses };
 }
 
 /* Display de ciudad: el separador del data (middle dot actual, em dash
@@ -203,10 +237,26 @@ const GENERATION: Record<string, { start: string; startShort: string; spots: num
 
 /* Horarios estáticos fase 1: PLACEHOLDER (Mindbody live en fase 2) */
 const SCHEDULE = [
-  { days: "Monday to Friday", hours: "5:30 AM to 9:00 PM" },
+  { days: "Monday to Friday", hours: "6:00 AM to 8:00 PM" },
   { days: "Saturday", hours: "7:00 AM to 12:00 PM" },
   { days: "Sunday", hours: "Active recovery: your protocol sets it" },
 ];
+
+/* Formato del schedule live: deterministico entre SSR y cliente.
+   Las horas de Mindbody son naive locales del site; se muestran tal
+   cual, sin pasar por el timezone del runtime. */
+const fmtTime = (iso: string) => {
+  const h = parseInt(iso.slice(11, 13), 10);
+  const m = iso.slice(14, 16);
+  const h12 = h % 12 || 12;
+  return `${h12}:${m} ${h >= 12 ? "PM" : "AM"}`;
+};
+const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const fmtDay = (dateStr: string) => {
+  const d = new Date(dateStr + "T12:00:00Z");
+  return `${WEEKDAYS[d.getUTCDay()]} · ${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`;
+};
 
 /* Qué incluye la experiencia presencial en la sede */
 const INCLUDES = [
@@ -524,7 +574,15 @@ function LeadForm({ locationSlug }: { locationSlug: string }) {
 }
 
 export default function StudioDetail({ loaderData }: Route.ComponentProps) {
-  const { studio } = loaderData;
+  const { studio, liveClasses } = loaderData;
+  /* Agrupar por fecha (YYYY-MM-DD) preservando orden cronologico */
+  const scheduleDays: Array<{ date: string; classes: typeof liveClasses }> = [];
+  for (const k of liveClasses) {
+    const date = k.start.slice(0, 10);
+    const last = scheduleDays[scheduleDays.length - 1];
+    if (last && last.date === date) last.classes.push(k);
+    else scheduleDays.push({ date, classes: [k] });
+  }
   const generation = GENERATION[studio.slug];
   const whatsappUrl = `https://wa.me/${studio.whatsapp.replace(/\D/g, "")}`;
   /* Numeros reales pendientes del cliente (jurado HT fix 1): un WhatsApp
@@ -790,28 +848,85 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                 <div className="method-name" style={{ marginTop: 0 }}>
                   Schedule
                 </div>
-                {/* .schedule: tabular-nums vía global CSS (DESIGN_FIXES_V4 §2) */}
-                <div className="schedule" style={{ marginTop: "1.4rem" }}>
-                  {SCHEDULE.map((row) => (
-                    <div
-                      key={row.days}
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        gap: "1rem",
-                        padding: "0.85rem 0",
-                        borderBottom: "1px solid var(--hairline)",
-                        fontSize: "0.95rem",
-                        lineHeight: 1.5,
-                      }}
-                    >
-                      <span style={{ color: "var(--c-mist)" }}>{row.days}</span>
-                      <span style={{ color: "var(--c-white)", textAlign: "right" }}>
-                        {row.hours}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+                {/* .schedule: tabular-nums vía global CSS (DESIGN_FIXES_V4 §2).
+                    Con datos de Mindbody: la semana real, agrupada por dia.
+                    Sin datos (sin go-live / sede sin match): franjas estaticas. */}
+                {scheduleDays.length > 0 ? (
+                  <div className="schedule" style={{ marginTop: "1.4rem" }}>
+                    {scheduleDays.map((day) => (
+                      <div key={day.date} style={{ marginBottom: "1.3rem" }}>
+                        <div
+                          style={{
+                            fontFamily: "var(--font-label)",
+                            fontWeight: 500,
+                            fontSize: "0.7rem",
+                            letterSpacing: "0.14em",
+                            textTransform: "uppercase",
+                            color: "var(--c-faint)",
+                            padding: "0.4rem 0",
+                            borderBottom: "1px solid var(--hairline)",
+                          }}
+                        >
+                          {fmtDay(day.date)}
+                        </div>
+                        {day.classes.map((k) => (
+                          <div
+                            key={k.id}
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              gap: "1rem",
+                              padding: "0.7rem 0",
+                              borderBottom: "1px solid var(--hairline)",
+                              fontSize: "0.92rem",
+                              lineHeight: 1.5,
+                            }}
+                          >
+                            <span style={{ color: "var(--c-white)" }}>
+                              {k.name}
+                              {k.staff && (
+                                <span style={{ color: "var(--c-faint)" }}>
+                                  {" "}· {k.staff}
+                                </span>
+                              )}
+                            </span>
+                            <span
+                              style={{
+                                color: "var(--c-mist)",
+                                textAlign: "right",
+                                whiteSpace: "nowrap",
+                              }}
+                            >
+                              {fmtTime(k.start)}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="schedule" style={{ marginTop: "1.4rem" }}>
+                    {SCHEDULE.map((row) => (
+                      <div
+                        key={row.days}
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          gap: "1rem",
+                          padding: "0.85rem 0",
+                          borderBottom: "1px solid var(--hairline)",
+                          fontSize: "0.95rem",
+                          lineHeight: 1.5,
+                        }}
+                      >
+                        <span style={{ color: "var(--c-mist)" }}>{row.days}</span>
+                        <span style={{ color: "var(--c-white)", textAlign: "right" }}>
+                          {row.hours}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
                 <p className="method-desc" style={{ marginTop: "1.2rem" }}>
                   Your group's schedule is confirmed in your consultation:
                   each Generation trains in fixed blocks.

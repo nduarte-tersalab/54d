@@ -64,3 +64,75 @@ export async function pushLeadToMindbody(
     return { ok: false, error: `network: ${String(err)}` };
   }
 }
+
+/* ============================================================
+   Clases (schedule live para el sitio).
+   GET /class/classes funciona con Api-Key + SiteId solos (igual
+   que addclient). En sandbox (-99) verificado 01/08/2026; el
+   site productivo 317554 responde DeniedAccess hasta que el
+   developer account tenga go-live: el endpoint devuelve [] y el
+   sitio cae a horarios estaticos sin romper nada.
+   ============================================================ */
+
+export type MbClass = {
+  id: number;
+  name: string;
+  staff: string;
+  start: string;
+  end: string;
+  location: string;
+  locationId: number;
+};
+
+export async function fetchMindbodyClasses(
+  env: Env,
+  days: number
+): Promise<MbClass[]> {
+  if (!env.MINDBODY_API_KEY || !env.MINDBODY_SITE_ID) return [];
+
+  // MB interpreta fechas en hora local del site; naive ISO sin zona
+  const fmt = (d: Date) => d.toISOString().slice(0, 19);
+  const start = new Date();
+  const end = new Date(start.getTime() + days * 86400_000);
+
+  const url =
+    `${MB}/class/classes?StartDateTime=${fmt(start)}` +
+    `&EndDateTime=${fmt(end)}&Limit=200`;
+
+  try {
+    const res = await fetch(url, {
+      headers: {
+        'Api-Key': env.MINDBODY_API_KEY,
+        SiteId: env.MINDBODY_SITE_ID,
+      },
+    });
+    if (!res.ok) return [];
+    const data = (await res.json()) as {
+      Classes?: Array<{
+        Id: number;
+        IsCanceled?: boolean;
+        StartDateTime: string;
+        EndDateTime: string;
+        ClassDescription?: { Name?: string };
+        Staff?: { FirstName?: string; LastName?: string };
+        Location?: { Id?: number; Name?: string };
+      }>;
+    };
+    return (data.Classes ?? [])
+      .filter((c) => !c.IsCanceled)
+      .map((c) => ({
+        id: c.Id,
+        name: c.ClassDescription?.Name ?? 'Class',
+        staff: [c.Staff?.FirstName, c.Staff?.LastName]
+          .filter(Boolean)
+          .join(' '),
+        start: c.StartDateTime,
+        end: c.EndDateTime,
+        location: c.Location?.Name ?? '',
+        locationId: c.Location?.Id ?? 0,
+      }))
+      .sort((a, b) => a.start.localeCompare(b.start));
+  } catch {
+    return [];
+  }
+}

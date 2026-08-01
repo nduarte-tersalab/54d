@@ -12,7 +12,7 @@ import Stripe from 'stripe';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type { CheckoutRequest, Env } from './types';
 import { sendMetaEvent } from './lib/meta';
-import { pushLeadToMindbody } from './lib/mindbody';
+import { pushLeadToMindbody, fetchMindbodyClasses } from './lib/mindbody';
 import { sendGa4Event } from './lib/ga4';
 
 type Ctx = { Bindings: Env };
@@ -423,6 +423,26 @@ async function onInvoicePaid(
 // ------------------------------------------------------------------
 // Leads presenciales (fase 2: push a Mindbody con locations.mindbody_site_id)
 // ------------------------------------------------------------------
+
+/* Schedule live desde Mindbody, cacheado 10 min en el edge (el plan de
+   developer de MB tiene limite diario de llamadas: el cache es la
+   proteccion, no una optimizacion). Sin go-live devuelve [] y el web
+   cae a horarios estaticos. */
+app.get('/mindbody/classes', async (c) => {
+  const days = Math.min(parseInt(c.req.query('days') ?? '7', 10) || 7, 14);
+  const cacheKey = new Request(new URL(c.req.url).toString());
+  const cache = caches.default;
+
+  const hit = await cache.match(cacheKey);
+  if (hit) return hit;
+
+  const classes = await fetchMindbodyClasses(c.env, days);
+  const res = c.json({ classes });
+  res.headers.set('Cache-Control', 'public, s-maxage=600, max-age=120');
+  c.executionCtx.waitUntil(cache.put(cacheKey, res.clone()));
+  return res;
+});
+
 app.post('/leads', async (c) => {
   const body = await c.req.json<Record<string, string>>();
   if (!body?.email && !body?.phone) return c.json({ error: 'email o phone requerido' }, 400);
