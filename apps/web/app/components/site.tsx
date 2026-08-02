@@ -72,6 +72,12 @@ export function Nav() {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
   const inStudios = pathname.startsWith("/studios");
+  /* CTA de consulta pathname-aware: en la sede ancla al form de ESA pagina
+     (#reserva); en el index, al grid de sedes (#sedes). Anchor nativo
+     same-page: el browser scrollea solo, sin sacar al visitante de la
+     pagina del form. */
+  const inStudioDetail = /^\/studios\/./.test(pathname);
+  const consultHref = inStudioDetail ? "#reserva" : "#sedes";
   /* SEPARACION DURA (cliente 01/08): en contexto Studios el nav no ofrece
      ON — high ticket presencial y low ticket online no se cruzan */
   const links = inStudios
@@ -112,9 +118,9 @@ export function Nav() {
           </NavLink>
         ))}
         {inStudios ? (
-          <Link to="/studios#sedes" className="btn btn-ghost btn-nav">
+          <a href={consultHref} className="btn btn-ghost btn-nav">
             {STUDIOS_CTA_COPY}
-          </Link>
+          </a>
         ) : (
           <Link to="/pricing" className="btn btn-primary btn-nav">
             {CTA_COPY}
@@ -146,13 +152,13 @@ export function Nav() {
           Contact
         </Link>
         {inStudios ? (
-          <Link
-            to="/studios#sedes"
+          <a
+            href={consultHref}
             className="btn btn-ghost btn-nav"
             onClick={close}
           >
             {STUDIOS_CTA_COPY}
-          </Link>
+          </a>
         ) : (
           <Link to="/pricing" className="btn btn-primary btn-nav" onClick={close}>
             {CTA_COPY}
@@ -185,7 +191,7 @@ export function Footer() {
             <h4>54D</h4>
             <p style={{ maxWidth: "22rem", fontSize: "0.95rem", lineHeight: 1.6 }}>
               The 54-day transformation method. Coral Gables · Hallandale
-              · Mexico City · Bogotá · Online.
+              · Mexico City · Bogotá{inStudios ? "." : " · Online."}
             </p>
             {!inStudios && (
               <AppStoreBadges
@@ -228,9 +234,15 @@ export function Footer() {
             <h4>More</h4>
             <Link to="/blog">Blog</Link>
             <Link to="/contact">Contact</Link>
+            {/* handle Studios = sameAs del schema de sedes; confirmar con
+                cliente si existe handle propio por sede */}
             <a
               className="footer-social"
-              href="https://www.instagram.com/54d.online"
+              href={
+                inStudios
+                  ? "https://www.instagram.com/54d"
+                  : "https://www.instagram.com/54d.online"
+              }
               rel="noreferrer"
               target="_blank"
             >
@@ -264,14 +276,18 @@ export function Footer() {
         />
         <div className="footer-legal">
           <span>© {new Date().getFullYear()} 54D. All rights reserved.</span>
-          <span>
-            <Link to="/terms" style={{ display: "inline", marginRight: "1.5rem" }}>
-              Terms
-            </Link>
-            <Link to="/privacy" style={{ display: "inline" }}>
-              Privacy
-            </Link>
-          </span>
+          {/* ocultos en Studios hasta que existan /terms y /privacy (hoy 404);
+              tech lead debe crear las rutas y revertir esto */}
+          {!inStudios && (
+            <span>
+              <Link to="/terms" style={{ display: "inline", marginRight: "1.5rem" }}>
+                Terms
+              </Link>
+              <Link to="/privacy" style={{ display: "inline" }}>
+                Privacy
+              </Link>
+            </span>
+          )}
         </div>
       </div>
     </footer>

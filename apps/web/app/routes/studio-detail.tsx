@@ -239,7 +239,7 @@ const GENERATION: Record<string, { start: string; startShort: string; spots: num
 const SCHEDULE = [
   { days: "Monday to Friday", hours: "6:00 AM to 8:00 PM" },
   { days: "Saturday", hours: "7:00 AM to 12:00 PM" },
-  { days: "Sunday", hours: "Active recovery: your protocol sets it" },
+  { days: "Sunday", hours: "Active recovery, guided by your protocol" },
 ];
 
 /* Formato del schedule live: deterministico entre SSR y cliente.
@@ -289,6 +289,11 @@ const INCLUDES = [
    afirman ser esa sede) hasta que el cliente envíe fotos propias.
    Ratios calculados para igualar alturas en el photo-grid
    (columna 3fr a ratio R exige columna 2fr a ratio 1.5R).
+   PROHIBIDAS en Studios (boxeo/conos verificados):
+   brand/coach-stretch-demo-vertical, brand/coach-class-boxing-bags-vertical,
+   brand/gym-structure-heavy-bags-wide, hallandale/coach-headset,
+   coral-gables/boxer-closeup, coral-gables/spin-bikes-boxing-bags-01,
+   hd/cg-highfive-euphoria, hd/cg-stairs-group
    ============================================================ */
 type GalleryPhoto = {
   src: string;
@@ -309,8 +314,8 @@ const HERO_PHOTO: Record<string, { src: string; alt: string }> = {
     alt: "An athlete mid drill in front of the giant 54D mural at the Coral Gables studio",
   },
   hallandale: {
-    src: hl("class-under-letters.jpg"),
-    alt: "A full 54D generation posing under the giant 54D letters at the Hallandale studio",
+    src: hl("bench-press-54d.jpg"),
+    alt: "Athlete pressing a barbell overhead at 54D Hallandale, shot low and close",
   },
 };
 
@@ -325,10 +330,10 @@ const GALLERY_ROWS: Record<string, GalleryRow[]> = {
           caption: "Strength, rep by rep",
         },
         {
-          src: cg("cardio-jump-mural-vertical.jpg"),
-          alt: "Athlete mid jump during the cardio block under the 54 mural",
+          src: cg("group-squat-class-01.jpg"),
+          alt: "A full class holding the bottom of a squat at 54D Coral Gables",
           ratio: "2 / 3",
-          caption: "Cardio, coached",
+          caption: "The squat block, together",
         },
       ],
     },
@@ -352,26 +357,9 @@ const GALLERY_ROWS: Record<string, GalleryRow[]> = {
     {
       photos: [
         {
-          src: cg("bike-floor-laughter.jpg"),
-          alt: "Two athletes laughing between rounds on the bike floor at 54D Coral Gables",
-          ratio: "3 / 2",
-          caption: "The bike floor",
-        },
-        {
-          src: cg("dumbbell-strength-light.jpg"),
-          alt: "Athlete pressing a dumbbell overhead in natural window light",
-          ratio: "1 / 1",
-          caption: "54D iron, every rep",
-        },
-      ],
-    },
-    {
-      flip: true,
-      photos: [
-        {
           src: cg("nutrition-spread-vertical.jpg"),
           alt: "Fresh nutrition spread: salmon, tuna, vegetables and fruit on the 54D table",
-          ratio: "2 / 3",
+          ratio: "3 / 2",
           caption: "Nutrition, part of the method",
         },
         {
@@ -404,10 +392,10 @@ const GALLERY_ROWS: Record<string, GalleryRow[]> = {
       flip: true,
       photos: [
         {
-          src: hl("coach-headset.jpg"),
-          alt: "54D coach with a headset leading the cardio block",
+          src: "images/hd/hl-laugh.jpg",
+          alt: "A Hallandale member laughing after a session in front of the 54D mural",
           ratio: "2 / 3",
-          caption: "Coaches on the floor",
+          caption: "Fifty-four days of this",
         },
         {
           src: hl("coach-hands.jpg"),
@@ -447,8 +435,8 @@ const BAND_PHOTO: Record<string, { src: string; alt: string }> = {
     alt: "A full Coral Gables Generation celebrating graduation under the 54D mural",
   },
   hallandale: {
-    src: hl("bench-press-54d.jpg"),
-    alt: "Bench press with a 54D branded plate shot from a low dramatic angle",
+    src: hl("class-under-letters.jpg"),
+    alt: "A full 54D Generation posing under the giant 54D letters at the Hallandale studio",
   },
 };
 
@@ -484,8 +472,8 @@ function LeadForm({ locationSlug }: { locationSlug: string }) {
   }
 
   const panelStyle: React.CSSProperties = {
-    maxWidth: "36rem",
-    marginTop: "3rem",
+    maxWidth: "100%",
+    marginTop: 0,
     padding: "clamp(2rem, 4vw, 3rem)",
     borderRadius: "var(--r-card, 8px)",
     background: "var(--glass)",
@@ -719,7 +707,12 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                 : "Admission is by Generation: one start date, limited places, no rolling entry."}
             </p>
             {generation && (
-              <div className="stat-row" style={{ maxWidth: "46rem" }}>
+              <div
+                className="stat-row"
+                style={{
+                  gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                }}
+              >
                 <div className="stat">
                   <div className="stat-value">{generation.startShort}</div>
                   <div className="stat-label">Start date</div>
@@ -744,7 +737,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
       </section>
 
       {/* ============ QUÉ INCLUYE LA EXPERIENCIA ============ */}
-      <section className="section">
+      <section className="section section-tight">
         <div className="section-inner" ref={includes.ref}>
           <div className={includes.className}>
             <span className="day-marker">The experience</span>
@@ -841,6 +834,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                 gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
                 gap: "1.1rem",
                 marginTop: "3rem",
+                alignItems: "start",
               }}
             >
               {/* Horarios estáticos fase 1: Mindbody live en fase 2 */}
@@ -943,10 +937,12 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                 {LOCAL_COPY[studio.slug] && (
                   <p className="method-desc">{LOCAL_COPY[studio.slug]}</p>
                 )}
-                <p className="method-desc">
-                  Not sure how to get here? Message us and we'll point the
-                  way.
-                </p>
+                {hasRealWhatsapp && (
+                  <p className="method-desc">
+                    Not sure how to get here? Message us and we'll point the
+                    way.
+                  </p>
+                )}
                 <div
                   style={{
                     marginTop: "1.8rem",
@@ -984,51 +980,57 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                     </a>
                   )}
                 </div>
-                {/* Interlinking cross-country (LOCAL_SEO §4): las 5 sedes,
-                    la actual sin link. Reparte autoridad entre paises. */}
-                <p className="method-desc" style={{ marginTop: "1.6rem" }}>
-                  All 54D Studios:{" "}
-                  {STUDIOS.map((s, i) => (
-                    <span key={s.slug}>
-                      {i > 0 && " · "}
-                      {s.slug === studio.slug ? (
-                        <span style={{ color: "var(--c-white)" }}>
-                          {cityLabel(s.city)}
-                        </span>
-                      ) : (
-                        <Link
-                          to={`/studios/${s.slug}`}
-                          style={{ color: "var(--c-yellow)", textDecoration: "none" }}
-                        >
-                          {cityLabel(s.city)}
-                        </Link>
-                      )}
-                    </span>
-                  ))}
-                </p>
               </div>
             </div>
+            {/* Interlinking cross-country (LOCAL_SEO §4): las 5 sedes,
+                la actual sin link. Reparte autoridad entre paises.
+                Separador coma: "Mexico City · Carso, Mexico City · Santa Fe"
+                se lee como dos sedes y no cuatro. */}
+            <p className="method-desc" style={{ marginTop: "1.6rem" }}>
+              All 54D Studios:{" "}
+              {STUDIOS.map((s, i) => (
+                <span key={s.slug}>
+                  {i > 0 && ", "}
+                  {s.slug === studio.slug ? (
+                    <span style={{ color: "var(--c-white)" }}>
+                      {cityLabel(s.city)}
+                    </span>
+                  ) : (
+                    <Link
+                      to={`/studios/${s.slug}`}
+                      style={{ color: "var(--c-yellow)", textDecoration: "none" }}
+                    >
+                      {cityLabel(s.city)}
+                    </Link>
+                  )}
+                </span>
+              ))}
+            </p>
           </div>
         </div>
       </section>
 
       {/* ============ FORMULARIO DE LEAD ============ */}
       {/* FIXES_V5 §3.2: único campo de luz de la página (ember pre-CTA) */}
-      <section className="section bloom-ember" id="reserva">
+      <section className="section section-tight bloom-ember" id="reserva">
         <div className="section-inner" ref={lead.ref}>
           <div className={lead.className}>
-            <span className="day-marker">Apply</span>
-            <h2 className="section-title">
-              Apply for your place in the next{" "}
-              <span className="accent">Generation.</span>
-            </h2>
-            {/* Guardrail high-ticket (SEPARATION_SPEC §4, verbatim) */}
-            <p className="lead" style={{ marginTop: "1.4rem", maxWidth: "36rem" }}>
-              54D Studios is our flagship tier, a private-client level
-              program. Your consultation covers fit, your Generation's start
-              date, and the investment.
-            </p>
-            <LeadForm locationSlug={studio.slug} />
+            <div className="apply-split">
+              <div>
+                <span className="day-marker">Apply</span>
+                <h2 className="section-title">
+                  Apply for your place in the next{" "}
+                  <span className="accent">Generation.</span>
+                </h2>
+                {/* Guardrail high-ticket (SEPARATION_SPEC §4, verbatim) */}
+                <p className="lead" style={{ marginTop: "1.4rem", maxWidth: "36rem" }}>
+                  54D Studios is our flagship tier, a private-client level
+                  program. Your consultation covers fit, your Generation's
+                  start date, and the investment.
+                </p>
+              </div>
+              <LeadForm locationSlug={studio.slug} />
+            </div>
           </div>
         </div>
       </section>

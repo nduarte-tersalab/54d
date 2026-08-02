@@ -78,6 +78,11 @@ const GENERATION_TIMELINE = [
   },
 ];
 
+/* PROHIBIDAS en Studios (boxeo/conos verificados): brand/coach-stretch-demo-vertical,
+   brand/coach-class-boxing-bags-vertical, brand/gym-structure-heavy-bags-wide,
+   hallandale/coach-headset, coral-gables/boxer-closeup,
+   coral-gables/spin-bikes-boxing-bags-01, hd/cg-highfive-euphoria,
+   hd/cg-stairs-group */
 /* Grid editorial asimétrico (ART_DIRECTION_V3 §2): fotos de marca reales.
    Ratios calculados para que ambas columnas del photo-grid queden a la
    misma altura (3fr a ratio R exige 2fr a ratio 1.5R). */
@@ -109,10 +114,10 @@ const FLOOR_ROWS: { flip?: boolean; photos: [FloorPhoto, FloorPhoto] }[] = [
     flip: true,
     photos: [
       {
-        src: "images/brand/coach-stretch-demo-vertical.jpg",
-        alt: "Coach with a headset demonstrating a stretch to students seated on mats",
+        src: "images/studios/coral-gables/group-cardio-session-01.jpg",
+        alt: "A 54D class mid cardio block, the whole group moving together",
         ratio: "1 / 1",
-        caption: "Demo first, then work",
+        caption: "The cardio block",
       },
       {
         src: "images/brand/class-plank-rows-54d-mural.jpg",
@@ -203,24 +208,16 @@ export default function Studios() {
                     color: "inherit",
                   }}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "baseline",
-                      gap: "1rem",
-                    }}
-                  >
-                    <span className="method-num">{s.countryCode}</span>
-                    <span className="studio-country">{s.country}</span>
-                  </div>
+                  <span className="method-num">{s.countryCode}</span>
                   <div className="method-name" style={{ marginTop: "2rem" }}>
                     {cityLabel(s.city)}
                   </div>
-                  <p className="method-desc">{s.address}</p>
+                  <p className="method-desc" style={{ marginBottom: "1.6rem" }}>
+                    {s.address}
+                  </p>
                   <span
                     className="studio-cta"
-                    style={{ marginTop: "1.6rem", alignSelf: "flex-start" }}
+                    style={{ marginTop: "auto", alignSelf: "flex-start" }}
                   >
                     Explore →
                   </span>
@@ -264,7 +261,7 @@ export default function Studios() {
       </section>
 
       {/* ============ LA EXPERIENCIA PRESENCIAL ============ */}
-      <section className="section">
+      <section className="section section-tight">
         <div className="section-inner" ref={experience.ref}>
           <div className={experience.className}>
             <span className="day-marker">The experience</span>
@@ -300,34 +297,38 @@ export default function Studios() {
               You don't join whenever you want. You join with your{" "}
               <span className="accent">Generation.</span>
             </h2>
-            <p className="lead" style={{ marginTop: "1.4rem", maxWidth: "38rem" }}>
-              Each studio opens Generations: the group you start and finish
-              with. A start date, limited spots, and 54 days together. That's
-              why it works. This is not an open membership. It's a commitment
-              with a date.
-            </p>
-            <p className="lead" style={{ marginTop: "1rem", maxWidth: "38rem" }}>
-              You are measured on day 1 and on day 54. The numbers are the
-              contract.
-            </p>
-            <div className="timeline">
-              {GENERATION_TIMELINE.map((t) => (
-                <div className="timeline-item" key={t.day}>
-                  <span className="timeline-day">{t.day}</span>
-                  <h3>{t.title}</h3>
-                  <p>{t.desc}</p>
-                </div>
-              ))}
+            <div className="gen-split">
+              <div>
+                <p className="lead" style={{ maxWidth: "38rem" }}>
+                  Each studio opens Generations: the group you start and
+                  finish with. A start date, limited spots, and 54 days
+                  together. That's why it works. This is not an open
+                  membership. It's a commitment with a date.
+                </p>
+                <p className="lead" style={{ marginTop: "1rem", maxWidth: "38rem" }}>
+                  You are measured on day 1 and on day 54. The numbers are the
+                  contract.
+                </p>
+              </div>
+              <div className="timeline">
+                {GENERATION_TIMELINE.map((t) => (
+                  <div className="timeline-item" key={t.day}>
+                    <span className="timeline-day">{t.day}</span>
+                    <h3>{t.title}</h3>
+                    <p>{t.desc}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* ============ PHOTO BAND: COMUNIDAD (foto grupal real) ============ */}
-      <section className="photo-band">
+      <section className="photo-band band-tight">
         <img
-          src={asset("images/hd/cg-highfive-euphoria.jpg")}
-          alt="54D members high-fiving, drenched and euphoric after finishing a session"
+          src={asset("images/brand/group-photo-54d-mural.jpg")}
+          alt="A full 54D Generation posing together under the giant 54D mural"
           loading="lazy"
         />
         <div className="photo-band-content">
@@ -358,10 +359,12 @@ export default function Studios() {
               <br />
               One decision that holds 54 days.
             </h2>
-            <div className="hero-ctas">
-              <a href="#sedes" className="btn btn-primary">
-                Choose your studio
-              </a>
+            <div className="final-links">
+              {STUDIOS.map((s) => (
+                <Link key={s.slug} to={`/studios/${s.slug}`} className="studio-cta">
+                  {cityLabel(s.city)}
+                </Link>
+              ))}
             </div>
           </div>
         </div>

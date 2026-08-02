@@ -43,7 +43,9 @@ export function SmartAppBanner() {
     };
   }, [platform]);
 
-  if (!platform || pathname === "/") return null;
+  /* SEPARATION_SPEC: cero menciones a la app ON en contexto Studios */
+  if (!platform || pathname === "/" || pathname.startsWith("/studios"))
+    return null;
 
   const dismiss = () => {
     localStorage.setItem(DISMISS_KEY, "1");

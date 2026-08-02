@@ -5,6 +5,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "react-router";
 
 import type { Route } from "./+types/root";
@@ -36,13 +37,17 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const { pathname } = useLocation();
   return (
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        {/* iOS Safari: Smart App Banner nativo con botón GET */}
-        <meta name="apple-itunes-app" content="app-id=1520445334" />
+        {/* iOS Safari: Smart App Banner nativo con botón GET.
+            SEPARATION_SPEC: cero menciones a la app ON en contexto Studios */}
+        {!pathname.startsWith("/studios") && (
+          <meta name="apple-itunes-app" content="app-id=1520445334" />
+        )}
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="54D" />
         <meta property="og:image" content={OG_IMAGE} />

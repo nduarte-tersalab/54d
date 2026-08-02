@@ -709,8 +709,10 @@ body {
   color: var(--c-white);
   border-color: rgba(255, 255, 255, 0.3);
 }
-/* La fila conserva su translateX(6px) (es su firma) + flecha que llega (ATMOSPHERE §3.3) */
-.studio-cta::after {
+/* La fila conserva su translateX(6px) (es su firma) + flecha que llega (ATMOSPHERE §3.3).
+   Scoped a .studio-row: fuera de las filas (chips de /studios: cards y
+   .final-links) la flecha invisible reservaba ~21px y descentraba el texto. */
+.studio-row .studio-cta::after {
   content: '→';
   display: inline-block;
   margin-left: 0.5rem;
@@ -983,6 +985,15 @@ body {
 .stat-value { font-family: var(--font-display); font-weight: 700; font-size: clamp(2rem, 3.6vw, 3rem); line-height: 1;
   color: var(--c-white); }
 .stat-label { margin-top: 0.5rem; font-size: 0.78rem; text-transform: uppercase; letter-spacing: var(--track-label); color: var(--c-faint); }
+
+/* ---------- Studios: splits de layout (reparto del canvas desktop) ---------- */
+.gen-split { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(3rem, 6vw, 6rem); align-items: start; margin-top: 1.4rem; }
+.gen-split .timeline { margin-top: 0.4rem; }
+.apply-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 28rem); gap: clamp(3rem, 6vw, 6rem); align-items: start; }
+@media (max-width: 900px) { .gen-split, .apply-split { grid-template-columns: 1fr; } }
+.final-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem; margin-top: 2.4rem; }
+.final-links .studio-cta { text-decoration: none; }
+.final-links .studio-cta:hover { color: var(--c-white); border-color: rgba(255, 255, 255, 0.3); }
 
 /* ---------- Form fields glass (contacto / leads Studios) ---------- */
 .field { display: grid; gap: 0.45rem; margin-bottom: 1.2rem; }
