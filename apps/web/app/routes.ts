@@ -9,6 +9,8 @@ export default [
   route("programs/:slug", "routes/program-landing.tsx"),
   route("blog", "routes/blog.tsx"),
   route("contact", "routes/contact.tsx"),
+  route("privacy", "routes/legal.tsx", { id: "privacy" }),
+  route("terms", "routes/legal.tsx", { id: "terms" }),
   route("admin/login", "routes/admin-login.tsx"),
   route("admin", "routes/admin.tsx"),
   route("admin/blog", "routes/admin-blog.tsx"),

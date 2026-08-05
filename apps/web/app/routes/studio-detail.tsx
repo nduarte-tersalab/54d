@@ -314,8 +314,8 @@ const HERO_PHOTO: Record<string, { src: string; alt: string }> = {
     alt: "An athlete mid drill in front of the giant 54D mural at the Coral Gables studio",
   },
   hallandale: {
-    src: hl("bench-press-54d.jpg"),
-    alt: "Athlete pressing a barbell overhead at 54D Hallandale, shot low and close",
+    src: hl("mural-54d-members-wide.jpg"),
+    alt: "Two 54D members standing under the giant 54D mural at the Hallandale studio",
   },
 };
 
@@ -375,14 +375,14 @@ const GALLERY_ROWS: Record<string, GalleryRow[]> = {
     {
       photos: [
         {
-          src: hl("dumbbell-press.jpg"),
-          alt: "Athlete pressing 54D dumbbells at shoulder height, focused",
+          src: hl("barbell-one-step-mural.jpg"),
+          alt: "Athlete curling a barbell under the One Step At A Time mural at Hallandale",
           ratio: "1 / 1",
-          caption: "54D iron, every rep",
+          caption: "Strength, rep by rep",
         },
         {
-          src: hl("stairs-vertical.jpg"),
-          alt: "Runner in a 54D top climbing the yellow staircase at Hallandale",
+          src: hl("yellow-stairs-descend-vertical.jpg"),
+          alt: "Members running down the yellow staircase at 54D Hallandale",
           ratio: "2 / 3",
           caption: "The yellow stairs",
         },
@@ -392,16 +392,32 @@ const GALLERY_ROWS: Record<string, GalleryRow[]> = {
       flip: true,
       photos: [
         {
-          src: "images/hd/hl-laugh.jpg",
-          alt: "A Hallandale member laughing after a session in front of the 54D mural",
+          src: hl("runner-mural-motion-vertical.jpg"),
+          alt: "Athlete mid run in front of the 54D mural, hair in motion",
           ratio: "2 / 3",
-          caption: "Fifty-four days of this",
+          caption: "Cardio, coached",
         },
         {
-          src: hl("coach-hands.jpg"),
-          alt: "Coach correcting an athlete's dumbbell press with his hands",
+          src: hl("member-press-smile.jpg"),
+          alt: "A member smiling through a dumbbell press at 54D Hallandale",
           ratio: "1 / 1",
-          caption: "Hands-on coaching",
+          caption: "54D iron, every rep",
+        },
+      ],
+    },
+    {
+      photos: [
+        {
+          src: hl("generation-trio.jpg"),
+          alt: "Three Hallandale members arm in arm after a session, smiling",
+          ratio: "3 / 2",
+          caption: "Fifty-four days together",
+        },
+        {
+          src: hl("bike-floor-smile.jpg"),
+          alt: "A member laughing on the bike floor at 54D Hallandale",
+          ratio: "1 / 1",
+          caption: "The bike floor",
         },
       ],
     },

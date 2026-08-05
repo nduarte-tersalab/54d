@@ -276,18 +276,14 @@ export function Footer() {
         />
         <div className="footer-legal">
           <span>© {new Date().getFullYear()} 54D. All rights reserved.</span>
-          {/* ocultos en Studios hasta que existan /terms y /privacy (hoy 404);
-              tech lead debe crear las rutas y revertir esto */}
-          {!inStudios && (
-            <span>
-              <Link to="/terms" style={{ display: "inline", marginRight: "1.5rem" }}>
-                Terms
-              </Link>
-              <Link to="/privacy" style={{ display: "inline" }}>
-                Privacy
-              </Link>
-            </span>
-          )}
+          <span>
+            <Link to="/terms" style={{ display: "inline", marginRight: "1.5rem" }}>
+              Terms
+            </Link>
+            <Link to="/privacy" style={{ display: "inline" }}>
+              Privacy
+            </Link>
+          </span>
         </div>
       </div>
     </footer>
