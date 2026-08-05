@@ -6,6 +6,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLocation,
+  useRouteLoaderData,
 } from "react-router";
 
 import type { Route } from "./+types/root";
@@ -13,6 +14,13 @@ import "./app.css";
 import { useEffect } from "react";
 import { captureAttribution } from "./lib/attribution";
 import { SmartAppBanner } from "./components/app-banner";
+import { LangProvider, resolveLang, type Lang } from "./lib/i18n";
+
+/* Idioma: cookie manda, si no Accept-Language del navegador (i18n fase 1).
+   En el prerender estatico de Pages no hay headers reales: cae a "en". */
+export async function loader({ request }: Route.LoaderArgs) {
+  return { lang: resolveLang(request) };
+}
 
 const BASE = import.meta.env.BASE_URL;
 /* og:image absoluta (Meta/WhatsApp la fetchean desde afuera):
@@ -38,8 +46,11 @@ export const links: Route.LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const { pathname } = useLocation();
+  /* undefined en ErrorBoundary sin loader data: cae a "en" */
+  const data = useRouteLoaderData("root") as { lang?: Lang } | undefined;
+  const lang: Lang = data?.lang ?? "en";
   return (
-    <html lang="en">
+    <html lang={lang}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -82,7 +93,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         ) : null}
       </head>
       <body className="grain">
-        {children}
+        <LangProvider initial={lang}>{children}</LangProvider>
         <ScrollRestoration />
         <Scripts />
       </body>

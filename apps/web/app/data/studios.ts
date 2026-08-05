@@ -32,6 +32,8 @@ export interface Studio {
   mapsUrl?: string;
   /** true solo cuando dirección y teléfono salieron del GBP real */
   napVerified?: boolean;
+  /** Handle de Instagram por sede (cliente, 04/08/2026) */
+  instagram?: string;
 }
 
 export const STUDIOS: Studio[] = [
@@ -41,9 +43,10 @@ export const STUDIOS: Studio[] = [
     country: "United States",
     countryCode: "US",
     address: "4210 Ponce de Leon Blvd, Coral Gables, FL 33146",
-    whatsapp: "+1 305 555 0154", // PLACEHOLDER: confirmar linea WhatsApp
+    whatsapp: "+1 786 769 4956",
     timezone: "America/New_York",
     phone: "+1 786-817-7008",
+    instagram: "https://www.instagram.com/54d.mia",
     geo: { lat: 25.7327988, lng: -80.2587469 },
     mapsUrl: "https://maps.app.goo.gl/b2uZ1n7XQJv75em86",
     napVerified: true,
@@ -54,9 +57,10 @@ export const STUDIOS: Studio[] = [
     country: "United States",
     countryCode: "US",
     address: "601 N Federal Hwy, Hallandale Beach, FL 33009",
-    whatsapp: "+1 954 555 0154", // PLACEHOLDER: confirmar linea WhatsApp
+    whatsapp: "+1 786 583 4387",
     timezone: "America/New_York",
     phone: "+1 786-583-4387",
+    instagram: "https://www.instagram.com/54d.mia",
     geo: { lat: 25.9927944, lng: -80.1433381 },
     mapsUrl: "https://maps.app.goo.gl/7y6WxPq2zHR8G473A",
     napVerified: true,
@@ -67,8 +71,9 @@ export const STUDIOS: Studio[] = [
     country: "Mexico",
     countryCode: "MX",
     address: "Lago Zúrich 245, Ampliación Granada, Miguel Hidalgo, 11529 CDMX", // PLACEHOLDER
-    whatsapp: "+52 55 5555 0154", // PLACEHOLDER
+    whatsapp: "+52 55 2337 8937",
     timezone: "America/Mexico_City",
+    instagram: "https://www.instagram.com/54d.mx/",
   },
   {
     slug: "mexico-santa-fe",
@@ -76,8 +81,9 @@ export const STUDIOS: Studio[] = [
     country: "Mexico",
     countryCode: "MX",
     address: "Av. Vasco de Quiroga 3800, Santa Fe, Cuajimalpa, 05348 CDMX", // PLACEHOLDER
-    whatsapp: "+52 55 5555 0155", // PLACEHOLDER
+    whatsapp: "+52 55 2337 8937",
     timezone: "America/Mexico_City",
+    instagram: "https://www.instagram.com/54d.mx/",
   },
   {
     slug: "bogota",
@@ -85,7 +91,8 @@ export const STUDIOS: Studio[] = [
     country: "Colombia",
     countryCode: "CO",
     address: "Cra. 11 #93-10, Chapinero, Bogotá", // PLACEHOLDER
-    whatsapp: "+57 300 555 0154", // PLACEHOLDER
+    whatsapp: "+57 300 228 3913",
     timezone: "America/Bogota",
+    instagram: "https://www.instagram.com/54d.col",
   },
 ];

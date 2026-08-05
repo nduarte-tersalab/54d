@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import type { Route } from "./+types/home";
 import { asset } from "../lib/asset";
+import { LangToggle, useLang } from "../lib/i18n";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -186,7 +187,42 @@ const GATE_CSS = `
 }
 `;
 
+const GATE_COPY = {
+  en: {
+    line: "One method. Two very different ways to live it.",
+    studiosEyebrow: "The flagship experience",
+    studiosDesc:
+      "The complete method, in person: coaches, nutrition, physiotherapy. One Generation, limited places.",
+    studiosCta: "Apply for admission",
+    studiosMicro: "By application · Miami, Mexico City, Bogotá",
+    onEyebrow: "Online, wherever you are",
+    onDesc:
+      "The 54-day program in the app: daily training, your nutrition protocol, a real coach in your corner.",
+    onCta: "Start free for 7 days",
+    onMicro: "Cancel anytime",
+    press: "Featured on",
+    chooseLabel: "Choose your 54D",
+  },
+  es: {
+    line: "Un método. Dos maneras muy distintas de vivirlo.",
+    studiosEyebrow: "La experiencia insignia",
+    studiosDesc:
+      "El método completo, presencial: coaches, nutrición, fisioterapia. Una Generación, cupos limitados.",
+    studiosCta: "Aplica a la admisión",
+    studiosMicro: "Por aplicación · Miami, Ciudad de México, Bogotá",
+    onEyebrow: "Online, donde estés",
+    onDesc:
+      "El programa de 54 días en la app: entrenamiento diario, tu protocolo de nutrición y un coach real contigo.",
+    onCta: "Empieza gratis 7 días",
+    onMicro: "Cancela cuando quieras",
+    press: "En los medios",
+    chooseLabel: "Elige tu 54D",
+  },
+} as const;
+
 export default function Home() {
+  const { lang } = useLang();
+  const c = GATE_COPY[lang];
   return (
     <div>
       <style dangerouslySetInnerHTML={{ __html: GATE_CSS }} />
@@ -236,6 +272,15 @@ export default function Home() {
         </div>
         <div className="gate-veil" />
 
+        <LangToggle
+          style={{
+            position: "absolute",
+            top: "clamp(1rem, 2.5vh, 1.8rem)",
+            right: "var(--gutter)",
+            zIndex: 3,
+          }}
+        />
+
         <div className="gate-inner">
           <h1
             style={{
@@ -253,37 +298,27 @@ export default function Home() {
             src={asset("images/brand/logo-54d.png")}
             alt="54D"
           />
-          <p className="gate-line">
-            One method. Two very different ways to live it.
-          </p>
+          <p className="gate-line">{c.line}</p>
 
-          <nav className="gate-doors" aria-label="Choose your 54D" id="choose">
+          <nav className="gate-doors" aria-label={c.chooseLabel} id="choose">
             <Link to="/studios" className="gate-door">
-              <span className="gate-eyebrow">The flagship experience</span>
+              <span className="gate-eyebrow">{c.studiosEyebrow}</span>
               <span className="gate-title">54D Studios</span>
-              <span className="gate-desc">
-                The complete method, in person: coaches, nutrition,
-                physiotherapy. One Generation, limited places.
-              </span>
-              <span className="gate-cta gate-cta-quiet">Apply for admission</span>
-              <span className="gate-micro">
-                By application · Miami, Mexico City, Bogotá
-              </span>
+              <span className="gate-desc">{c.studiosDesc}</span>
+              <span className="gate-cta gate-cta-quiet">{c.studiosCta}</span>
+              <span className="gate-micro">{c.studiosMicro}</span>
             </Link>
             <Link to="/on" className="gate-door gate-door-on">
-              <span className="gate-eyebrow">Online, wherever you are</span>
+              <span className="gate-eyebrow">{c.onEyebrow}</span>
               <span className="gate-title">54D ON</span>
-              <span className="gate-desc">
-                The 54-day program in the app: daily training, your nutrition
-                protocol, a real coach in your corner.
-              </span>
-              <span className="gate-cta gate-cta-on">Start free for 7 days</span>
-              <span className="gate-micro">Cancel anytime</span>
+              <span className="gate-desc">{c.onDesc}</span>
+              <span className="gate-cta gate-cta-on">{c.onCta}</span>
+              <span className="gate-micro">{c.onMicro}</span>
             </Link>
           </nav>
 
           <div className="gate-press" aria-label="Featured on">
-            <span className="gate-press-label">Featured on</span>
+            <span className="gate-press-label">{c.press}</span>
             <div className="gate-press-logos">
               {PRESS.map(([file, name, h]) => (
                 <img

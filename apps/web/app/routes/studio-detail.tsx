@@ -4,6 +4,7 @@ import type { Route } from "./+types/studio-detail";
 import { Nav, Footer, useReveal } from "../components/site";
 import { STUDIOS } from "../data/studios";
 import { asset } from "../lib/asset";
+import { useLang, type Lang } from "../lib/i18n";
 
 /* ============================================================
    /studios/:slug: detalle de sede (54D Studios)
@@ -144,7 +145,7 @@ const STUDIO_SCHEMA: Record<string, object> = {
     telephone: "+17868177008",
     hasMap: "https://maps.app.goo.gl/b2uZ1n7XQJv75em86",
     priceRange: "$$$$",
-    sameAs: ["https://www.instagram.com/54d"], // DATO_PENDIENTE: handle por sede si existe
+    sameAs: ["https://www.instagram.com/54d.mia"],
     parentOrganization: ORG,
   },
   hallandale: {
@@ -156,7 +157,7 @@ const STUDIO_SCHEMA: Record<string, object> = {
     telephone: "+17865834387",
     hasMap: "https://maps.app.goo.gl/7y6WxPq2zHR8G473A",
     priceRange: "$$$$",
-    sameAs: ["https://www.instagram.com/54d"], parentOrganization: ORG,
+    sameAs: ["https://www.instagram.com/54d.mia"], parentOrganization: ORG,
   },
   "mexico-carso": {
     "@context": "https://schema.org", "@type": "ExerciseGym",
@@ -166,7 +167,7 @@ const STUDIO_SCHEMA: Record<string, object> = {
     geo: { "@type": "GeoCoordinates", latitude: 19.4404, longitude: -99.2046 },
     /* telephone: DATO_PENDIENTE — no publicar NAP falso (jurado HT fix 1) */
     openingHoursSpecification: HOURS, priceRange: "$$$$",
-    sameAs: ["https://www.instagram.com/54d"], parentOrganization: ORG,
+    sameAs: ["https://www.instagram.com/54d.mx"], parentOrganization: ORG,
   },
   "mexico-santa-fe": {
     "@context": "https://schema.org", "@type": "ExerciseGym",
@@ -176,7 +177,7 @@ const STUDIO_SCHEMA: Record<string, object> = {
     geo: { "@type": "GeoCoordinates", latitude: 19.3599, longitude: -99.2743 },
     /* telephone: DATO_PENDIENTE — no publicar NAP falso (jurado HT fix 1) */
     openingHoursSpecification: HOURS, priceRange: "$$$$",
-    sameAs: ["https://www.instagram.com/54d"], parentOrganization: ORG,
+    sameAs: ["https://www.instagram.com/54d.mx"], parentOrganization: ORG,
   },
   bogota: {
     "@context": "https://schema.org", "@type": "ExerciseGym",
@@ -186,7 +187,7 @@ const STUDIO_SCHEMA: Record<string, object> = {
     geo: { "@type": "GeoCoordinates", latitude: 4.6768, longitude: -74.0484 },
     /* telephone: DATO_PENDIENTE — no publicar NAP falso (jurado HT fix 1) */
     openingHoursSpecification: HOURS, priceRange: "$$$$",
-    sameAs: ["https://www.instagram.com/54d"], parentOrganization: ORG,
+    sameAs: ["https://www.instagram.com/54d.col"], parentOrganization: ORG,
   },
 };
 
@@ -201,46 +202,90 @@ const BREADCRUMB_SCHEMA = (slug: string, name: string): object => ({
   ],
 });
 
-/* Bloque de contenido local por sede: LOCAL_SEO.md §3 verbatim
-   (zonas y vias reales, 60-72 palabras por sede) */
-const LOCAL_COPY: Record<string, string> = {
-  "coral-gables":
-    "Our Coral Gables studio sits at 4210 Ponce de Leon Blvd, a few blocks from the Shops at Merrick Park and the Douglas Road Metrorail station. Members drive in from Coconut Grove, South Miami and Brickell for one reason: a 54 day program you cannot get anywhere else in Miami. First sessions start at 6 AM, and you can be back on US 1 before the city wakes up.",
-  hallandale:
-    "54D Hallandale sits at 601 N Federal Hwy (US 1), minutes from the beach and the halfway point between Miami and Fort Lauderdale. Members come from Aventura, Hollywood, Sunny Isles and Golden Beach, most within a ten minute drive. Morning Generations finish before the Gulfstream Park traffic starts, and the studio's location makes it the natural home for the method in Broward County.",
-  "mexico-carso":
-    "In Nuevo Polanco, steps from Plaza Carso and the Museo Soumaya, our studio serves the executives and families of Polanco, Granada and Irrigacion. Lago Zurich is minutes from Ejercito Nacional and Ferrocarril de Cuernavaca, with parking in the Carso complex. Early Generations let you train, shower and be at your office on Mariano Escobedo or Paseo de la Reforma before 8 AM.",
-  "mexico-santa-fe":
-    "Our Santa Fe studio sits on Av. Vasco de Quiroga, in the corporate district that runs from Centro Santa Fe to Parque La Mexicana. If you work in the towers of Santa Fe or live in Bosques de las Lomas, Interlomas or Contadero, your Generation trains here: before the office, or right after, without crossing the city.",
-  bogota:
-    "54D Bogota lives in Chapinero, steps from Parque de la 93 on Carrera 11. The studio draws members from Chico, Rosales and Usaquen, many walking over from the offices along the Calle 93 corridor. Sessions start at 5:30 AM, before the Septima fills up, and the neighborhood's cafes have adopted our Generations as their post workout ritual.",
+/* Bloque de contenido local por sede: LOCAL_SEO.md §3 verbatim en EN
+   (zonas y vias reales, 60-72 palabras por sede). ES: traduccion
+   editorial propia (acentos correctos en ES aunque el EN los omita). */
+const LOCAL_COPY: Record<Lang, Record<string, string>> = {
+  en: {
+    "coral-gables":
+      "Our Coral Gables studio sits at 4210 Ponce de Leon Blvd, a few blocks from the Shops at Merrick Park and the Douglas Road Metrorail station. Members drive in from Coconut Grove, South Miami and Brickell for one reason: a 54 day program you cannot get anywhere else in Miami. First sessions start at 6 AM, and you can be back on US 1 before the city wakes up.",
+    hallandale:
+      "54D Hallandale sits at 601 N Federal Hwy (US 1), minutes from the beach and the halfway point between Miami and Fort Lauderdale. Members come from Aventura, Hollywood, Sunny Isles and Golden Beach, most within a ten minute drive. Morning Generations finish before the Gulfstream Park traffic starts, and the studio's location makes it the natural home for the method in Broward County.",
+    "mexico-carso":
+      "In Nuevo Polanco, steps from Plaza Carso and the Museo Soumaya, our studio serves the executives and families of Polanco, Granada and Irrigacion. Lago Zurich is minutes from Ejercito Nacional and Ferrocarril de Cuernavaca, with parking in the Carso complex. Early Generations let you train, shower and be at your office on Mariano Escobedo or Paseo de la Reforma before 8 AM.",
+    "mexico-santa-fe":
+      "Our Santa Fe studio sits on Av. Vasco de Quiroga, in the corporate district that runs from Centro Santa Fe to Parque La Mexicana. If you work in the towers of Santa Fe or live in Bosques de las Lomas, Interlomas or Contadero, your Generation trains here: before the office, or right after, without crossing the city.",
+    bogota:
+      "54D Bogota lives in Chapinero, steps from Parque de la 93 on Carrera 11. The studio draws members from Chico, Rosales and Usaquen, many walking over from the offices along the Calle 93 corridor. Sessions start at 5:30 AM, before the Septima fills up, and the neighborhood's cafes have adopted our Generations as their post workout ritual.",
+  },
+  es: {
+    "coral-gables":
+      "Nuestro studio de Coral Gables está en 4210 Ponce de Leon Blvd, a pocas cuadras de los Shops at Merrick Park y de la estación Douglas Road del Metrorail. Nuestros miembros llegan desde Coconut Grove, South Miami y Brickell por una razón: un programa de 54 días que no existe en ningún otro lugar de Miami. Las primeras sesiones comienzan a las 6 AM, y puedes estar de vuelta en la US 1 antes de que la ciudad despierte.",
+    hallandale:
+      "54D Hallandale está en 601 N Federal Hwy (US 1), a minutos de la playa y en el punto medio entre Miami y Fort Lauderdale. Nuestros miembros llegan desde Aventura, Hollywood, Sunny Isles y Golden Beach, la mayoría a menos de diez minutos en auto. Las Generaciones de la mañana terminan antes de que empiece el tráfico de Gulfstream Park, y la ubicación del studio lo convierte en la casa natural del método en el condado de Broward.",
+    "mexico-carso":
+      "En Nuevo Polanco, a pasos de Plaza Carso y del Museo Soumaya, nuestro studio recibe a los ejecutivos y familias de Polanco, Granada e Irrigación. Lago Zurich está a minutos de Ejército Nacional y Ferrocarril de Cuernavaca, con estacionamiento en el complejo Carso. Las Generaciones tempranas te permiten entrenar, ducharte y estar en tu oficina en Mariano Escobedo o Paseo de la Reforma antes de las 8 AM.",
+    "mexico-santa-fe":
+      "Nuestro studio de Santa Fe está sobre Av. Vasco de Quiroga, en el distrito corporativo que va de Centro Santa Fe a Parque La Mexicana. Si trabajas en las torres de Santa Fe o vives en Bosques de las Lomas, Interlomas o Contadero, tu Generación entrena aquí: antes de la oficina, o justo después, sin cruzar la ciudad.",
+    bogota:
+      "54D Bogotá vive en Chapinero, a pasos del Parque de la 93 sobre la Carrera 11. El studio recibe miembros de Chicó, Rosales y Usaquén, muchos llegan caminando desde las oficinas del corredor de la Calle 93. Las sesiones comienzan a las 5:30 AM, antes de que se llene la Séptima, y los cafés del barrio ya adoptaron a nuestras Generaciones como su ritual post entrenamiento.",
+  },
 };
 
 /* Sub localizado del hero por sede (zona/barrio): PLACEHOLDER, confirmar con cliente */
-const ZONE: Record<string, string> = {
-  "coral-gables": "In the heart of Coral Gables, on Ponce de Leon Blvd.",
-  hallandale: "Between Miami and Fort Lauderdale, on N Federal Hwy.",
-  "mexico-carso": "In Nuevo Polanco, right by Plaza Carso.",
-  "mexico-santa-fe": "In the corporate heart of Santa Fe.",
-  bogota: "In Chapinero, steps from Parque de la 93.",
+const ZONE: Record<Lang, Record<string, string>> = {
+  en: {
+    "coral-gables": "In the heart of Coral Gables, on Ponce de Leon Blvd.",
+    hallandale: "Between Miami and Fort Lauderdale, on N Federal Hwy.",
+    "mexico-carso": "In Nuevo Polanco, right by Plaza Carso.",
+    "mexico-santa-fe": "In the corporate heart of Santa Fe.",
+    bogota: "In Chapinero, steps from Parque de la 93.",
+  },
+  es: {
+    "coral-gables": "En el corazón de Coral Gables, sobre Ponce de Leon Blvd.",
+    hallandale: "Entre Miami y Fort Lauderdale, sobre N Federal Hwy.",
+    "mexico-carso": "En Nuevo Polanco, junto a Plaza Carso.",
+    "mexico-santa-fe": "En el corazón corporativo de Santa Fe.",
+    bogota: "En Chapinero, a pasos del Parque de la 93.",
+  },
 };
 
 /* Próxima generación por sede: DATO_PENDIENTE (fechas y cupos placeholder,
-   confirmar con cliente / Mindbody antes del launch) */
-const GENERATION: Record<string, { start: string; startShort: string; spots: number }> = {
-  "coral-gables": { start: "Monday, August 17", startShort: "AUG 17", spots: 20 },
-  hallandale: { start: "Monday, August 24", startShort: "AUG 24", spots: 20 },
-  "mexico-carso": { start: "Monday, August 17", startShort: "AUG 17", spots: 24 },
-  "mexico-santa-fe": { start: "Monday, August 24", startShort: "AUG 24", spots: 24 },
-  bogota: { start: "Monday, August 31", startShort: "AUG 31", spots: 20 },
+   confirmar con cliente / Mindbody antes del launch). ES: start en
+   minúscula porque va embebido a mitad de frase ("comienza el lunes..."). */
+const GENERATION: Record<
+  Lang,
+  Record<string, { start: string; startShort: string; spots: number }>
+> = {
+  en: {
+    "coral-gables": { start: "Monday, August 17", startShort: "AUG 17", spots: 20 },
+    hallandale: { start: "Monday, August 24", startShort: "AUG 24", spots: 20 },
+    "mexico-carso": { start: "Monday, August 17", startShort: "AUG 17", spots: 24 },
+    "mexico-santa-fe": { start: "Monday, August 24", startShort: "AUG 24", spots: 24 },
+    bogota: { start: "Monday, August 31", startShort: "AUG 31", spots: 20 },
+  },
+  es: {
+    "coral-gables": { start: "lunes 17 de agosto", startShort: "17 AGO", spots: 20 },
+    hallandale: { start: "lunes 24 de agosto", startShort: "24 AGO", spots: 20 },
+    "mexico-carso": { start: "lunes 17 de agosto", startShort: "17 AGO", spots: 24 },
+    "mexico-santa-fe": { start: "lunes 24 de agosto", startShort: "24 AGO", spots: 24 },
+    bogota: { start: "lunes 31 de agosto", startShort: "31 AGO", spots: 20 },
+  },
 };
 
 /* Horarios estáticos fase 1: PLACEHOLDER (Mindbody live en fase 2) */
-const SCHEDULE = [
-  { days: "Monday to Friday", hours: "6:00 AM to 8:00 PM" },
-  { days: "Saturday", hours: "7:00 AM to 12:00 PM" },
-  { days: "Sunday", hours: "Active recovery, guided by your protocol" },
-];
+const SCHEDULE: Record<Lang, Array<{ days: string; hours: string }>> = {
+  en: [
+    { days: "Monday to Friday", hours: "6:00 AM to 8:00 PM" },
+    { days: "Saturday", hours: "7:00 AM to 12:00 PM" },
+    { days: "Sunday", hours: "Active recovery, guided by your protocol" },
+  ],
+  es: [
+    { days: "Lunes a viernes", hours: "6:00 AM a 8:00 PM" },
+    { days: "Sábado", hours: "7:00 AM a 12:00 PM" },
+    { days: "Domingo", hours: "Recuperación activa, guiada por tu protocolo" },
+  ],
+};
 
 /* Formato del schedule live: deterministico entre SSR y cliente.
    Las horas de Mindbody son naive locales del site; se muestran tal
@@ -251,36 +296,71 @@ const fmtTime = (iso: string) => {
   const h12 = h % 12 || 12;
   return `${h12}:${m} ${h >= 12 ? "PM" : "AM"}`;
 };
-const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const fmtDay = (dateStr: string) => {
+const WEEKDAYS: Record<Lang, string[]> = {
+  en: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+  es: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+};
+const MONTHS: Record<Lang, string[]> = {
+  en: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+  es: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+};
+const fmtDay = (dateStr: string, lang: Lang) => {
   const d = new Date(dateStr + "T12:00:00Z");
-  return `${WEEKDAYS[d.getUTCDay()]} · ${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`;
+  const day = WEEKDAYS[lang][d.getUTCDay()];
+  const month = MONTHS[lang][d.getUTCMonth()];
+  /* ES lee fecha antes que mes: "Lunes · 17 Ago" vs "Monday · Aug 17" */
+  return lang === "es"
+    ? `${day} · ${d.getUTCDate()} ${month}`
+    : `${day} · ${month} ${d.getUTCDate()}`;
 };
 
 /* Qué incluye la experiencia presencial en la sede */
-const INCLUDES = [
-  {
-    num: "01",
-    name: "Coaches on the floor",
-    desc: "Small groups with coaches who correct you live, rep by rep. No one trains on autopilot.",
-  },
-  {
-    num: "02",
-    name: "Nutritionist on site",
-    desc: "Your nutrition protocol is built from real measurements and adjusted across the 54 days, not set once.",
-  },
-  {
-    num: "03",
-    name: "Physiotherapy",
-    desc: "Prevention and recovery inside the program, so intensity doesn't cost you the result.",
-  },
-  {
-    num: "04",
-    name: "Fixed group",
-    desc: "Your Generation trains with you from start to finish. Same group, same date, same goal. No one goes it alone.",
-  },
-];
+const INCLUDES: Record<Lang, Array<{ num: string; name: string; desc: string }>> = {
+  en: [
+    {
+      num: "01",
+      name: "Coaches on the floor",
+      desc: "Small groups with coaches who correct you live, rep by rep. No one trains on autopilot.",
+    },
+    {
+      num: "02",
+      name: "Nutritionist on site",
+      desc: "Your nutrition protocol is built from real measurements and adjusted across the 54 days, not set once.",
+    },
+    {
+      num: "03",
+      name: "Physiotherapy",
+      desc: "Prevention and recovery inside the program, so intensity doesn't cost you the result.",
+    },
+    {
+      num: "04",
+      name: "Fixed group",
+      desc: "Your Generation trains with you from start to finish. Same group, same date, same goal. No one goes it alone.",
+    },
+  ],
+  es: [
+    {
+      num: "01",
+      name: "Coaches en el piso",
+      desc: "Grupos pequeños con coaches que te corrigen en vivo, rep por rep. Nadie entrena en piloto automático.",
+    },
+    {
+      num: "02",
+      name: "Nutricionista en el studio",
+      desc: "Tu protocolo de nutrición se construye con mediciones reales y se ajusta durante los 54 días, no se define una sola vez.",
+    },
+    {
+      num: "03",
+      name: "Fisioterapia",
+      desc: "Prevención y recuperación dentro del programa, para que la intensidad no te cueste el resultado.",
+    },
+    {
+      num: "04",
+      name: "Grupo fijo",
+      desc: "Tu Generación entrena contigo de principio a fin. Mismo grupo, misma fecha, mismo objetivo. Nadie lo hace solo.",
+    },
+  ],
+};
 
 /* ============================================================
    Fotos por sede (ART_DIRECTION_V3 §2)
@@ -295,11 +375,12 @@ const INCLUDES = [
    coral-gables/boxer-closeup, coral-gables/spin-bikes-boxing-bags-01,
    hd/cg-highfive-euphoria, hd/cg-stairs-group
    ============================================================ */
+/* caption bilingüe; src/alt/ratio son fuente única (alt queda EN en fase 1) */
 type GalleryPhoto = {
   src: string;
   alt: string;
   ratio: string;
-  caption: string;
+  caption: Record<Lang, string>;
 };
 type GalleryRow = { flip?: boolean; photos: [GalleryPhoto, GalleryPhoto] };
 
@@ -327,13 +408,16 @@ const GALLERY_ROWS: Record<string, GalleryRow[]> = {
           src: cg("barbell-press-gaze-vertical.jpg"),
           alt: "Athlete pressing a barbell overhead, eyes on the bar, at 54D Coral Gables",
           ratio: "1 / 1",
-          caption: "Strength, rep by rep",
+          caption: { en: "Strength, rep by rep", es: "Fuerza, rep por rep" },
         },
         {
           src: cg("group-squat-class-01.jpg"),
           alt: "A full class holding the bottom of a squat at 54D Coral Gables",
           ratio: "2 / 3",
-          caption: "The squat block, together",
+          caption: {
+            en: "The squat block, together",
+            es: "El bloque de sentadillas, juntos",
+          },
         },
       ],
     },
@@ -344,13 +428,13 @@ const GALLERY_ROWS: Record<string, GalleryRow[]> = {
           src: cg("yellow-stairs-run-vertical.jpg"),
           alt: "An athlete in a 54D tank descending the signature yellow stairs at Coral Gables",
           ratio: "2 / 3",
-          caption: "The yellow stairs",
+          caption: { en: "The yellow stairs", es: "La escalera amarilla" },
         },
         {
           src: cg("runner-smile-vertical.jpg"),
           alt: "A member smiling mid run across the training floor",
           ratio: "1 / 1",
-          caption: "Cardio with the group",
+          caption: { en: "Cardio with the group", es: "Cardio con el grupo" },
         },
       ],
     },
@@ -360,13 +444,19 @@ const GALLERY_ROWS: Record<string, GalleryRow[]> = {
           src: cg("nutrition-spread-vertical.jpg"),
           alt: "Fresh nutrition spread: salmon, tuna, vegetables and fruit on the 54D table",
           ratio: "3 / 2",
-          caption: "Nutrition, part of the method",
+          caption: {
+            en: "Nutrition, part of the method",
+            es: "Nutrición, parte del método",
+          },
         },
         {
           src: cg("generation-hug.jpg"),
           alt: "Two 54D members embracing after a session, both smiling",
           ratio: "1 / 1",
-          caption: "Fifty-four days together",
+          caption: {
+            en: "Fifty-four days together",
+            es: "Cincuenta y cuatro días juntos",
+          },
         },
       ],
     },
@@ -378,13 +468,13 @@ const GALLERY_ROWS: Record<string, GalleryRow[]> = {
           src: hl("barbell-one-step-mural.jpg"),
           alt: "Athlete curling a barbell under the One Step At A Time mural at Hallandale",
           ratio: "1 / 1",
-          caption: "Strength, rep by rep",
+          caption: { en: "Strength, rep by rep", es: "Fuerza, rep por rep" },
         },
         {
           src: hl("yellow-stairs-descend-vertical.jpg"),
           alt: "Members running down the yellow staircase at 54D Hallandale",
           ratio: "2 / 3",
-          caption: "The yellow stairs",
+          caption: { en: "The yellow stairs", es: "La escalera amarilla" },
         },
       ],
     },
@@ -395,13 +485,13 @@ const GALLERY_ROWS: Record<string, GalleryRow[]> = {
           src: hl("runner-mural-motion-vertical.jpg"),
           alt: "Athlete mid run in front of the 54D mural, hair in motion",
           ratio: "2 / 3",
-          caption: "Cardio, coached",
+          caption: { en: "Cardio, coached", es: "Cardio, con coach" },
         },
         {
           src: hl("member-press-smile.jpg"),
           alt: "A member smiling through a dumbbell press at 54D Hallandale",
           ratio: "1 / 1",
-          caption: "54D iron, every rep",
+          caption: { en: "54D iron, every rep", es: "Hierro 54D, cada rep" },
         },
       ],
     },
@@ -411,13 +501,16 @@ const GALLERY_ROWS: Record<string, GalleryRow[]> = {
           src: hl("generation-trio.jpg"),
           alt: "Three Hallandale members arm in arm after a session, smiling",
           ratio: "3 / 2",
-          caption: "Fifty-four days together",
+          caption: {
+            en: "Fifty-four days together",
+            es: "Cincuenta y cuatro días juntos",
+          },
         },
         {
           src: hl("bike-floor-smile.jpg"),
           alt: "A member laughing on the bike floor at 54D Hallandale",
           ratio: "1 / 1",
-          caption: "The bike floor",
+          caption: { en: "The bike floor", es: "El piso de bicis" },
         },
       ],
     },
@@ -432,13 +525,16 @@ const BRAND_ROWS: GalleryRow[] = [
         src: "images/brand/class-plank-54d-mural.jpg",
         alt: "Full class training on mats under the 54D mural on a black wall",
         ratio: "3 / 2",
-        caption: "The 54D method on the floor",
+        caption: {
+          en: "The 54D method on the floor",
+          es: "El método 54D en el piso",
+        },
       },
       {
         src: "images/studios/coral-gables/generation-hug.jpg",
         alt: "Two 54D members embracing after a session, both smiling",
         ratio: "1 / 1",
-        caption: "The Generation, together",
+        caption: { en: "The Generation, together", es: "La Generación, unida" },
       },
     ],
   },
@@ -457,6 +553,8 @@ const BAND_PHOTO: Record<string, { src: string; alt: string }> = {
 };
 
 function LeadForm({ locationSlug }: { locationSlug: string }) {
+  const { lang } = useLang();
+  const es = lang === "es";
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">(
     "idle"
   );
@@ -501,11 +599,15 @@ function LeadForm({ locationSlug }: { locationSlug: string }) {
     return (
       <div style={panelStyle} aria-live="polite">
         <div className="method-name" style={{ marginTop: 0 }}>
-          Application{" "}
-          <span style={{ color: "var(--c-yellow)" }}>received.</span>
+          {es ? "Aplicación" : "Application"}{" "}
+          <span style={{ color: "var(--c-yellow)" }}>
+            {es ? "recibida." : "received."}
+          </span>
         </div>
         <p className="method-desc" style={{ marginTop: "0.9rem" }}>
-          We will reach out on WhatsApp to schedule your consultation.
+          {es
+            ? "Te escribiremos por WhatsApp para agendar tu consulta."
+            : "We will reach out on WhatsApp to schedule your consultation."}
         </p>
       </div>
     );
@@ -516,14 +618,14 @@ function LeadForm({ locationSlug }: { locationSlug: string }) {
   return (
     <form onSubmit={handleSubmit} style={panelStyle} noValidate={false}>
       <div className="field">
-        <label htmlFor="lead-name">Name</label>
+        <label htmlFor="lead-name">{es ? "Nombre" : "Name"}</label>
         <input
           id="lead-name"
           name="name"
           type="text"
           required
           autoComplete="name"
-          placeholder="Your full name"
+          placeholder={es ? "Tu nombre completo" : "Your full name"}
         />
       </div>
       <div className="field">
@@ -546,7 +648,13 @@ function LeadForm({ locationSlug }: { locationSlug: string }) {
           opacity: status === "sending" ? 0.6 : 1,
         }}
       >
-        {status === "sending" ? "Sending…" : "Request a consultation"}
+        {status === "sending"
+          ? es
+            ? "Enviando…"
+            : "Sending…"
+          : es
+            ? "Solicita una consulta"
+            : "Request a consultation"}
       </button>
       {status === "error" && (
         <p
@@ -558,8 +666,9 @@ function LeadForm({ locationSlug }: { locationSlug: string }) {
             color: "var(--c-red)",
           }}
         >
-          We couldn't send your details. Try again, or message us directly on
-          WhatsApp.
+          {es
+            ? "No pudimos enviar tus datos. Intenta de nuevo o escríbenos directamente por WhatsApp."
+            : "We couldn't send your details. Try again, or message us directly on WhatsApp."}
         </p>
       )}
       <p
@@ -570,8 +679,9 @@ function LeadForm({ locationSlug }: { locationSlug: string }) {
           color: "var(--c-faint)",
         }}
       >
-        We contact you for one thing: scheduling your consultation. No spam,
-        no endless calls.
+        {es
+          ? "Te contactamos para una sola cosa: agendar tu consulta. Sin spam, sin llamadas interminables."
+          : "We contact you for one thing: scheduling your consultation. No spam, no endless calls."}
       </p>
     </form>
   );
@@ -579,6 +689,10 @@ function LeadForm({ locationSlug }: { locationSlug: string }) {
 
 export default function StudioDetail({ loaderData }: Route.ComponentProps) {
   const { studio, liveClasses } = loaderData;
+  const { lang } = useLang();
+  const es = lang === "es";
+  /* CTA primario repetido 3 veces (hero, generación, band) */
+  const ctaLabel = es ? "Solicita una consulta" : "Request a consultation";
   /* Agrupar por fecha (YYYY-MM-DD) preservando orden cronologico */
   const scheduleDays: Array<{ date: string; classes: typeof liveClasses }> = [];
   for (const k of liveClasses) {
@@ -587,7 +701,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
     if (last && last.date === date) last.classes.push(k);
     else scheduleDays.push({ date, classes: [k] });
   }
-  const generation = GENERATION[studio.slug];
+  const generation = GENERATION[lang][studio.slug];
   const whatsappUrl = `https://wa.me/${studio.whatsapp.replace(/\D/g, "")}`;
   /* Numeros reales pendientes del cliente (jurado HT fix 1): un WhatsApp
      falso visible es grieta de credibilidad en un producto flagship.
@@ -686,12 +800,14 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
             <span className="accent">{cityLabel(studio.city)}.</span>
           </h1>
           <p className="hero-sub">
-            {ZONE[studio.slug] ?? studio.address} The full method, in person:
-            your Generation, your coaches, your result.
+            {ZONE[lang][studio.slug] ?? studio.address}{" "}
+            {es
+              ? "El método completo, en persona: tu Generación, tus coaches, tu resultado."
+              : "The full method, in person: your Generation, your coaches, your result."}
           </p>
           <div className="hero-ctas">
             <a href="#reserva" className="btn btn-primary">
-              Request a consultation
+              {ctaLabel}
             </a>
             {/* Secundario ligero y más corto que el primario
                 (DESIGN_FIXES_V4 §5, studio-cg-desktop-0.png) */}
@@ -702,7 +818,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                 rel="noreferrer"
                 className="btn btn-ghost"
               >
-                WhatsApp us
+                {es ? "Escríbenos por WhatsApp" : "WhatsApp us"}
               </a>
             )}
           </div>
@@ -713,14 +829,28 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
       <section className="section">
         <div className="section-inner" ref={gen.ref}>
           <div className={gen.className}>
-            <span className="day-marker">Next Generation</span>
+            <span className="day-marker">
+              {es ? "Próxima Generación" : "Next Generation"}
+            </span>
             <h2 className="section-title">
-              Generations <span className="accent">fill up.</span>
+              {es ? (
+                <>
+                  Las Generaciones <span className="accent">se llenan.</span>
+                </>
+              ) : (
+                <>
+                  Generations <span className="accent">fill up.</span>
+                </>
+              )}
             </h2>
             <p className="lead" style={{ marginTop: "1.4rem", maxWidth: "38rem" }}>
               {generation
-                ? `Yours starts ${generation.start}. Admission is by Generation: one start date, limited places, no rolling entry.`
-                : "Admission is by Generation: one start date, limited places, no rolling entry."}
+                ? es
+                  ? `La tuya comienza el ${generation.start}. La admisión es por Generación: una fecha de inicio, cupos limitados, nadie entra después.`
+                  : `Yours starts ${generation.start}. Admission is by Generation: one start date, limited places, no rolling entry.`
+                : es
+                  ? "La admisión es por Generación: una fecha de inicio, cupos limitados, nadie entra después."
+                  : "Admission is by Generation: one start date, limited places, no rolling entry."}
             </p>
             {generation && (
               <div
@@ -731,21 +861,27 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
               >
                 <div className="stat">
                   <div className="stat-value">{generation.startShort}</div>
-                  <div className="stat-label">Start date</div>
+                  <div className="stat-label">
+                    {es ? "Fecha de inicio" : "Start date"}
+                  </div>
                 </div>
                 <div className="stat">
                   <div className="stat-value">{generation.spots}</div>
-                  <div className="stat-label">Places per Generation</div>
+                  <div className="stat-label">
+                    {es ? "Cupos por Generación" : "Places per Generation"}
+                  </div>
                 </div>
                 <div className="stat">
                   <div className="stat-value">54</div>
-                  <div className="stat-label">Days with the same group</div>
+                  <div className="stat-label">
+                    {es ? "Días con el mismo grupo" : "Days with the same group"}
+                  </div>
                 </div>
               </div>
             )}
             <div className="hero-ctas" style={{ marginTop: "2.6rem" }}>
               <a href="#reserva" className="btn btn-primary">
-                Request a consultation
+                {ctaLabel}
               </a>
             </div>
           </div>
@@ -756,19 +892,30 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
       <section className="section section-tight">
         <div className="section-inner" ref={includes.ref}>
           <div className={includes.className}>
-            <span className="day-marker">The experience</span>
+            <span className="day-marker">
+              {es ? "La experiencia" : "The experience"}
+            </span>
             <div className="method-intro">
               <h2 className="section-title">
-                What you get training <span className="accent">here.</span>
+                {es ? (
+                  <>
+                    Lo que obtienes entrenando{" "}
+                    <span className="accent">aquí.</span>
+                  </>
+                ) : (
+                  <>
+                    What you get training <span className="accent">here.</span>
+                  </>
+                )}
               </h2>
               <p>
-                You start with a full initial assessment on day 1:
-                measurements, history, and goal. From there the whole studio
-                team works on your transformation.
+                {es
+                  ? "Comienzas con una evaluación inicial completa el día 1: mediciones, historial y objetivo. A partir de ahí, todo el equipo del studio trabaja en tu transformación."
+                  : "You start with a full initial assessment on day 1: measurements, history, and goal. From there the whole studio team works on your transformation."}
               </p>
             </div>
             <div className="method-grid">
-              {INCLUDES.map((item) => (
+              {INCLUDES[lang].map((item) => (
                 <div className="method-card" key={item.num}>
                   <div className="method-num">{item.num}</div>
                   <div className="method-name">{item.name}</div>
@@ -785,9 +932,17 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
         <div className="section-inner" ref={gallery.ref}>
           <div className={gallery.className}>
             <span className="day-marker">
-              {GALLERY_ROWS[studio.slug] ? "Inside the studio" : "Inside 54D"}
+              {GALLERY_ROWS[studio.slug]
+                ? es
+                  ? "Dentro del studio"
+                  : "Inside the studio"
+                : es
+                  ? "Dentro de 54D"
+                  : "Inside 54D"}
             </span>
-            <h2 className="section-title">This is where it happens.</h2>
+            <h2 className="section-title">
+              {es ? "Aquí es donde sucede." : "This is where it happens."}
+            </h2>
             <div style={{ display: "grid", gap: "1rem", marginTop: "3rem" }}>
               {galleryRows.map((row, i) => (
                 <div
@@ -803,7 +958,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                         <img src={asset(p.src)} alt={p.alt} loading="lazy" />
                       </div>
                       <figcaption className="photo-caption">
-                        {p.caption}
+                        {p.caption[lang]}
                       </figcaption>
                     </figure>
                   ))}
@@ -819,17 +974,20 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
         <section className="photo-band">
           <img src={asset(bandPhoto.src)} alt={bandPhoto.alt} loading="lazy" />
           <div className="photo-band-content">
-            <span className="day-marker">Day 54</span>
+            <span className="day-marker">{es ? "Día 54" : "Day 54"}</span>
             <h2 className="section-title">
-              Graduation day is real here.
+              {es
+                ? "Aquí el día de graduación es real."
+                : "Graduation day is real here."}
             </h2>
             <p className="lead" style={{ marginTop: "1.4rem", maxWidth: "34rem" }}>
-              Every Generation at 54D {cityLabel(studio.city)} ends the same
-              way: results on the table and a room full of people who made it.
+              {es
+                ? `Cada Generación en 54D ${cityLabel(studio.city)} termina de la misma manera: resultados sobre la mesa y una sala llena de gente que lo logró.`
+                : `Every Generation at 54D ${cityLabel(studio.city)} ends the same way: results on the table and a room full of people who made it.`}
             </p>
             <div className="hero-ctas">
               <a href="#reserva" className="btn btn-primary">
-                Request a consultation
+                {ctaLabel}
               </a>
             </div>
           </div>
@@ -840,9 +998,19 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
       <section className="section">
         <div className="section-inner" ref={location.ref}>
           <div className={location.className}>
-            <span className="day-marker">Schedule and location</span>
+            <span className="day-marker">
+              {es ? "Horarios y ubicación" : "Schedule and location"}
+            </span>
             <h2 className="section-title">
-              Your studio, your <span className="accent">schedule.</span>
+              {es ? (
+                <>
+                  Tu studio, tu <span className="accent">horario.</span>
+                </>
+              ) : (
+                <>
+                  Your studio, your <span className="accent">schedule.</span>
+                </>
+              )}
             </h2>
             <div
               style={{
@@ -856,7 +1024,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
               {/* Horarios estáticos fase 1: Mindbody live en fase 2 */}
               <div style={panelStyle}>
                 <div className="method-name" style={{ marginTop: 0 }}>
-                  Schedule
+                  {es ? "Horarios" : "Schedule"}
                 </div>
                 {/* .schedule: tabular-nums vía global CSS (DESIGN_FIXES_V4 §2).
                     Con datos de Mindbody: la semana real, agrupada por dia.
@@ -877,7 +1045,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                             borderBottom: "1px solid var(--hairline)",
                           }}
                         >
-                          {fmtDay(day.date)}
+                          {fmtDay(day.date, lang)}
                         </div>
                         {day.classes.map((k) => (
                           <div
@@ -916,7 +1084,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                   </div>
                 ) : (
                   <div className="schedule" style={{ marginTop: "1.4rem" }}>
-                    {SCHEDULE.map((row) => (
+                    {SCHEDULE[lang].map((row) => (
                       <div
                         key={row.days}
                         style={{
@@ -938,25 +1106,27 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                   </div>
                 )}
                 <p className="method-desc" style={{ marginTop: "1.2rem" }}>
-                  Your group's schedule is confirmed in your consultation:
-                  each Generation trains in fixed blocks.
+                  {es
+                    ? "El horario de tu grupo se confirma en tu consulta: cada Generación entrena en bloques fijos."
+                    : "Your group's schedule is confirmed in your consultation: each Generation trains in fixed blocks."}
                 </p>
               </div>
               <div style={panelStyle}>
                 <div className="method-name" style={{ marginTop: 0 }}>
-                  Location
+                  {es ? "Ubicación" : "Location"}
                 </div>
                 <p className="method-desc" style={{ marginTop: "1.4rem" }}>
                   {studio.address}
                 </p>
-                {/* Contenido local por sede (LOCAL_SEO §3, verbatim) */}
-                {LOCAL_COPY[studio.slug] && (
-                  <p className="method-desc">{LOCAL_COPY[studio.slug]}</p>
+                {/* Contenido local por sede (LOCAL_SEO §3, verbatim en EN) */}
+                {LOCAL_COPY[lang][studio.slug] && (
+                  <p className="method-desc">{LOCAL_COPY[lang][studio.slug]}</p>
                 )}
                 {hasRealWhatsapp && (
                   <p className="method-desc">
-                    Not sure how to get here? Message us and we'll point the
-                    way.
+                    {es
+                      ? "¿No sabes cómo llegar? Escríbenos y te guiamos."
+                      : "Not sure how to get here? Message us and we'll point the way."}
                   </p>
                 )}
                 <div
@@ -974,7 +1144,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                       rel="noreferrer"
                       className="btn btn-ghost"
                     >
-                      Get directions
+                      {es ? "Cómo llegar" : "Get directions"}
                     </a>
                   )}
                   {studio.phone && (
@@ -982,7 +1152,8 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                       href={`tel:${studio.phone.replace(/[^+\d]/g, "")}`}
                       className="btn btn-ghost"
                     >
-                      Call · {studio.phone.replace("+1 ", "")}
+                      {es ? "Llamar" : "Call"} ·{" "}
+                      {studio.phone.replace("+1 ", "")}
                     </a>
                   )}
                   {hasRealWhatsapp && (
@@ -1003,7 +1174,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                 Separador coma: "Mexico City · Carso, Mexico City · Santa Fe"
                 se lee como dos sedes y no cuatro. */}
             <p className="method-desc" style={{ marginTop: "1.6rem" }}>
-              All 54D Studios:{" "}
+              {es ? "Todos los 54D Studios:" : "All 54D Studios:"}{" "}
               {STUDIOS.map((s, i) => (
                 <span key={s.slug}>
                   {i > 0 && ", "}
@@ -1033,16 +1204,25 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
           <div className={lead.className}>
             <div className="apply-split">
               <div>
-                <span className="day-marker">Apply</span>
+                <span className="day-marker">{es ? "Aplica" : "Apply"}</span>
                 <h2 className="section-title">
-                  Apply for your place in the next{" "}
-                  <span className="accent">Generation.</span>
+                  {es ? (
+                    <>
+                      Aplica por tu lugar en la próxima{" "}
+                      <span className="accent">Generación.</span>
+                    </>
+                  ) : (
+                    <>
+                      Apply for your place in the next{" "}
+                      <span className="accent">Generation.</span>
+                    </>
+                  )}
                 </h2>
-                {/* Guardrail high-ticket (SEPARATION_SPEC §4, verbatim) */}
+                {/* Guardrail high-ticket (SEPARATION_SPEC §4, verbatim en EN) */}
                 <p className="lead" style={{ marginTop: "1.4rem", maxWidth: "36rem" }}>
-                  54D Studios is our flagship tier, a private-client level
-                  program. Your consultation covers fit, your Generation's
-                  start date, and the investment.
+                  {es
+                    ? "54D Studios es nuestro nivel insignia, un programa con atención de cliente privado. Tu consulta define tres cosas: si el programa es para ti, la fecha de inicio de tu Generación y la inversión."
+                    : "54D Studios is our flagship tier, a private-client level program. Your consultation covers fit, your Generation's start date, and the investment."}
                 </p>
               </div>
               <LeadForm locationSlug={studio.slug} />

@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation } from "react-router";
 import { STUDIOS } from "../data/studios";
 import { asset } from "../lib/asset";
 import { AppStoreBadges } from "./badges";
+import { LangToggle, useLang } from "../lib/i18n";
 
 /* ============================================================
    Componentes globales del sitio (Nav, Footer) + useReveal.
@@ -44,20 +45,20 @@ export function useReveal() {
 }
 
 const NAV_LINKS = [
-  { to: "/method", label: "Method" },
-  { to: "/on", label: "54D ON" },
-  { to: "/studios", label: "Studios" },
-  { to: "/blog", label: "Blog" },
+  { to: "/method", label: { en: "Method", es: "Método" } },
+  { to: "/on", label: { en: "54D ON", es: "54D ON" } },
+  { to: "/studios", label: { en: "Studios", es: "Studios" } },
+  { to: "/blog", label: { en: "Blog", es: "Blog" } },
 ] as const;
 
 /* CTA global unificado (DESIGN_FIXES_V4 §5): nav y hero, mismo copy.
    \u2014 = em dash del copy V4, escapado por el grep de CI. */
-const CTA_COPY = "Start free. 7 days.";
+const CTA_COPY = { en: "Start free. 7 days.", es: "Empieza gratis. 7 días." };
 
 /* SEPARATION_SPEC §5: en rutas /studios* el trial es lenguaje de
    suscripcion de ON y no puede aparecer; nav y footer mutan solos via
    pathname (toda ruta studio futura queda protegida por defecto). */
-const STUDIOS_CTA_COPY = "Request a consultation";
+const STUDIOS_CTA_COPY = { en: "Request a consultation", es: "Solicita una consulta" };
 
 const APP_STORE_URL = "https://apps.apple.com/us/app/54d-on/id1520445334";
 const GOOGLE_PLAY_URL =
@@ -71,6 +72,7 @@ export function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
+  const { lang } = useLang();
   const inStudios = pathname.startsWith("/studios");
   /* CTA de consulta pathname-aware: en la sede ancla al form de ESA pagina
      (#reserva); en el index, al grid de sedes (#sedes). Anchor nativo
@@ -114,16 +116,17 @@ export function Nav() {
       <div className="nav-links">
         {links.map((item) => (
           <NavLink key={item.to} to={item.to}>
-            {item.label}
+            {item.label[lang]}
           </NavLink>
         ))}
+        <LangToggle />
         {inStudios ? (
           <a href={consultHref} className="btn btn-ghost btn-nav">
-            {STUDIOS_CTA_COPY}
+            {STUDIOS_CTA_COPY[lang]}
           </a>
         ) : (
           <Link to="/pricing" className="btn btn-primary btn-nav">
-            {CTA_COPY}
+            {CTA_COPY[lang]}
           </Link>
         )}
       </div>
@@ -142,26 +145,27 @@ export function Nav() {
       <div id="nav-drawer" className={`nav-drawer${open ? " open" : ""}`}>
         {links.map((item) => (
           <Link key={item.to} to={item.to} onClick={close}>
-            {item.label}
+            {item.label[lang]}
           </Link>
         ))}
         {/* Contact solo en el drawer (FIXES_V5 §4 / MOBILE_NAV H4): destino de
             primer nivel en mobile (WhatsApp por sede); el nav desktop se
             mantiene corto y Contact vive en el footer. */}
         <Link to="/contact" onClick={close}>
-          Contact
+          {lang === "es" ? "Contacto" : "Contact"}
         </Link>
+        <LangToggle style={{ marginTop: "1.2rem" }} />
         {inStudios ? (
           <a
             href={consultHref}
             className="btn btn-ghost btn-nav"
             onClick={close}
           >
-            {STUDIOS_CTA_COPY}
+            {STUDIOS_CTA_COPY[lang]}
           </a>
         ) : (
           <Link to="/pricing" className="btn btn-primary btn-nav" onClick={close}>
-            {CTA_COPY}
+            {CTA_COPY[lang]}
           </Link>
         )}
       </div>
@@ -183,6 +187,8 @@ const cityLabel = (city: string): string =>
 export function Footer() {
   const { pathname } = useLocation();
   const inStudios = pathname.startsWith("/studios");
+  const { lang } = useLang();
+  const es = lang === "es";
   return (
     <footer className="footer">
       <div className="footer-inner">
@@ -190,8 +196,10 @@ export function Footer() {
           <div>
             <h4>54D</h4>
             <p style={{ maxWidth: "22rem", fontSize: "0.95rem", lineHeight: 1.6 }}>
-              The 54-day transformation method. Coral Gables · Hallandale
-              · Mexico City · Bogotá{inStudios ? "." : " · Online."}
+              {es
+                ? "El método de transformación de 54 días. Coral Gables · Hallandale · Ciudad de México · Bogotá"
+                : "The 54-day transformation method. Coral Gables · Hallandale · Mexico City · Bogotá"}
+              {inStudios ? "." : " · Online."}
             </p>
             {!inStudios && (
               <AppStoreBadges
@@ -202,22 +210,22 @@ export function Footer() {
             <p className="footer-trust">
               {inStudios ? (
                 <>
-                  <span>By application</span>
-                  <span>Limited places per Generation</span>
-                  <span>Miami · Mexico City · Bogotá</span>
+                  <span>{es ? "Por aplicación" : "By application"}</span>
+                  <span>{es ? "Cupos limitados por Generación" : "Limited places per Generation"}</span>
+                  <span>{es ? "Miami · Ciudad de México · Bogotá" : "Miami · Mexico City · Bogotá"}</span>
                 </>
               ) : (
                 <>
-                  <span>7 days free</span>
-                  <span>Cancel anytime</span>
-                  <span>30-day guarantee</span>
+                  <span>{es ? "7 días gratis" : "7 days free"}</span>
+                  <span>{es ? "Cancela cuando quieras" : "Cancel anytime"}</span>
+                  <span>{es ? "Garantía de 30 días" : "30-day guarantee"}</span>
                 </>
               )}
             </p>
           </div>
           <div>
-            <h4>Programs</h4>
-            <Link to="/method">Method</Link>
+            <h4>{es ? "Programas" : "Programs"}</h4>
+            <Link to="/method">{es ? "Método" : "Method"}</Link>
             {!inStudios && <Link to="/on">54D ON</Link>}
             <Link to="/studios">54D Studios</Link>
             {!inStudios && <Link to="/pricing">Pricing</Link>}
@@ -231,16 +239,19 @@ export function Footer() {
             ))}
           </div>
           <div>
-            <h4>More</h4>
+            <h4>{es ? "Más" : "More"}</h4>
             <Link to="/blog">Blog</Link>
-            <Link to="/contact">Contact</Link>
+            <Link to="/contact">{es ? "Contacto" : "Contact"}</Link>
             {/* handle Studios = sameAs del schema de sedes; confirmar con
                 cliente si existe handle propio por sede */}
             <a
               className="footer-social"
               href={
                 inStudios
-                  ? "https://www.instagram.com/54d"
+                  ? /* IG por sede (cliente 04/08): en pagina de sede, el handle
+                       de ESA sede; en el index, el de la sede US insignia */
+                    STUDIOS.find((s) => pathname === `/studios/${s.slug}`)
+                      ?.instagram ?? "https://www.instagram.com/54d.mia"
                   : "https://www.instagram.com/54d.online"
               }
               rel="noreferrer"
@@ -275,7 +286,10 @@ export function Footer() {
           aria-hidden="true"
         />
         <div className="footer-legal">
-          <span>© {new Date().getFullYear()} 54D. All rights reserved.</span>
+          <span>
+            © {new Date().getFullYear()} 54D.{" "}
+            {es ? "Todos los derechos reservados." : "All rights reserved."}
+          </span>
           <span>
             <Link to="/terms" style={{ display: "inline", marginRight: "1.5rem" }}>
               Terms

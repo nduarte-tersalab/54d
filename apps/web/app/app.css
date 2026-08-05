@@ -277,6 +277,20 @@ body {
   background: rgba(255, 210, 0, 0.05); /* ATMOSPHERE §3.6: ≤0.08, es luz, no fill */
   box-shadow: none;
 }
+/* Selector de idioma quiet (i18n fase 1): dos letras, punto medio */
+.lang-toggle {
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  font-family: var(--font-label); font-size: 0.72rem;
+  letter-spacing: 0.08em; color: var(--c-faint);
+}
+.lang-toggle button {
+  background: none; border: 0; padding: 0.4rem 0.1rem; cursor: pointer;
+  font: inherit; letter-spacing: inherit; color: var(--c-faint);
+  transition: color var(--transition);
+}
+.lang-toggle button[aria-pressed="true"] { color: var(--c-white); }
+.lang-toggle button:hover { color: var(--c-mist); }
+
 /* Modificador de tamano para CTAs de nav: ULTIMO para ganar el empate
    (el ghost de /studios salia con padding de hero y quedaba pegado al
    borde de la barra — feedback cliente 01/08) */

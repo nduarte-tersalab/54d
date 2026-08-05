@@ -3,6 +3,7 @@ import type { Route } from "./+types/studios";
 import { Nav, Footer, useReveal } from "../components/site";
 import { STUDIOS } from "../data/studios";
 import { asset } from "../lib/asset";
+import { useLang, type Lang } from "../lib/i18n";
 
 /* ============================================================
    /studios: index de sedes (54D Studios)
@@ -10,6 +11,8 @@ import { asset } from "../lib/asset";
    aplicación: el CTA es la consulta, nunca carrito). Copy según
    SITE_STRATEGY.md, COPY_V3.md y SEPARATION_SPEC.md §3 (sin
    em/en dashes en copy visible).
+   i18n fase 1: copy visible bilingüe EN/ES vía useLang. SEO (meta)
+   y alt/aria quedan EN, idioma principal indexado.
    Fotos reales según ART_DIRECTION_V3.md + IMAGES_BRAND.md.
    ============================================================ */
 
@@ -27,56 +30,111 @@ export function meta({}: Route.MetaArgs) {
 /* Display de ciudad: el em dash del data ("Mexico City [u2014] Carso") se
    convierte a middle dot ("Mexico City · Carso") solo en UI.
    Regla COPY_V3 §2: nunca en slugs ni SEO. Escape unicode a propósito:
-   el caracter literal está prohibido en apps/web/app (CI grep). */
-const cityLabel = (city: string) => city.replace(/\s*\u2014\s*/g, " · ");
+   el caracter literal está prohibido en apps/web/app (CI grep).
+   En ES la ciudad se localiza en display ("Ciudad de México"), igual
+   que Nav/Footer; slugs y data quedan EN. */
+const cityLabel = (city: string, lang: Lang) => {
+  const dotted = city.replace(/\s*\u2014\s*/g, " · ");
+  return lang === "es"
+    ? dotted.replace("Mexico City", "Ciudad de México")
+    : dotted;
+};
 
 /* La experiencia presencial: qué la hace distinta a entrenar solo */
-const EXPERIENCE = [
-  {
-    num: "01",
-    name: "Small groups",
-    desc: "No one gets lost in the crowd. Limited spots per Generation, so every session has your name on it and your form gets real attention.",
-  },
-  {
-    num: "02",
-    name: "Coaches on the floor",
-    desc: "You don't follow a screen. A coach two meters away corrects you. Every rep counts because someone is watching it.",
-  },
-  {
-    num: "03",
-    name: "Nutritionist",
-    desc: "Your nutrition protocol is built and adjusted at the studio, with real measurements. What you eat is part of the program.",
-  },
-  {
-    num: "04",
-    name: "Physiotherapy",
-    desc: "Prevention and recovery inside the program. You train hard for 54 days because a team makes sure you cross the finish line in one piece.",
-  },
-];
+const EXPERIENCE = {
+  en: [
+    {
+      num: "01",
+      name: "Small groups",
+      desc: "No one gets lost in the crowd. Limited spots per Generation, so every session has your name on it and your form gets real attention.",
+    },
+    {
+      num: "02",
+      name: "Coaches on the floor",
+      desc: "You don't follow a screen. A coach two meters away corrects you. Every rep counts because someone is watching it.",
+    },
+    {
+      num: "03",
+      name: "Nutritionist",
+      desc: "Your nutrition protocol is built and adjusted at the studio, with real measurements. What you eat is part of the program.",
+    },
+    {
+      num: "04",
+      name: "Physiotherapy",
+      desc: "Prevention and recovery inside the program. You train hard for 54 days because a team makes sure you cross the finish line in one piece.",
+    },
+  ],
+  es: [
+    {
+      num: "01",
+      name: "Grupos reducidos",
+      desc: "Nadie se pierde en la multitud. Cupos limitados por Generación: cada sesión lleva tu nombre y tu técnica recibe atención real.",
+    },
+    {
+      num: "02",
+      name: "Coaches en el piso",
+      desc: "No sigues una pantalla. Un coach a dos metros te corrige. Cada repetición cuenta porque alguien la está viendo.",
+    },
+    {
+      num: "03",
+      name: "Nutricionista",
+      desc: "Tu protocolo de nutrición se construye y se ajusta en el studio, con mediciones reales. Lo que comes es parte del programa.",
+    },
+    {
+      num: "04",
+      name: "Fisioterapia",
+      desc: "Prevención y recuperación dentro del programa. Entrenas fuerte 54 días porque un equipo se asegura de que cruces la meta sin romperte.",
+    },
+  ],
+};
 
 /* Cómo funcionan las generaciones: fecha de inicio + cupo limitado */
-const GENERATION_TIMELINE = [
-  {
-    day: "Today",
-    title: "Request a consultation",
-    desc: "Admission is by Generation: one start date, limited places, no rolling entry. Your consultation covers fit, dates, and the investment.",
-  },
-  {
-    day: "D01",
-    title: "Your Generation starts",
-    desc: "Everyone starts the same day, with the same initial assessment. No one joins late and no one starts alone.",
-  },
-  {
-    day: "D01 to D54",
-    title: "Same group, 54 days",
-    desc: "You train with the same people and the same coaches through the entire program. The pressure of the group is part of the method.",
-  },
-  {
-    day: "D54",
-    title: "Your Generation closes",
-    desc: "Final measurements, results on the table, and how you keep them. The program ends. The new you doesn't.",
-  },
-];
+const GENERATION_TIMELINE = {
+  en: [
+    {
+      day: "Today",
+      title: "Request a consultation",
+      desc: "Admission is by Generation: one start date, limited places, no rolling entry. Your consultation covers fit, dates, and the investment.",
+    },
+    {
+      day: "D01",
+      title: "Your Generation starts",
+      desc: "Everyone starts the same day, with the same initial assessment. No one joins late and no one starts alone.",
+    },
+    {
+      day: "D01 to D54",
+      title: "Same group, 54 days",
+      desc: "You train with the same people and the same coaches through the entire program. The pressure of the group is part of the method.",
+    },
+    {
+      day: "D54",
+      title: "Your Generation closes",
+      desc: "Final measurements, results on the table, and how you keep them. The program ends. The new you doesn't.",
+    },
+  ],
+  es: [
+    {
+      day: "Hoy",
+      title: "Solicita una consulta",
+      desc: "La admisión es por Generación: una sola fecha de inicio, cupo limitado, sin ingreso continuo. En la consulta vemos si es para ti, las fechas y la inversión.",
+    },
+    {
+      day: "D01",
+      title: "Empieza tu Generación",
+      desc: "Todos empiezan el mismo día, con la misma evaluación inicial. Nadie entra tarde y nadie empieza solo.",
+    },
+    {
+      day: "D01 a D54",
+      title: "Mismo grupo, 54 días",
+      desc: "Entrenas con las mismas personas y los mismos coaches durante todo el programa. La presión del grupo es parte del método.",
+    },
+    {
+      day: "D54",
+      title: "Cierra tu Generación",
+      desc: "Mediciones finales, resultados sobre la mesa y cómo mantenerlos. El programa termina. La nueva versión de ti, no.",
+    },
+  ],
+};
 
 /* PROHIBIDAS en Studios (boxeo/conos verificados): brand/coach-stretch-demo-vertical,
    brand/coach-class-boxing-bags-vertical, brand/gym-structure-heavy-bags-wide,
@@ -85,12 +143,13 @@ const GENERATION_TIMELINE = [
    hd/cg-stairs-group */
 /* Grid editorial asimétrico (ART_DIRECTION_V3 §2): fotos de marca reales.
    Ratios calculados para que ambas columnas del photo-grid queden a la
-   misma altura (3fr a ratio R exige 2fr a ratio 1.5R). */
+   misma altura (3fr a ratio R exige 2fr a ratio 1.5R).
+   Caption bilingüe por foto; src/alt/ratio son únicos (alt queda EN). */
 type FloorPhoto = {
   src: string;
   alt: string;
   ratio: string;
-  caption: string;
+  caption: Record<Lang, string>;
 };
 
 const FLOOR_ROWS: { flip?: boolean; photos: [FloorPhoto, FloorPhoto] }[] = [
@@ -100,13 +159,13 @@ const FLOOR_ROWS: { flip?: boolean; photos: [FloorPhoto, FloorPhoto] }[] = [
         src: "images/studios/coral-gables/bike-floor-laughter.jpg",
         alt: "Two athletes laughing between rounds on the 54D bike floor",
         ratio: "3 / 2",
-        caption: "The bike floor",
+        caption: { en: "The bike floor", es: "El piso de bicis" },
       },
       {
         src: "images/studios/coral-gables/cardio-jump-mural-vertical.jpg",
         alt: "Athlete mid jump during the cardio block under the 54D mural",
         ratio: "1 / 1",
-        caption: "Cardio, coached live",
+        caption: { en: "Cardio, coached live", es: "Cardio con coach en vivo" },
       },
     ],
   },
@@ -117,13 +176,13 @@ const FLOOR_ROWS: { flip?: boolean; photos: [FloorPhoto, FloorPhoto] }[] = [
         src: "images/studios/coral-gables/group-cardio-session-01.jpg",
         alt: "A 54D class mid cardio block, the whole group moving together",
         ratio: "1 / 1",
-        caption: "The cardio block",
+        caption: { en: "The cardio block", es: "El bloque de cardio" },
       },
       {
         src: "images/brand/class-plank-rows-54d-mural.jpg",
         alt: "Rows of students holding planks on colored mats under the 54D mural",
         ratio: "3 / 2",
-        caption: "One group, one standard",
+        caption: { en: "One group, one standard", es: "Un grupo, un estándar" },
       },
     ],
   },
@@ -135,6 +194,8 @@ export default function Studios() {
   const experience = useReveal();
   const generations = useReveal();
   const cta = useReveal();
+  const { lang } = useLang();
+  const es = lang === "es";
 
   return (
     <div>
@@ -150,26 +211,33 @@ export default function Studios() {
         </div>
         <div className="hero-veil" />
         <div className="hero-content">
-          <span className="day-marker">54D Studios · The flagship experience</span>
+          <span className="day-marker">
+            {es
+              ? "54D Studios · La experiencia insignia"
+              : "54D Studios · The flagship experience"}
+          </span>
           <h1 className="hero-title">
-            Three countries.
+            {es ? "Tres países." : "Three countries."}
             <br />
-            <span className="accent">Five studios.</span>
+            <span className="accent">
+              {es ? "Cinco studios." : "Five studios."}
+            </span>
           </h1>
           <p className="hero-sub">
-            The complete method with a dedicated team on one outcome: coaches,
-            a nutritionist, and a physiotherapist assigned to your Generation.
+            {es
+              ? "El método completo con un equipo dedicado a un solo resultado: coaches, nutricionista y fisioterapeuta asignados a tu Generación."
+              : "The complete method with a dedicated team on one outcome: coaches, a nutritionist, and a physiotherapist assigned to your Generation."}
           </p>
           <div className="hero-ctas">
             <a href="#sedes" className="btn btn-primary">
-              Find your studio
+              {es ? "Encuentra tu studio" : "Find your studio"}
             </a>
           </div>
           {/* Guardrail high-ticket (SEPARATION_SPEC §3, verbatim) */}
           <p className="method-desc" style={{ marginTop: "1.6rem", maxWidth: "36rem" }}>
-            54D Studios is our flagship tier, a private-client level program.
-            Your consultation covers fit, your Generation's start date, and
-            the investment.
+            {es
+              ? "54D Studios es nuestro nivel insignia, un programa con trato de cliente privado. En la consulta vemos si es para ti, la fecha de inicio de tu Generación y la inversión."
+              : "54D Studios is our flagship tier, a private-client level program. Your consultation covers fit, your Generation's start date, and the investment."}
           </p>
         </div>
       </header>
@@ -181,11 +249,13 @@ export default function Studios() {
           <div className={map.className}>
             <span className="day-marker">Studios</span>
             <h2 className="section-title">
-              Choose your <span className="accent">studio.</span>
+              {es ? "Elige tu" : "Choose your"}{" "}
+              <span className="accent">studio.</span>
             </h2>
             <p className="lead" style={{ marginTop: "1.4rem", maxWidth: "38rem" }}>
-              Miami, Mexico City, and Bogotá. Each studio runs its own
-              Generations: same method, same standard, your city.
+              {es
+                ? "Miami, Ciudad de México y Bogotá. Cada studio tiene sus propias Generaciones: mismo método, mismo estándar, tu ciudad."
+                : "Miami, Mexico City, and Bogotá. Each studio runs its own Generations: same method, same standard, your city."}
             </p>
             <div
               style={{
@@ -200,7 +270,7 @@ export default function Studios() {
                   key={s.slug}
                   to={`/studios/${s.slug}`}
                   className="method-card"
-                  aria-label={`54D ${cityLabel(s.city)} transformation program`}
+                  aria-label={`54D ${cityLabel(s.city, "en")} transformation program`}
                   style={{
                     display: "flex",
                     flexDirection: "column",
@@ -210,7 +280,7 @@ export default function Studios() {
                 >
                   <span className="method-num">{s.countryCode}</span>
                   <div className="method-name" style={{ marginTop: "2rem" }}>
-                    {cityLabel(s.city)}
+                    {cityLabel(s.city, lang)}
                   </div>
                   <p className="method-desc" style={{ marginBottom: "1.6rem" }}>
                     {s.address}
@@ -219,7 +289,7 @@ export default function Studios() {
                     className="studio-cta"
                     style={{ marginTop: "auto", alignSelf: "flex-start" }}
                   >
-                    Explore →
+                    {es ? "Explorar →" : "Explore →"}
                   </span>
                 </Link>
               ))}
@@ -232,8 +302,12 @@ export default function Studios() {
       <section className="section">
         <div className="section-inner" ref={floor.ref}>
           <div className={floor.className}>
-            <span className="day-marker">Inside 54D</span>
-            <h2 className="section-title">The floor does the talking.</h2>
+            <span className="day-marker">
+              {es ? "Dentro de 54D" : "Inside 54D"}
+            </span>
+            <h2 className="section-title">
+              {es ? "El piso habla por sí solo." : "The floor does the talking."}
+            </h2>
             <div style={{ display: "grid", gap: "1rem", marginTop: "3rem" }}>
               {FLOOR_ROWS.map((row, i) => (
                 <div
@@ -249,7 +323,7 @@ export default function Studios() {
                         <img src={asset(p.src)} alt={p.alt} loading="lazy" />
                       </div>
                       <figcaption className="photo-caption">
-                        {p.caption}
+                        {p.caption[lang]}
                       </figcaption>
                     </figure>
                   ))}
@@ -264,19 +338,22 @@ export default function Studios() {
       <section className="section section-tight">
         <div className="section-inner" ref={experience.ref}>
           <div className={experience.className}>
-            <span className="day-marker">The experience</span>
+            <span className="day-marker">
+              {es ? "La experiencia" : "The experience"}
+            </span>
             <div className="method-intro">
               <h2 className="section-title">
-                In person is another <span className="accent">level.</span>
+                {es ? "Lo presencial es otro" : "In person is another"}{" "}
+                <span className="accent">{es ? "nivel." : "level."}</span>
               </h2>
               <p>
-                54D Studios is not another group class. It's the full method
-                with a team around you: coaches, a nutritionist, and
-                physiotherapy working on your transformation, in person.
+                {es
+                  ? "54D Studios no es una clase grupal más. Es el método completo con un equipo a tu alrededor: coaches, nutricionista y fisioterapia trabajando en tu transformación, en persona."
+                  : "54D Studios is not another group class. It's the full method with a team around you: coaches, a nutritionist, and physiotherapy working on your transformation, in person."}
               </p>
             </div>
             <div className="method-grid">
-              {EXPERIENCE.map((e) => (
+              {EXPERIENCE[lang].map((e) => (
                 <div className="method-card" key={e.num}>
                   <div className="method-num">{e.num}</div>
                   <div className="method-name">{e.name}</div>
@@ -292,26 +369,32 @@ export default function Studios() {
       <section className="section">
         <div className="section-inner" ref={generations.ref}>
           <div className={generations.className}>
-            <span className="day-marker">Generations</span>
+            <span className="day-marker">
+              {es ? "Generaciones" : "Generations"}
+            </span>
             <h2 className="section-title">
-              You don't join whenever you want. You join with your{" "}
-              <span className="accent">Generation.</span>
+              {es
+                ? "No entras cuando quieres. Entras con tu"
+                : "You don't join whenever you want. You join with your"}{" "}
+              <span className="accent">
+                {es ? "Generación." : "Generation."}
+              </span>
             </h2>
             <div className="gen-split">
               <div>
                 <p className="lead" style={{ maxWidth: "38rem" }}>
-                  Each studio opens Generations: the group you start and
-                  finish with. A start date, limited spots, and 54 days
-                  together. That's why it works. This is not an open
-                  membership. It's a commitment with a date.
+                  {es
+                    ? "Cada studio abre Generaciones: el grupo con el que empiezas y terminas. Una fecha de inicio, cupo limitado y 54 días juntos. Por eso funciona. Esto no es una membresía abierta. Es un compromiso con fecha."
+                    : "Each studio opens Generations: the group you start and finish with. A start date, limited spots, and 54 days together. That's why it works. This is not an open membership. It's a commitment with a date."}
                 </p>
                 <p className="lead" style={{ marginTop: "1rem", maxWidth: "38rem" }}>
-                  You are measured on day 1 and on day 54. The numbers are the
-                  contract.
+                  {es
+                    ? "Te mides el día 1 y el día 54. Los números son el contrato."
+                    : "You are measured on day 1 and on day 54. The numbers are the contract."}
                 </p>
               </div>
               <div className="timeline">
-                {GENERATION_TIMELINE.map((t) => (
+                {GENERATION_TIMELINE[lang].map((t) => (
                   <div className="timeline-item" key={t.day}>
                     <span className="timeline-day">{t.day}</span>
                     <h3>{t.title}</h3>
@@ -332,19 +415,22 @@ export default function Studios() {
           loading="lazy"
         />
         <div className="photo-band-content">
-          <span className="day-marker">The Generation</span>
+          <span className="day-marker">
+            {es ? "La Generación" : "The Generation"}
+          </span>
           <h2 className="section-title">
-            You start with strangers.
+            {es ? "Empiezas con desconocidos." : "You start with strangers."}
             <br />
-            You finish with your people.
+            {es ? "Terminas con tu gente." : "You finish with your people."}
           </h2>
           <p className="lead" style={{ marginTop: "1.4rem", maxWidth: "34rem" }}>
-            Every Generation trains, sweats, and graduates together. That is
-            what the studios are for.
+            {es
+              ? "Cada Generación entrena, suda y se gradúa junta. Para eso existen los studios."
+              : "Every Generation trains, sweats, and graduates together. That is what the studios are for."}
           </p>
           <div className="hero-ctas">
             <a href="#sedes" className="btn btn-primary">
-              Find your studio
+              {es ? "Encuentra tu studio" : "Find your studio"}
             </a>
           </div>
         </div>
@@ -355,14 +441,16 @@ export default function Studios() {
         <div className="section-inner" ref={cta.ref}>
           <div className={`final-wrap ${cta.className}`}>
             <h2 className="final-title">
-              One consultation.
+              {es ? "Una consulta." : "One consultation."}
               <br />
-              One decision that holds 54 days.
+              {es
+                ? "Una decisión que se sostiene 54 días."
+                : "One decision that holds 54 days."}
             </h2>
             <div className="final-links">
               {STUDIOS.map((s) => (
                 <Link key={s.slug} to={`/studios/${s.slug}`} className="studio-cta">
-                  {cityLabel(s.city)}
+                  {cityLabel(s.city, lang)}
                 </Link>
               ))}
             </div>
