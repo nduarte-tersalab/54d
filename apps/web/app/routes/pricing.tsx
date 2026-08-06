@@ -5,6 +5,7 @@ import { Nav, Footer, useReveal } from "../components/site";
 import { StickyCta } from "../components/sticky-cta";
 import { startCheckout } from "../lib/attribution";
 import { asset } from "../lib/asset";
+import { useLang, type Lang } from "../lib/i18n";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -24,10 +25,12 @@ export function meta({}: Route.MetaArgs) {
    .check-list, .btn-riskline. Todo lo demás reusa app.css.
    ============================================================ */
 const PLANS_CSS = `
-/* §1.1 Split 5/7: foto vertical izquierda, planes apilados derecha */
-.plans-split { display: grid; grid-template-columns: 5fr 7fr; gap: var(--space-block); align-items: start; margin-top: var(--space-block); }
-.plans-photo { margin: 0; }
-.plans-photo .photo-card { position: relative; }
+/* §1.1 Split 5/7: foto vertical izquierda, planes apilados derecha.
+   stretch: la foto llena la columna a la altura del stack (cero canvas
+   medio vacío, lección .gen-split). */
+.plans-split { display: grid; grid-template-columns: 5fr 7fr; gap: var(--space-block); align-items: stretch; margin-top: var(--space-block); }
+.plans-photo { margin: 0; display: flex; flex-direction: column; }
+.plans-photo .photo-card { position: relative; flex: 1; min-height: 24rem; }
 /* Overlay: negro 60% desde abajo (patron photo-band) para que la foto
    no compita en luminancia con el precio */
 .plans-photo .photo-card::after { content: ''; position: absolute; inset: 0; pointer-events: none;
@@ -52,10 +55,6 @@ const PLANS_CSS = `
 .photo-grid .check-list { margin-top: 1.6rem; max-width: 36rem; display: grid; gap: 0.9rem; }
 .photo-grid .check-list li { font-size: 1.05rem; padding-left: 1.7rem; }
 
-@media (min-width: 1081px) {
-  /* Foto sticky mientras se escanean los 3 precios */
-  .plans-photo { position: sticky; top: 6rem; }
-}
 @media (min-width: 1240px) {
   /* §1.1 Cards apiladas pasan a layout horizontal interno (patron Peloton):
      plan+precio izquierda, diferenciales centro, CTA derecha.
@@ -65,9 +64,11 @@ const PLANS_CSS = `
   .plans-stack .pricing-card > footer { margin-top: 0; }
 }
 @media (max-width: 1080px) {
-  /* Mobile/tablet: apila con la foto arriba, max 46vh */
+  /* Mobile/tablet: apila con los PRECIOS arriba (el CTA del hero aterriza
+     en la decisión, no en una foto); la foto cierra la sección */
   .plans-split { grid-template-columns: 1fr; }
-  .plans-photo .photo-card { height: 46vh; }
+  .plans-photo { order: 2; }
+  .plans-photo .photo-card { height: 46vh; min-height: 0; flex: none; }
 }
 @media (max-width: 900px) {
   /* Replica del refuerzo featured de app.css (alli scoped a .pricing-grid):
@@ -83,14 +84,14 @@ const PLANS_CSS = `
    ============================================================ */
 type Plan = {
   priceId: string;
-  plan: string;
+  plan: Record<Lang, string>;
   price: string;
   regular: string;
-  period: string;
+  period: Record<Lang, string>;
   /* §1.2: solo los 3 diferenciales del plan, verbo primero en <strong> */
-  features: { lead: string; rest: string }[];
+  features: { lead: Record<Lang, string>; rest: Record<Lang, string> }[];
   featured: boolean;
-  badge?: string;
+  badge?: Record<Lang, string>;
 };
 
 /* Precios reales de store.54d.com/packs, verificados 25/07/2026.
@@ -99,41 +100,95 @@ type Plan = {
 const PLANS: Plan[] = [
   {
     priceId: "PENDING_membership_monthly",
-    plan: "Monthly",
+    plan: { en: "Monthly", es: "Mensual" },
     price: "$54",
     regular: "$99",
-    period: "/ month · billed monthly",
+    period: { en: "/ month · billed monthly", es: "/ mes · facturación mensual" },
     features: [
-      { lead: "Start", rest: " with everything unlocked from day 1" },
-      { lead: "Commit", rest: " to nothing: billed month to month" },
-      { lead: "Cancel", rest: " anytime from your account, one click" },
+      {
+        lead: { en: "Start", es: "Empieza" },
+        rest: {
+          en: " with everything unlocked from day 1",
+          es: " con todo desbloqueado desde el día 1",
+        },
+      },
+      {
+        lead: { en: "Commit", es: "Paga" },
+        rest: {
+          en: " to nothing: billed month to month",
+          es: " mes a mes, sin compromiso de permanencia",
+        },
+      },
+      {
+        lead: { en: "Cancel", es: "Cancela" },
+        rest: {
+          en: " anytime from your account, one click",
+          es: " cuando quieras desde tu cuenta, en un clic",
+        },
+      },
     ],
     featured: false,
   },
   {
     priceId: "PENDING_membership_quarterly",
-    plan: "Quarterly",
+    plan: { en: "Quarterly", es: "Trimestral" },
     price: "$52",
     regular: "$89",
-    period: "/ month · $156 every 3 months",
-    badge: "Most chosen",
+    period: { en: "/ month · $156 every 3 months", es: "/ mes · $156 cada 3 meses" },
+    badge: { en: "Most chosen", es: "El más elegido" },
     features: [
-      { lead: "Get", rest: " everything in the monthly plan" },
-      { lead: "Cover", rest: " the full 54 days, plus time to lock the habit" },
-      { lead: "Save", rest: " $2 every month vs the monthly plan" },
+      {
+        lead: { en: "Get", es: "Recibe" },
+        rest: {
+          en: " everything in the monthly plan",
+          es: " todo lo del plan mensual",
+        },
+      },
+      {
+        lead: { en: "Cover", es: "Cubre" },
+        rest: {
+          en: " the full 54 days, plus time to lock the habit",
+          es: " los 54 días completos, más tiempo para fijar el hábito",
+        },
+      },
+      {
+        lead: { en: "Save", es: "Ahorra" },
+        rest: {
+          en: " $2 every month vs the monthly plan",
+          es: " $2 al mes frente al plan mensual",
+        },
+      },
     ],
     featured: true,
   },
   {
     priceId: "PENDING_membership_yearly",
-    plan: "Annual",
+    plan: { en: "Annual", es: "Anual" },
     price: "$49",
     regular: "$79",
-    period: "/ month · $588 a year",
+    period: { en: "/ month · $588 a year", es: "/ mes · $588 al año" },
     features: [
-      { lead: "Get", rest: " everything in the monthly plan" },
-      { lead: "Lock", rest: " the lowest monthly price all year" },
-      { lead: "Train", rest: " every new release at no extra cost" },
+      {
+        lead: { en: "Get", es: "Recibe" },
+        rest: {
+          en: " everything in the monthly plan",
+          es: " todo lo del plan mensual",
+        },
+      },
+      {
+        lead: { en: "Lock", es: "Asegura" },
+        rest: {
+          en: " the lowest monthly price all year",
+          es: " el precio mensual más bajo todo el año",
+        },
+      },
+      {
+        lead: { en: "Train", es: "Entrena" },
+        rest: {
+          en: " every new release at no extra cost",
+          es: " cada nuevo lanzamiento sin costo extra",
+        },
+      },
     ],
     featured: false,
   },
@@ -141,130 +196,214 @@ const PLANS: Plan[] = [
 
 /* §4 Punteos EXACTOS de la membresía: la lista de valor completa
    vive UNA sola vez, en Everything included. Verbo primero. */
-const MEMBERSHIP_VALUE: { lead: string; rest: string }[] = [
-  {
-    lead: "Train every program",
-    rest: ": all 13, including 54D ON, with 650+ recorded sessions",
-  },
-  {
-    lead: "Get a real coach",
-    rest: " in your corner: unlimited chat, corrections, and follow-up",
-  },
-  {
-    lead: "Eat with a plan",
-    rest: ": 12+ nutrition protocols and 120+ recipes built by the team",
-  },
-  {
-    lead: "Start free",
-    rest: ": 7 full days with everything unlocked before you pay a cent",
-  },
-  {
-    lead: "Cancel in one click",
-    rest: ": from your account, no calls, no retention tricks",
-  },
-  {
-    lead: "Keep your results covered",
-    rest: ": 30-day money-back guarantee if you do the work",
-  },
-];
+const MEMBERSHIP_VALUE: Record<Lang, { lead: string; rest: string }[]> = {
+  en: [
+    {
+      lead: "Train every program",
+      rest: ": all 13, including 54D ON, with 650+ recorded sessions",
+    },
+    {
+      lead: "Get a real coach",
+      rest: " in your corner: unlimited chat, corrections, and follow-up",
+    },
+    {
+      lead: "Eat with a plan",
+      rest: ": 12+ nutrition protocols and 120+ recipes built by the team",
+    },
+    {
+      lead: "Start free",
+      rest: ": 7 full days with everything unlocked before you pay a cent",
+    },
+    {
+      lead: "Cancel in one click",
+      rest: ": from your account, no calls, no retention tricks",
+    },
+    {
+      lead: "Keep your results covered",
+      rest: ": 30-day money-back guarantee if you do the work",
+    },
+  ],
+  es: [
+    {
+      lead: "Entrena todos los programas",
+      rest: ": los 13, incluido 54D ON, con 650+ sesiones grabadas",
+    },
+    {
+      lead: "Ten un coach real",
+      rest: " en tu esquina: chat ilimitado, correcciones y seguimiento",
+    },
+    {
+      lead: "Come con un plan",
+      rest: ": 12+ protocolos de nutrición y 120+ recetas creadas por el equipo",
+    },
+    {
+      lead: "Empieza gratis",
+      rest: ": 7 días completos con todo desbloqueado antes de pagar un centavo",
+    },
+    {
+      lead: "Cancela en un clic",
+      rest: ": desde tu cuenta, sin llamadas ni trucos de retención",
+    },
+    {
+      lead: "Mantén tus resultados cubiertos",
+      rest: ": garantía de devolución de 30 días si haces el trabajo",
+    },
+  ],
+};
 
 /* Bloque anti-objeción: matar riesgo percibido en tráfico frío */
-const NO_RISK = [
-  {
-    q: "What if I don't like it?",
-    name: "7-day free trial",
-    desc: "Full access to the method from minute one. If it's not for you, cancel in one click before day 8. The charge is zero.",
-  },
-  {
-    q: "What if I start and it doesn't work?",
-    name: "30-day guarantee",
-    desc: "Follow the program, and if you don't see results, we refund your money. No interrogation, no fine print.",
-  },
-  {
-    q: "Will you charge me without warning?",
-    name: "No surprise charges",
-    desc: "We email you before your first charge. Cancel from your account: no calls, no retention tricks.",
-  },
-];
+const NO_RISK: Record<Lang, { q: string; name: string; desc: string }[]> = {
+  en: [
+    {
+      q: "What if I don't like it?",
+      name: "7-day free trial",
+      desc: "Full access to the method from minute one. If it's not for you, cancel in one click before day 8. The charge is zero.",
+    },
+    {
+      q: "What if I start and it doesn't work?",
+      name: "30-day guarantee",
+      desc: "Follow the program, and if you don't see results, we refund your money. No interrogation, no fine print.",
+    },
+    {
+      q: "Will you charge me without warning?",
+      name: "No surprise charges",
+      desc: "We email you before your first charge. Cancel from your account: no calls, no retention tricks.",
+    },
+  ],
+  es: [
+    {
+      q: "¿Y si no me gusta?",
+      name: "Prueba gratis de 7 días",
+      desc: "Acceso completo al método desde el primer minuto. Si no es para ti, cancela en un clic antes del día 8. El cargo es cero.",
+    },
+    {
+      q: "¿Y si empiezo y no funciona?",
+      name: "Garantía de 30 días",
+      desc: "Sigue el programa y, si no ves resultados, te devolvemos tu dinero. Sin interrogatorios, sin letra pequeña.",
+    },
+    {
+      q: "¿Me van a cobrar sin avisar?",
+      name: "Sin cargos sorpresa",
+      desc: "Te enviamos un correo antes de tu primer cargo. Cancela desde tu cuenta: sin llamadas, sin trucos de retención.",
+    },
+  ],
+};
 
-/* SOCIAL_PROOF_PLACEHOLDER: reemplazar con testimonios reales
-   del cliente (nombre, edad, ciudad, generación y foto). */
-const TESTIMONIALS = [
-  {
-    quote:
-      "I thought it was another workout app. The difference was the coach: he wrote to me every day, even the days I wanted to disappear.",
-    name: "Mariana R., 34",
-    tag: "Gen 41 · Mexico City",
-  },
-  {
-    quote:
-      "I did the full method from home, with two dumbbells and a band. On day 54 I didn't recognize myself in the day 1 photos.",
-    name: "Camilo T., 29",
-    tag: "54D ON · Bogotá",
-  },
-  {
-    quote:
-      "What scared me most was paying and quitting, like always. This time, someone didn't let me let go. That's the difference.",
-    name: "Andrea S., 41",
-    tag: "54D ON · Miami",
-  },
-];
+/* SOCIAL_PROOF_PLACEHOLDER: la sección Results queda APAGADA (array
+   vacío) hasta tener testimonios REALES confirmados por el cliente
+   (nombre, edad, ciudad, generación y foto). Regla dura: NO INVENTAR
+   DATOS. Al cargar testimonios verificados acá, la sección se
+   enciende sola. */
+type Testimonial = { quote: string; name: string; tag: string };
+const TESTIMONIALS: Testimonial[] = [];
 
-/* FAQ de objeciones: también alimenta el schema FAQPage */
-const FAQS: { q: string; a: string; link?: { href: string; label: string } }[] = [
-  {
-    q: "Can I cancel anytime?",
-    a: "Yes. Cancel from your account in one click: no calls, no tricks. Cancel before day 8 and you pay nothing. And we email you before your first charge.",
-  },
-  {
-    q: "Do I need equipment or experience?",
-    a: "No. You start at your level, with what you have at home. Sessions are progressive: the program adapts to your starting point, not the other way around.",
-  },
-  {
-    q: "Do I need the app?",
-    a: "Yes. 54D ON is delivered through the 54D On app for iOS and Android: your daily training, your nutrition protocol, and the chat with your coach all live there. The app is free to download and rated 4.9 on the App Store. Your subscription unlocks everything.",
-    link: { href: "/on", label: "See how 54D ON works →" },
-  },
-  {
-    q: "What's the coach like? Is it a real person?",
-    a: "A real person, not a bot. Your coach writes to you over chat, reviews your progress, corrects you, and demands more. Every day. The app is just the vehicle: the method is the coach.",
-  },
-  {
-    q: "How does billing work?",
-    a: "You activate your 7-day free trial at no cost. Before it ends, we email you. Only then does the first charge for the plan you chose go through, processed securely by Stripe. After that it renews per your plan, and you can cancel anytime.",
-  },
-  {
-    q: "Can I change plans later?",
-    a: "Yes. You can switch from monthly to quarterly or annual from your account anytime; the change applies on your next billing cycle.",
-  },
-  {
-    q: "Which countries is it available in?",
-    a: "All of them. 54D ON works from any country, on any device; prices are in US dollars (USD) and payment is processed by Stripe.",
-  },
-  {
-    q: "How does the 54D Method work?",
-    a: "54 days of structured training, a personalized nutrition protocol, and daily coaching. A program with a start, an end, and someone who demands more of you.",
-    link: { href: "/method", label: "See the full method →" },
-  },
-];
+/* FAQ de objeciones: también alimenta el schema FAQPage (SIEMPRE en EN,
+   idioma indexado) */
+type Faq = { q: string; a: string; link?: { href: string; label: string } };
+const FAQS: Record<Lang, Faq[]> = {
+  en: [
+    {
+      q: "Can I cancel anytime?",
+      a: "Yes. Cancel from your account in one click: no calls, no tricks. Cancel before day 8 and you pay nothing. And we email you before your first charge.",
+    },
+    {
+      q: "Do I need equipment or experience?",
+      a: "No. You start at your level, with what you have at home. Sessions are progressive: the program adapts to your starting point, not the other way around.",
+    },
+    {
+      q: "Do I need the app?",
+      a: "Yes. 54D ON is delivered through the 54D On app for iOS and Android: your daily training, your nutrition protocol, and the chat with your coach all live there. The app is free to download and rated 4.9 on the App Store. Your subscription unlocks everything.",
+      link: { href: "/on", label: "See how 54D ON works →" },
+    },
+    {
+      q: "What's the coach like? Is it a real person?",
+      a: "A real person, not a bot. Your coach writes to you over chat, reviews your progress, corrects you, and demands more. Every day. The app is just the vehicle: the method is the coach.",
+    },
+    {
+      q: "How does billing work?",
+      a: "You activate your 7-day free trial at no cost. Before it ends, we email you. Only then does the first charge for the plan you chose go through, processed securely by Stripe. After that it renews per your plan, and you can cancel anytime.",
+    },
+    {
+      q: "Can I change plans later?",
+      a: "Yes. You can switch from monthly to quarterly or annual from your account anytime; the change applies on your next billing cycle.",
+    },
+    {
+      q: "Which countries is it available in?",
+      a: "All of them. 54D ON works from any country, on any device; prices are in US dollars (USD) and payment is processed by Stripe.",
+    },
+    {
+      q: "How does the 54D Method work?",
+      a: "54 days of structured training, a personalized nutrition protocol, and daily coaching. A program with a start, an end, and someone who demands more of you.",
+      link: { href: "/method", label: "See the full method →" },
+    },
+  ],
+  es: [
+    {
+      q: "¿Puedo cancelar cuando quiera?",
+      a: "Sí. Cancela desde tu cuenta en un clic: sin llamadas, sin trucos. Cancela antes del día 8 y no pagas nada. Además te enviamos un correo antes de tu primer cargo.",
+    },
+    {
+      q: "¿Necesito equipo o experiencia?",
+      a: "No. Empiezas en tu nivel, con lo que tienes en casa. Las sesiones son progresivas: el programa se adapta a tu punto de partida, no al revés.",
+    },
+    {
+      q: "¿Necesito la app?",
+      a: "Sí. 54D ON se entrega a través de la app 54D On para iOS y Android: ahí viven tu entrenamiento diario, tu protocolo de nutrición y el chat con tu coach. La app es gratis de descargar y tiene 4.9 en el App Store. Tu suscripción desbloquea todo.",
+      link: { href: "/on", label: "Mira cómo funciona 54D ON →" },
+    },
+    {
+      q: "¿Cómo es el coach? ¿Es una persona real?",
+      a: "Una persona real, no un bot. Tu coach te escribe por chat, revisa tu progreso, te corrige y te exige más. Todos los días. La app es solo el vehículo: el método es el coach.",
+    },
+    {
+      q: "¿Cómo funciona el cobro?",
+      a: "Activas tu prueba gratis de 7 días sin costo. Antes de que termine, te enviamos un correo. Solo entonces se procesa el primer cargo del plan que elegiste, de forma segura con Stripe. Después se renueva según tu plan, y puedes cancelar cuando quieras.",
+    },
+    {
+      q: "¿Puedo cambiar de plan después?",
+      a: "Sí. Puedes pasar de mensual a trimestral o anual desde tu cuenta cuando quieras; el cambio aplica en tu siguiente ciclo de facturación.",
+    },
+    {
+      q: "¿En qué países está disponible?",
+      a: "En todos. 54D ON funciona desde cualquier país, en cualquier dispositivo; los precios están en dólares (USD) y el pago se procesa con Stripe.",
+    },
+    {
+      q: "¿Cómo funciona el Método 54D?",
+      a: "54 días de entrenamiento estructurado, un protocolo de nutrición personalizado y coaching diario. Un programa con inicio, final y alguien que te exige más.",
+      link: { href: "/method", label: "Conoce el método completo →" },
+    },
+  ],
+};
 
+/* Schema SIEMPRE desde el EN (idioma principal indexado) */
 const FAQ_SCHEMA = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  mainEntity: FAQS.map((f) => ({
+  mainEntity: FAQS.en.map((f) => ({
     "@type": "Question",
     name: f.q,
     acceptedAnswer: { "@type": "Answer", text: f.a },
   })),
 };
 
-const MICROCOPY = "7 days free · cancel anytime · 30-day guarantee";
+const MICROCOPY: Record<Lang, string> = {
+  en: "7 days free · cancel anytime · 30-day guarantee",
+  es: "7 días gratis · cancela cuando quieras · garantía de 30 días",
+};
 /* §3.4: la riskline por card ya dice "7 days free · cancel anytime";
    la línea central de la sección no lo triplica */
-const RISKLINE = "7 days free · cancel anytime";
-const PLANS_FOOTNOTE = "30-day guarantee · secure payment by Stripe";
+const RISKLINE: Record<Lang, string> = {
+  en: "7 days free · cancel anytime",
+  es: "7 días gratis · cancela cuando quieras",
+};
+const PLANS_FOOTNOTE: Record<Lang, string> = {
+  en: "30-day guarantee · secure payment by Stripe",
+  es: "Garantía de 30 días · pago seguro con Stripe",
+};
 
 export default function Pricing() {
+  const { lang } = useLang();
+  const es = lang === "es";
   const plans = useReveal();
   const band = useReveal();
   const included = useReveal();
@@ -275,18 +414,24 @@ export default function Pricing() {
 
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  /* El error se ancla a la card tapeada (no dos pantallas más abajo) */
+  const [errorPlan, setErrorPlan] = useState<string | null>(null);
 
   async function handleCheckout(priceId: string) {
     if (loadingPlan) return;
     setError(null);
+    setErrorPlan(null);
     setLoadingPlan(priceId);
     try {
       // startCheckout adjunta la atribución (utm/fbclid) y redirige a Stripe
       await startCheckout(priceId);
     } catch {
       setError(
-        "We couldn't start checkout. Check your connection and try again in a few seconds."
+        es
+          ? "No pudimos iniciar el pago. Revisa tu conexión e intenta de nuevo en unos segundos."
+          : "We couldn't start checkout. Check your connection and try again in a few seconds."
       );
+      setErrorPlan(priceId);
       setLoadingPlan(null);
     }
   }
@@ -310,18 +455,26 @@ export default function Pricing() {
         </div>
         <div className="hero-veil" />
         <div className="hero-content">
-          <span className="day-marker">54D ON · 7-day free trial</span>
+          <span className="day-marker">
+            {es ? "54D ON · Prueba gratis de 7 días" : "54D ON · 7-day free trial"}
+          </span>
           <h1 className="hero-title">
-            Start today.
+            {es ? "Empieza hoy." : "Start today."}
             <br />
-            <span className="accent">The first 7 days are on us.</span>
+            <span className="accent">
+              {es
+                ? "Los primeros 7 días van por nuestra cuenta."
+                : "The first 7 days are on us."}
+            </span>
           </h1>
           <p className="hero-sub">
-            Full access to the method. Cancel before day 8 and pay nothing.
+            {es
+              ? "Acceso completo al método. Cancela antes del día 8 y no pagas nada."
+              : "Full access to the method. Cancel before day 8 and pay nothing."}
           </p>
           <div className="hero-ctas">
             <a href="#plans" className="btn btn-primary">
-              Start free. 7 days.
+              {es ? "Empieza gratis. 7 días." : "Start free. 7 days."}
             </a>
           </div>
         </div>
@@ -336,9 +489,11 @@ export default function Pricing() {
       >
         <div className="section-inner" ref={plans.ref}>
           <div className={plans.className}>
-            <span className="day-marker">Plans</span>
+            <span className="day-marker">{es ? "Planes" : "Plans"}</span>
             <h2 className="section-title">
-              One method. Three ways to start.
+              {es
+                ? "Un método. Tres maneras de empezar."
+                : "One method. Three ways to start."}
             </h2>
             <p
               style={{
@@ -349,10 +504,11 @@ export default function Pricing() {
                 color: "var(--c-mist)",
               }}
             >
-              One subscription, every program. The method, the coach, and the
-              community are the same in all three: you only choose how you pay.{" "}
+              {es
+                ? "Una sola suscripción, todos los programas. El método, el coach y la comunidad son iguales en los tres: solo eliges cómo pagar."
+                : "One subscription, every program. The method, the coach, and the community are the same in all three: you only choose how you pay."}{" "}
               <Link to="/on" style={{ color: "var(--c-yellow)", textDecoration: "none" }}>
-                See every program →
+                {es ? "Mira todos los programas →" : "See every program →"}
               </Link>
             </p>
 
@@ -367,8 +523,10 @@ export default function Pricing() {
                     loading="lazy"
                   />
                 </div>
+                {/* Caption neutral: sin número de Generación (dato no
+                    verificado); la sede sí es real */}
                 <figcaption className="photo-caption">
-                  Gen 41 · Coral Gables
+                  54D Coral Gables
                 </figcaption>
               </figure>
 
@@ -393,12 +551,12 @@ export default function Pricing() {
                           padding: "0.4rem 0.8rem",
                         }}
                       >
-                        {p.badge}
+                        {p.badge[lang]}
                       </span>
                     )}
                     {/* §3.6 Un decisor por card: plan, precio, 3 diferenciales, CTA, riskline */}
                     <header>
-                      <span className="pricing-plan">{p.plan}</span>
+                      <span className="pricing-plan">{p.plan[lang]}</span>
                       {/* §3.1 ancla tachada + §3.2 per-month framing: el número
                           grande es SIEMPRE el mensual */}
                       <div className="pricing-price">
@@ -414,13 +572,13 @@ export default function Pricing() {
                         </s>
                         {p.price}
                       </div>
-                      <span className="pricing-period">{p.period}</span>
+                      <span className="pricing-period">{p.period[lang]}</span>
                     </header>
                     <ul className="check-list">
                       {p.features.map((f) => (
-                        <li key={f.lead}>
-                          <strong>{f.lead}</strong>
-                          {f.rest}
+                        <li key={f.lead.en}>
+                          <strong>{f.lead[lang]}</strong>
+                          {f.rest[lang]}
                         </li>
                       ))}
                     </ul>
@@ -434,29 +592,36 @@ export default function Pricing() {
                         aria-busy={loadingPlan === p.priceId}
                         style={loadingPlan && loadingPlan !== p.priceId ? { opacity: 0.5 } : undefined}
                       >
-                        {loadingPlan === p.priceId ? "Connecting…" : "Start free trial"}
+                        {loadingPlan === p.priceId
+                          ? es
+                            ? "Conectando…"
+                            : "Connecting…"
+                          : es
+                            ? "Empieza tu prueba gratis"
+                            : "Start free trial"}
                       </button>
                       {/* §3.4 riesgo pegado al botón */}
-                      <span className="btn-riskline">{RISKLINE}</span>
+                      <span className="btn-riskline">{RISKLINE[lang]}</span>
+                      {/* El error vive DENTRO de la card tapeada, junto al botón */}
+                      {error && errorPlan === p.priceId && (
+                        <p
+                          role="alert"
+                          style={{
+                            marginTop: "0.8rem",
+                            fontSize: "0.88rem",
+                            color: "var(--c-red)",
+                            textAlign: "center",
+                          }}
+                        >
+                          {error}
+                        </p>
+                      )}
                     </footer>
                   </article>
                 ))}
               </div>
             </div>
 
-            {error && (
-              <p
-                role="alert"
-                style={{
-                  marginTop: "1.4rem",
-                  fontSize: "0.95rem",
-                  color: "var(--c-red)",
-                  textAlign: "center",
-                }}
-              >
-                {error}
-              </p>
-            )}
             <p
               style={{
                 marginTop: "1.6rem",
@@ -465,26 +630,32 @@ export default function Pricing() {
                 textAlign: "center",
               }}
             >
-              {PLANS_FOOTNOTE}
+              {PLANS_FOOTNOTE[lang]}
             </p>
 
             {/* Trust bar: cierra Plans, queda como está (§1.3.1) */}
             <div className="stat-row">
               <div className="stat">
                 <div className="stat-value">7</div>
-                <div className="stat-label">Days free</div>
+                <div className="stat-label">{es ? "Días gratis" : "Days free"}</div>
               </div>
               <div className="stat">
                 <div className="stat-value">30</div>
-                <div className="stat-label">Day guarantee</div>
+                <div className="stat-label">
+                  {es ? "Días de garantía" : "Day guarantee"}
+                </div>
               </div>
               <div className="stat">
                 <div className="stat-value">54</div>
-                <div className="stat-label">Days of method</div>
+                <div className="stat-label">
+                  {es ? "Días de método" : "Days of method"}
+                </div>
               </div>
               <div className="stat">
-                <div className="stat-value">1 click</div>
-                <div className="stat-label">To cancel</div>
+                <div className="stat-value">{es ? "1 clic" : "1 click"}</div>
+                <div className="stat-label">
+                  {es ? "Para cancelar" : "To cancel"}
+                </div>
               </div>
             </div>
           </div>
@@ -500,9 +671,13 @@ export default function Pricing() {
         />
         <div className="photo-band-content" ref={band.ref}>
           <div className={band.className}>
-            <span className="photo-caption">The finish line</span>
+            <span className="photo-caption">
+              {es ? "La meta" : "The finish line"}
+            </span>
             <h2 className="section-title" style={{ marginTop: "1.4rem", maxWidth: "24ch" }}>
-              54 days from now, you won't recognize yourself.
+              {es
+                ? "En 54 días no te vas a reconocer."
+                : "54 days from now, you won't recognize yourself."}
             </h2>
           </div>
         </div>
@@ -512,21 +687,34 @@ export default function Pricing() {
       <section className="section">
         <div className="section-inner" ref={included.ref}>
           <div className={included.className}>
-            <span className="day-marker">Everything included</span>
+            <span className="day-marker">
+              {es ? "Todo incluido" : "Everything included"}
+            </span>
             <div className="method-intro">
+              {/* Titular 100% blanco (QUIET v6): acento con color inherit */}
               <h2 className="section-title">
-                Every plan includes <span style={{ color: "var(--c-yellow)" }}>everything.</span>
+                {es ? (
+                  <>
+                    Cada plan incluye <span className="accent">todo.</span>
+                  </>
+                ) : (
+                  <>
+                    Every plan includes <span className="accent">everything.</span>
+                  </>
+                )}
               </h2>
               <p>
-                The plan only changes what you pay and how often. The method is
-                the same: complete, demanding, with a real coach behind it. No
-                stripped-down tiers, no locked features.
+                {es
+                  ? "El plan solo cambia cuánto pagas y con qué frecuencia. El método es el mismo: completo, exigente y con un coach real detrás. Sin versiones recortadas, sin funciones bloqueadas."
+                  : "The plan only changes what you pay and how often. The method is the same: complete, demanding, with a real coach behind it. No stripped-down tiers, no locked features."}
               </p>
             </div>
-            {/* Split 2 columnas: la lista de valor completa (§4) vive UNA vez */}
+            {/* Split 2 columnas: la lista de valor completa (§4) vive UNA vez.
+                Foto a 3/2: la columna derecha acompaña la altura de la lista
+                sin dejar canvas muerto */}
             <div className="photo-grid" style={{ alignItems: "start", gap: "var(--space-block)" }}>
               <ul className="check-list">
-                {MEMBERSHIP_VALUE.map((item) => (
+                {MEMBERSHIP_VALUE[lang].map((item) => (
                   <li key={item.lead}>
                     <strong>{item.lead}</strong>
                     {item.rest}
@@ -534,15 +722,20 @@ export default function Pricing() {
                 ))}
               </ul>
               <figure style={{ margin: 0 }}>
-                <div className="photo-card">
+                <div className="photo-card" style={{ aspectRatio: "3 / 2" }}>
+                  {/* Vertical recortada a 3/2: el encuadre sube al rostro del
+                      coach (el centro de la foto es torso negro sobre negro) */}
                   <img
                     src={asset("images/studios/coral-gables/coach-with-headset-01.jpg")}
                     alt="A 54D coach wearing a headset guiding the class from the training floor"
                     loading="lazy"
+                    style={{ objectPosition: "center 26%" }}
                   />
                 </div>
                 <figcaption className="photo-caption">
-                  Your coach · Every one of the 54 days
+                  {es
+                    ? "Tu coach · Cada uno de los 54 días"
+                    : "Your coach · Every one of the 54 days"}
                 </figcaption>
               </figure>
             </div>
@@ -561,12 +754,21 @@ export default function Pricing() {
       >
         <div className="section-inner" ref={noRisk.ref}>
           <div className={noRisk.className}>
-            <span className="day-marker">Zero risk</span>
+            <span className="day-marker">{es ? "Cero riesgo" : "Zero risk"}</span>
+            {/* Titular 100% blanco (QUIET v6) */}
             <h2 className="section-title">
-              If it's not for you, <span style={{ color: "var(--c-yellow)" }}>you don't pay.</span>
+              {es ? (
+                <>
+                  Si no es para ti, <span className="accent">no pagas.</span>
+                </>
+              ) : (
+                <>
+                  If it's not for you, <span className="accent">you don't pay.</span>
+                </>
+              )}
             </h2>
             <div className="pricing-grid">
-              {NO_RISK.map((item) => (
+              {NO_RISK[lang].map((item) => (
                 <div className="method-card" key={item.name}>
                   {/* La pregunta en amarillo (§1.3.4) */}
                   <div
@@ -589,48 +791,70 @@ export default function Pricing() {
         </div>
       </section>
 
-      {/* ============ AIDA · D: PRUEBA SOCIAL (placeholder) ============ */}
-      {/* SOCIAL_PROOF_PLACEHOLDER: reemplazar con testimonios reales,
-          fotos y generaciones confirmadas por el cliente */}
-      <section className="section">
-        <div className="section-inner" ref={proof.ref}>
-          <div className={proof.className}>
-            <span className="day-marker">Results</span>
-            <h2 className="section-title">
-              Thousands have done it. <span style={{ color: "var(--c-yellow)" }}>You're next.</span>
-            </h2>
-            <div className="pricing-grid">
-              {TESTIMONIALS.map((t) => (
-                <div className="method-card" key={t.name}>
-                  <p className="method-desc" style={{ marginTop: 0, fontSize: "1.02rem" }}>
-                    "{t.quote}"
-                  </p>
-                  <div className="method-name" style={{ fontSize: "1rem" }}>{t.name}</div>
-                  <p
-                    style={{
-                      marginTop: "0.3rem",
-                      fontSize: "0.78rem",
-                      textTransform: "uppercase",
-                      letterSpacing: "var(--track-label, 0.14em)",
-                      color: "var(--c-faint)",
-                    }}
-                  >
-                    {t.tag}
-                  </p>
-                </div>
-              ))}
+      {/* ============ AIDA · D: PRUEBA SOCIAL (APAGADA hasta tener datos
+          reales) ============ */}
+      {/* Gateada al array: con TESTIMONIALS vacío no se renderiza nada.
+          NO INVENTAR DATOS: solo testimonios confirmados por el cliente
+          (nombre, edad, ciudad, generación y foto). */}
+      {TESTIMONIALS.length > 0 && (
+        <section className="section">
+          <div className="section-inner" ref={proof.ref}>
+            <div className={proof.className}>
+              <span className="day-marker">{es ? "Resultados" : "Results"}</span>
+              <h2 className="section-title">
+                {es ? (
+                  <>
+                    Sigues <span className="accent">tú.</span>
+                  </>
+                ) : (
+                  <>
+                    You're <span className="accent">next.</span>
+                  </>
+                )}
+              </h2>
+              <div className="pricing-grid">
+                {TESTIMONIALS.map((t) => (
+                  <div className="method-card" key={t.name}>
+                    <p className="method-desc" style={{ marginTop: 0, fontSize: "1.02rem" }}>
+                      "{t.quote}"
+                    </p>
+                    <div className="method-name" style={{ fontSize: "1rem" }}>{t.name}</div>
+                    <p
+                      style={{
+                        marginTop: "0.3rem",
+                        fontSize: "0.78rem",
+                        textTransform: "uppercase",
+                        letterSpacing: "var(--track-label, 0.14em)",
+                        color: "var(--c-faint)",
+                      }}
+                    >
+                      {t.tag}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ============ AIDA · A: FAQ (objeciones tardías) ============ */}
       <section className="section">
         <div className="section-inner" ref={faq.ref}>
           <div className={faq.className}>
-            <span className="day-marker">Questions</span>
+            <span className="day-marker">{es ? "Preguntas" : "Questions"}</span>
+            {/* Titular 100% blanco (QUIET v6) */}
             <h2 className="section-title">
-              What you'd ask <span style={{ color: "var(--c-yellow)" }}>before starting.</span>
+              {es ? (
+                <>
+                  Lo que preguntarías{" "}
+                  <span className="accent">antes de empezar.</span>
+                </>
+              ) : (
+                <>
+                  What you'd ask <span className="accent">before starting.</span>
+                </>
+              )}
             </h2>
             {/* 2 columnas: mata el 50% de viewport en negro vacío (pricing-desktop-2.png) */}
             <div
@@ -641,7 +865,7 @@ export default function Pricing() {
                 alignItems: "start",
               }}
             >
-              {FAQS.map((f) => (
+              {FAQS[lang].map((f) => (
                 <details className="faq-item" key={f.q}>
                   <summary>{f.q}</summary>
                   <p>
@@ -670,18 +894,28 @@ export default function Pricing() {
         <div className="section-inner" ref={cta.ref}>
           <div className={`final-wrap ${cta.className}`}>
             <h2 className="final-title">
-              Your Day 1 <span className="accent">starts free.</span>
+              {es ? (
+                <>
+                  Tu Día 1 <span className="accent">empieza gratis.</span>
+                </>
+              ) : (
+                <>
+                  Your Day 1 <span className="accent">starts free.</span>
+                </>
+              )}
             </h2>
             <div className="hero-ctas">
               <a href="#plans" className="btn btn-primary">
-                Start free. 7 days.
+                {es ? "Empieza gratis. 7 días." : "Start free. 7 days."}
               </a>
               <Link to="/studios" className="btn btn-ghost">
-                Rather train in person? See the studios
+                {es
+                  ? "¿Prefieres entrenar en persona? Conoce los studios"
+                  : "Rather train in person? See the studios"}
               </Link>
             </div>
             <p style={{ marginTop: "1.4rem", fontSize: "0.82rem", color: "var(--c-faint)" }}>
-              {MICROCOPY}
+              {MICROCOPY[lang]}
             </p>
           </div>
         </div>
@@ -689,7 +923,10 @@ export default function Pricing() {
 
       {/* Sticky CTA mobile compartida (umbral 25%, compensa el footer):
           extraída a components/sticky-cta.tsx — FIXES_V5 §4 / MOBILE_COMMERCE F5 */}
-      <StickyCta href="#plans" label="Start free. 7 days." />
+      <StickyCta
+        href="#plans"
+        label={es ? "Empieza gratis. 7 días." : "Start free. 7 days."}
+      />
 
       <Footer />
     </div>

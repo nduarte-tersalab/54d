@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 import type { Route } from "./+types/studios";
 import { Nav, Footer, useReveal } from "../components/site";
-import { STUDIOS } from "../data/studios";
+import { STUDIOS, cityLabel } from "../data/studios";
 import { asset } from "../lib/asset";
 import { useLang, type Lang } from "../lib/i18n";
 
@@ -27,17 +27,21 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-/* Display de ciudad: el em dash del data ("Mexico City [u2014] Carso") se
-   convierte a middle dot ("Mexico City · Carso") solo en UI.
-   Regla COPY_V3 §2: nunca en slugs ni SEO. Escape unicode a propósito:
-   el caracter literal está prohibido en apps/web/app (CI grep).
-   En ES la ciudad se localiza en display ("Ciudad de México"), igual
-   que Nav/Footer; slugs y data quedan EN. */
-const cityLabel = (city: string, lang: Lang) => {
-  const dotted = city.replace(/\s*\u2014\s*/g, " · ");
-  return lang === "es"
-    ? dotted.replace("Mexico City", "Ciudad de México")
-    : dotted;
+/* Display de ciudad: cityLabel compartido y localizado en data/studios.ts
+   (una sola fuente con footer y detalle de sede). */
+
+/* Thumbnail por sede para el chooser: SOLO sedes con galería curada
+   propia (CG y Hallandale); el resto espera fotos del cliente.
+   Assets ya verificados contra la lista de PROHIBIDAS. */
+const SEDE_THUMBS: Record<string, { src: string; alt: string }> = {
+  "coral-gables": {
+    src: "images/studios/coral-gables/mural-54d-editorial-wide.jpg",
+    alt: "An athlete mid drill in front of the giant 54D mural at the Coral Gables studio",
+  },
+  hallandale: {
+    src: "images/studios/hallandale/mural-54d-members-wide.jpg",
+    alt: "Two 54D members standing under the giant 54D mural at the Hallandale studio",
+  },
 };
 
 /* La experiencia presencial: qué la hace distinta a entrenar solo */
@@ -244,7 +248,11 @@ export default function Studios() {
 
       {/* ============ MAPA CONCEPTUAL DE SEDES (grid de cards) ============ */}
       {/* FIXES_V5 §3.2: único campo de luz de la página */}
-      <section className="section bloom-right" id="sedes">
+      <section
+        className="section bloom-right"
+        id="sedes"
+        style={{ scrollMarginTop: "5rem" }}
+      >
         <div className="section-inner" ref={map.ref}>
           <div className={map.className}>
             <span className="day-marker">Studios</span>
@@ -257,42 +265,37 @@ export default function Studios() {
                 ? "Miami, Ciudad de México y Bogotá. Cada studio tiene sus propias Generaciones: mismo método, mismo estándar, tu ciudad."
                 : "Miami, Mexico City, and Bogotá. Each studio runs its own Generations: same method, same standard, your city."}
             </p>
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))",
-                gap: "1.1rem",
-                marginTop: "3rem",
-              }}
-            >
-              {STUDIOS.map((s) => (
-                <Link
-                  key={s.slug}
-                  to={`/studios/${s.slug}`}
-                  className="method-card"
-                  aria-label={`54D ${cityLabel(s.city, "en")} transformation program`}
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    textDecoration: "none",
-                    color: "inherit",
-                  }}
-                >
-                  <span className="method-num">{s.countryCode}</span>
-                  <div className="method-name" style={{ marginTop: "2rem" }}>
-                    {cityLabel(s.city, lang)}
-                  </div>
-                  <p className="method-desc" style={{ marginBottom: "1.6rem" }}>
-                    {s.address}
-                  </p>
-                  <span
-                    className="studio-cta"
-                    style={{ marginTop: "auto", alignSelf: "flex-start" }}
+            {/* Tiles clickeables: ciudad protagonista, dirección como
+                metadata, hover solo de borde (deja de leerse como un
+                resultado de Maps). */}
+            <div className="sede-grid">
+              {STUDIOS.map((s) => {
+                const thumb = SEDE_THUMBS[s.slug];
+                return (
+                  <Link
+                    key={s.slug}
+                    to={`/studios/${s.slug}`}
+                    className="sede-tile"
+                    aria-label={`54D ${cityLabel(s.city, "en")} transformation program`}
                   >
-                    {es ? "Explorar →" : "Explore →"}
-                  </span>
-                </Link>
-              ))}
+                    {thumb && (
+                      <span className="sede-thumb">
+                        <img src={asset(thumb.src)} alt={thumb.alt} loading="lazy" />
+                      </span>
+                    )}
+                    <span className="sede-body">
+                      <span className="sede-country">
+                        {s.countryCode} · {s.country}
+                      </span>
+                      <span className="sede-city">{cityLabel(s.city, lang)}</span>
+                      <span className="sede-addr">{s.address}</span>
+                      <span className="sede-go">
+                        {es ? "Explorar →" : "Explore →"}
+                      </span>
+                    </span>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -450,9 +453,25 @@ export default function Studios() {
                 ? "Una decisión que se sostiene 54 días."
                 : "One decision that holds 54 days."}
             </h2>
+            {/* El cierre lleva UN primario (único CTA dominante de la banda);
+                las ciudades quedan como links de texto secundarios */}
+            <div className="hero-ctas" style={{ justifyContent: "center" }}>
+              <a href="#sedes" className="btn btn-primary">
+                {es ? "Encuentra tu studio" : "Find your studio"}
+              </a>
+            </div>
             <div className="final-links">
               {STUDIOS.map((s) => (
-                <Link key={s.slug} to={`/studios/${s.slug}`} className="studio-cta">
+                <Link
+                  key={s.slug}
+                  to={`/studios/${s.slug}`}
+                  style={{
+                    color: "var(--c-faint)",
+                    textDecoration: "none",
+                    fontSize: "0.9rem",
+                    padding: "0.7rem 0.5rem",
+                  }}
+                >
                   {cityLabel(s.city, lang)}
                 </Link>
               ))}

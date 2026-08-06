@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import type { Route } from "./+types/studio-detail";
 import { Nav, Footer, useReveal } from "../components/site";
-import { STUDIOS } from "../data/studios";
+import { STUDIOS, cityLabel } from "../data/studios";
 import { asset } from "../lib/asset";
 import { useLang, type Lang } from "../lib/i18n";
 import { DIAL_CODES, FREQUENT_ISO, isoFlag } from "../data/dial-codes";
@@ -63,12 +63,11 @@ export async function loader({ params }: Route.LoaderArgs) {
   return { studio: { ...studio, whatsapp }, liveClasses };
 }
 
-/* Display de ciudad: el separador del data (middle dot actual, em dash
-   [u2014] legacy) se normaliza a "Mexico City · Carso" en UI y a espacio
-   simple ("Mexico City Carso") en SEO/schema, donde el middle dot tampoco
-   va (regla COPY_V3 §2: nunca en slugs ni SEO). Escape unicode a
-   propósito: el em dash literal está prohibido en apps/web/app (CI grep). */
-const cityLabel = (city: string) => city.replace(/\s*\u2014\s*/g, " · ");
+/* Display de ciudad: cityLabel compartido y localizado (data/studios.ts),
+   misma fuente que footer e index. cityPlain queda local: es la forma
+   SEO/schema ("Mexico City Carso"), donde el middle dot no va (COPY_V3
+   §2). Escape unicode a propósito: el em dash literal está prohibido
+   en apps/web/app (CI grep). */
 const cityPlain = (city: string) =>
   city.replace(/\s*(?:\u2014|\u00B7)\s*/g, " ");
 
@@ -127,10 +126,9 @@ export function meta({ loaderData }: Route.MetaArgs) {
    tal cual cuando otra ruta lo necesite.
    ============================================================ */
 const ORG = { "@type": "Organization", name: "54D", url: "https://54d.com" };
-const HOURS = [
-  { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"], opens: "05:30", closes: "21:00" },
-  { "@type": "OpeningHoursSpecification", dayOfWeek: "Saturday", opens: "07:00", closes: "12:00" },
-]; // Del SCHEDULE actual (PLACEHOLDER fase 1: confirmar por sede con Mindbody)
+/* Horarios en schema: OMITIDOS en TODAS las sedes hasta tener la tabla
+   semanal real por sede (mismo criterio deliberado de CG/HL): un schema
+   de horas placeholder que contradice al GBP resta consistencia local. */
 
 const STUDIO_SCHEMA: Record<string, object> = {
   /* CG + Hallandale: NAP VERIFICADO contra el Google Business Profile real
@@ -167,7 +165,7 @@ const STUDIO_SCHEMA: Record<string, object> = {
       addressLocality: "Miguel Hidalgo", addressRegion: "CDMX", postalCode: "11529", addressCountry: "MX" },
     geo: { "@type": "GeoCoordinates", latitude: 19.4404, longitude: -99.2046 },
     /* telephone: DATO_PENDIENTE — no publicar NAP falso (jurado HT fix 1) */
-    openingHoursSpecification: HOURS, priceRange: "$$$$",
+    priceRange: "$$$$",
     sameAs: ["https://www.instagram.com/54d.mx"], parentOrganization: ORG,
   },
   "mexico-santa-fe": {
@@ -177,7 +175,7 @@ const STUDIO_SCHEMA: Record<string, object> = {
       addressLocality: "Cuajimalpa", addressRegion: "CDMX", postalCode: "05348", addressCountry: "MX" },
     geo: { "@type": "GeoCoordinates", latitude: 19.3599, longitude: -99.2743 },
     /* telephone: DATO_PENDIENTE — no publicar NAP falso (jurado HT fix 1) */
-    openingHoursSpecification: HOURS, priceRange: "$$$$",
+    priceRange: "$$$$",
     sameAs: ["https://www.instagram.com/54d.mx"], parentOrganization: ORG,
   },
   bogota: {
@@ -187,7 +185,7 @@ const STUDIO_SCHEMA: Record<string, object> = {
       addressLocality: "Bogota", addressRegion: "Bogota D.C.", addressCountry: "CO" },
     geo: { "@type": "GeoCoordinates", latitude: 4.6768, longitude: -74.0484 },
     /* telephone: DATO_PENDIENTE — no publicar NAP falso (jurado HT fix 1) */
-    openingHoursSpecification: HOURS, priceRange: "$$$$",
+    priceRange: "$$$$",
     sameAs: ["https://www.instagram.com/54d.col"], parentOrganization: ORG,
   },
 };
@@ -272,6 +270,19 @@ const GENERATION: Record<
     "mexico-santa-fe": { start: "lunes 24 de agosto", startShort: "24 AGO", spots: 24 },
     bogota: { start: "lunes 31 de agosto", startShort: "31 AGO", spots: 20 },
   },
+};
+
+/* Fecha ISO de cada inicio (fuente única de vigencia del bloque de arriba).
+   GUARD: una fecha vencida en pantalla es el peor golpe de confianza
+   high-ticket; pasado el día de inicio, la página degrada SOLA al copy
+   de admisión sin fecha (ya existente). Al confirmar fechas nuevas,
+   actualizar GENERATION y este record juntos. */
+const GENERATION_START_ISO: Record<string, string> = {
+  "coral-gables": "2026-08-17",
+  hallandale: "2026-08-24",
+  "mexico-carso": "2026-08-17",
+  "mexico-santa-fe": "2026-08-24",
+  bogota: "2026-08-31",
 };
 
 /* Horarios estáticos fase 1: PLACEHOLDER (Mindbody live en fase 2) */
@@ -376,12 +387,14 @@ const INCLUDES: Record<Lang, Array<{ num: string; name: string; desc: string }>>
    coral-gables/boxer-closeup, coral-gables/spin-bikes-boxing-bags-01,
    hd/cg-highfive-euphoria, hd/cg-stairs-group
    ============================================================ */
-/* caption bilingüe; src/alt/ratio son fuente única (alt queda EN en fase 1) */
+/* caption bilingüe; src/alt/ratio son fuente única (alt queda EN en fase 1).
+   imgStyle: reencuadre puntual (objectPosition/filter) por foto. */
 type GalleryPhoto = {
   src: string;
   alt: string;
   ratio: string;
   caption: Record<Lang, string>;
+  imgStyle?: React.CSSProperties;
 };
 type GalleryRow = { flip?: boolean; photos: [GalleryPhoto, GalleryPhoto] };
 
@@ -449,15 +462,26 @@ const GALLERY_ROWS: Record<string, GalleryRow[]> = {
             en: "Nutrition, part of the method",
             es: "Nutrición, parte del método",
           },
+          /* Reencuadre oscuro: la banda alta de la mesa (madera negra +
+             bandejas) en lugar del primer plano rosa; saturación abajo
+             para que la fila no desentone con la galería */
+          imgStyle: {
+            objectPosition: "center 22%",
+            filter: "saturate(0.68) contrast(1.05) brightness(0.88)",
+          },
         },
         {
-          src: cg("generation-hug.jpg"),
-          alt: "Two 54D members embracing after a session, both smiling",
+          /* graduation-celebration-01: el abrazo de graduación real, en la
+             clave oscura de la galería (reemplaza generation-hug, la fila
+             más clara antes del cierre emocional) */
+          src: cg("graduation-celebration-01.jpg"),
+          alt: "Members of a 54D Generation embracing at their graduation under the 54D mural",
           ratio: "1 / 1",
           caption: {
             en: "Fifty-four days together",
             es: "Cincuenta y cuatro días juntos",
           },
+          imgStyle: { objectPosition: "center 32%" },
         },
       ],
     },
@@ -553,6 +577,16 @@ const BAND_PHOTO: Record<string, { src: string; alt: string }> = {
   },
 };
 
+/* Franja de prensa pre-form: mismos assets aprobados del gate (home.tsx),
+   tratamiento quiet (grayscale, opacidad baja). [archivo, nombre, alto px] */
+const PRESS = [
+  ["mens-health.png", "Men's Health", 15],
+  ["forbes.png", "Forbes", 17],
+  ["business-insider.png", "Business Insider", 13],
+  ["new-york-post.png", "New York Post", 14],
+  ["haute-living.png", "Haute Living", 12],
+] as const;
+
 /* Lista COMPLETA de paises (data/dial-codes.ts): el cliente contacta el
    100% de los leads por WhatsApp — ningun pais puede faltar. Frecuentes
    arriba; el resto alfabetico segun el idioma del visitante. */
@@ -565,9 +599,12 @@ const DEFAULT_DIAL: Record<string, string> = {
 function LeadForm({
   locationSlug,
   countryCode,
+  whatsappUrl,
 }: {
   locationSlug: string;
   countryCode: string;
+  /** Vía de rescate del lead fallido: link tapeable en el error */
+  whatsappUrl?: string;
 }) {
   const { lang } = useLang();
   const es = lang === "es";
@@ -581,6 +618,10 @@ function LeadForm({
     const data = new FormData(form);
     setStatus("sending");
     try {
+      /* El value de la option es "dial|ISO" (único por país: varios países
+         comparten +1 y el select caía en el último). El payload de /leads
+         NO cambia: se envía solo el dial. */
+      const dial = String(data.get("dial")).split("|")[0];
       const res = await fetch(
         (import.meta.env.VITE_API_URL ?? "http://localhost:8788") + "/leads",
         {
@@ -588,7 +629,7 @@ function LeadForm({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             name: data.get("name"),
-            phone: `${data.get("dial")} ${String(data.get("phone")).trim()}`,
+            phone: `${dial} ${String(data.get("phone")).trim()}`,
             location_slug: locationSlug,
           }),
         }
@@ -615,7 +656,7 @@ function LeadForm({
     return (
       <div style={panelStyle} aria-live="polite">
         <div className="method-name" style={{ marginTop: 0 }}>
-          {es ? "Aplicación" : "Application"}{" "}
+          {es ? "Solicitud" : "Application"}{" "}
           <span style={{ color: "var(--c-yellow)" }}>
             {es ? "recibida." : "received."}
           </span>
@@ -650,28 +691,35 @@ function LeadForm({
           <select
             name="dial"
             aria-label={es ? "Código de país" : "Country code"}
-            defaultValue={DEFAULT_DIAL[countryCode] ?? "+1"}
+            defaultValue={`${DEFAULT_DIAL[countryCode] ?? "+1"}|${
+              DEFAULT_DIAL[countryCode] ? countryCode : "US"
+            }`}
             style={{ flex: "0 0 auto", width: "8.6rem" }}
           >
+            {/* Código ANTES del nombre: el select clipea el final de la
+                option ("🇺🇸 United S…"); así el dato clave siempre se ve */}
             <optgroup label={es ? "Frecuentes" : "Frequent"}>
               {FREQUENT_ISO.map((iso) => {
                 const c = DIAL_CODES.find((d) => d[0] === iso);
                 if (!c) return null;
                 return (
-                  <option key={`f-${c[0]}`} value={c[1]}>
-                    {isoFlag(c[0])} {c[0]} {c[1]}
+                  <option key={`f-${c[0]}`} value={`${c[1]}|${c[0]}`}>
+                    {isoFlag(c[0])} {c[1]} {es ? c[3] : c[2]}
                   </option>
                 );
               })}
             </optgroup>
+            {/* Los frecuentes no se repiten en el listado alfabético */}
             <optgroup label={es ? "Todos los países" : "All countries"}>
-              {[...DIAL_CODES]
+              {DIAL_CODES.filter(
+                (c) => !(FREQUENT_ISO as readonly string[]).includes(c[0])
+              )
                 .sort((a, b) =>
                   (es ? a[3] : a[2]).localeCompare(es ? b[3] : b[2], lang)
                 )
                 .map((c) => (
-                  <option key={c[0]} value={c[1]}>
-                    {isoFlag(c[0])} {es ? c[3] : c[2]} {c[1]}
+                  <option key={c[0]} value={`${c[1]}|${c[0]}`}>
+                    {isoFlag(c[0])} {c[1]} {es ? c[3] : c[2]}
                   </option>
                 ))}
             </optgroup>
@@ -681,7 +729,7 @@ function LeadForm({
             name="phone"
             type="tel"
             required
-            autoComplete="tel"
+            autoComplete="tel-national"
             inputMode="tel"
             placeholder={es ? "Tu número" : "Your number"}
             style={{ flex: 1, minWidth: 0 }}
@@ -716,8 +764,33 @@ function LeadForm({
           }}
         >
           {es
-            ? "No pudimos enviar tus datos. Intenta de nuevo o escríbenos directamente por WhatsApp."
-            : "We couldn't send your details. Try again, or message us directly on WhatsApp."}
+            ? "No pudimos enviar tus datos. Intenta de nuevo o "
+            : "We couldn't send your details. Try again, or "}
+          {whatsappUrl ? (
+            /* Vía de rescate TAPEABLE: el lead fallido salta a WhatsApp */
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                color: "var(--c-yellow)",
+                textDecoration: "underline",
+                display: "inline-block",
+                padding: "0.6rem 0.2rem",
+                margin: "-0.6rem -0.2rem",
+              }}
+            >
+              {es
+                ? "escríbenos directamente por WhatsApp."
+                : "message us directly on WhatsApp."}
+            </a>
+          ) : (
+            <span>
+              {es
+                ? "escríbenos directamente por WhatsApp."
+                : "message us directly on WhatsApp."}
+            </span>
+          )}
         </p>
       )}
       <p
@@ -746,6 +819,34 @@ function WhatsAppFab({
 }) {
   const { lang } = useLang();
   const es = lang === "es";
+  /* Gate por viewport: mientras el hero (ya tiene su ghost de WhatsApp)
+     o el form #reserva están a la vista, el FAB se esconde; no triplica
+     affordances de contacto ni tapa el CTA del form en mobile. Arranca
+     oculto (el primer viewport ES el hero) y el IO corrige al instante. */
+  const [hidden, setHidden] = useState(true);
+  useEffect(() => {
+    const targets = [
+      document.querySelector(".hero"),
+      document.getElementById("reserva"),
+    ].filter((el): el is Element => el !== null);
+    if (targets.length === 0) {
+      setHidden(false);
+      return;
+    }
+    const visible = new Set<Element>();
+    const obs = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) visible.add(e.target);
+          else visible.delete(e.target);
+        }
+        setHidden(visible.size > 0);
+      },
+      { threshold: 0.05 }
+    );
+    targets.forEach((t) => obs.observe(t));
+    return () => obs.disconnect();
+  }, []);
   const msg = encodeURIComponent(
     es
       ? `Hola, quiero información sobre 54D ${city}.`
@@ -753,7 +854,7 @@ function WhatsAppFab({
   );
   return (
     <a
-      className="wa-fab"
+      className={`wa-fab${hidden ? " wa-fab-hidden" : ""}`}
       href={`https://wa.me/${whatsapp.replace(/\D/g, "")}?text=${msg}`}
       target="_blank"
       rel="noreferrer"
@@ -784,7 +885,14 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
     if (last && last.date === date) last.classes.push(k);
     else scheduleDays.push({ date, classes: [k] });
   }
-  const generation = GENERATION[lang][studio.slug];
+  /* Vigencia: el día de inicio todavía se muestra; desde el día siguiente
+     la Generación anunciada se apaga y cae el copy sin fecha. */
+  const startISO = GENERATION_START_ISO[studio.slug];
+  const generationRaw = GENERATION[lang][studio.slug];
+  const generation =
+    generationRaw && startISO && new Date(startISO + "T23:59:59") >= new Date()
+      ? generationRaw
+      : undefined;
   const whatsappUrl = `https://wa.me/${studio.whatsapp.replace(/\D/g, "")}`;
   /* Numeros reales pendientes del cliente (jurado HT fix 1): un WhatsApp
      falso visible es grieta de credibilidad en un producto flagship.
@@ -858,7 +966,17 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
               color: "var(--c-faint)",
             }}
           >
-            <Link to="/" style={{ color: "var(--c-mist)", textDecoration: "none" }}>
+            {/* Target táctil ≥44px sin mover el layout (padding compensado) */}
+            <Link
+              to="/"
+              style={{
+                color: "var(--c-mist)",
+                textDecoration: "none",
+                display: "inline-block",
+                padding: "0.85rem 0.45rem",
+                margin: "-0.85rem -0.45rem",
+              }}
+            >
               54D
             </Link>
             <span aria-hidden="true" style={{ margin: "0 0.45rem" }}>
@@ -866,7 +984,13 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
             </span>
             <Link
               to="/studios"
-              style={{ color: "var(--c-mist)", textDecoration: "none" }}
+              style={{
+                color: "var(--c-mist)",
+                textDecoration: "none",
+                display: "inline-block",
+                padding: "0.85rem 0.45rem",
+                margin: "-0.85rem -0.45rem",
+              }}
             >
               Studios
             </Link>
@@ -874,13 +998,13 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
               /
             </span>
             <span aria-current="page" style={{ color: "var(--c-white)" }}>
-              54D {cityLabel(studio.city)}
+              54D {cityLabel(studio.city, lang)}
             </span>
           </nav>
           <h1 className="hero-title">
             54D
             <br />
-            <span className="accent">{cityLabel(studio.city)}.</span>
+            <span className="accent">{cityLabel(studio.city, lang)}.</span>
           </h1>
           <p className="hero-sub">
             {ZONE[lang][studio.slug] ?? studio.address}{" "}
@@ -912,64 +1036,72 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
       <section className="section">
         <div className="section-inner" ref={gen.ref}>
           <div className={gen.className}>
-            <span className="day-marker">
-              {es ? "Próxima Generación" : "Next Generation"}
-            </span>
-            {/* Copy claro-primero (cliente 05/08): el titulo dice lo concreto
-                en lenguaje llano; "Generacion" aparece recien en el lead,
-                donde se define sola en su primera mencion. */}
-            <h2 className="section-title">
-              {es ? (
-                <>
-                  Una sola fecha de inicio.{" "}
-                  <span className="accent">Cupos limitados.</span>
-                </>
-              ) : (
-                <>
-                  One start date. <span className="accent">Limited places.</span>
-                </>
-              )}
-            </h2>
-            <p className="lead" style={{ marginTop: "1.4rem", maxWidth: "38rem" }}>
-              {generation
-                ? es
-                  ? `Tu Generación es el grupo con el que empiezas y terminas. La próxima comienza el ${generation.start}, y nadie entra después del día uno.`
-                  : `Your Generation is the group you start and finish with. The next one begins ${generation.start}, and no one joins after day one.`
-                : es
-                  ? "Tu Generación es el grupo con el que empiezas y terminas. La admisión es por aplicación, y nadie entra después del día uno."
-                  : "Your Generation is the group you start and finish with. Admission is by application, and no one joins after day one."}
-            </p>
-            {generation && (
-              <div
-                className="stat-row"
-                style={{
-                  gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-                }}
-              >
-                <div className="stat">
-                  <div className="stat-value">{generation.startShort}</div>
-                  <div className="stat-label">
-                    {es ? "Fecha de inicio" : "Start date"}
-                  </div>
-                </div>
-                <div className="stat">
-                  <div className="stat-value">{generation.spots}</div>
-                  <div className="stat-label">
-                    {es ? "Cupos por Generación" : "Places per Generation"}
-                  </div>
-                </div>
-                <div className="stat">
-                  <div className="stat-value">54</div>
-                  <div className="stat-label">
-                    {es ? "Días con el mismo grupo" : "Days with the same group"}
-                  </div>
+            {/* Reparto de canvas (lección .gen-split): la columna de stats
+                NACE a la altura del título; sin stats vigentes la sección
+                vuelve a una sola columna. */}
+            <div className={generation ? "gen-split" : undefined}>
+              <div>
+                <span className="day-marker">
+                  {es ? "Próxima Generación" : "Next Generation"}
+                </span>
+                {/* Copy claro-primero (cliente 05/08): el titulo dice lo
+                    concreto en lenguaje llano; "Generacion" aparece recien
+                    en el lead, donde se define sola en su primera mencion. */}
+                <h2 className="section-title">
+                  {es ? (
+                    <>
+                      Una sola fecha de inicio.{" "}
+                      <span className="accent">Cupos limitados.</span>
+                    </>
+                  ) : (
+                    <>
+                      One start date.{" "}
+                      <span className="accent">Limited places.</span>
+                    </>
+                  )}
+                </h2>
+                <p className="lead" style={{ marginTop: "1.4rem", maxWidth: "38rem" }}>
+                  {generation
+                    ? es
+                      ? `Tu Generación es el grupo con el que empiezas y terminas. La próxima comienza el ${generation.start}, y nadie entra después del día uno.`
+                      : `Your Generation is the group you start and finish with. The next one begins ${generation.start}, and no one joins after day one.`
+                    : es
+                      ? "Tu Generación es el grupo con el que empiezas y terminas. La admisión es por solicitud, y nadie entra después del día uno."
+                      : "Your Generation is the group you start and finish with. Admission is by application, and no one joins after day one."}
+                </p>
+                <div className="hero-ctas" style={{ marginTop: "2.6rem" }}>
+                  <a href="#reserva" className="btn btn-primary">
+                    {ctaLabel}
+                  </a>
                 </div>
               </div>
-            )}
-            <div className="hero-ctas" style={{ marginTop: "2.6rem" }}>
-              <a href="#reserva" className="btn btn-primary">
-                {ctaLabel}
-              </a>
+              {generation && (
+                <div
+                  className="stat-row"
+                  style={{
+                    gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))",
+                  }}
+                >
+                  <div className="stat">
+                    <div className="stat-value">{generation.startShort}</div>
+                    <div className="stat-label">
+                      {es ? "Fecha de inicio" : "Start date"}
+                    </div>
+                  </div>
+                  <div className="stat">
+                    <div className="stat-value">{generation.spots}</div>
+                    <div className="stat-label">
+                      {es ? "Cupos por Generación" : "Places per Generation"}
+                    </div>
+                  </div>
+                  <div className="stat">
+                    <div className="stat-value">54</div>
+                    <div className="stat-label">
+                      {es ? "Días con el mismo grupo" : "Days with the same group"}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -1042,7 +1174,12 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                         className="photo-card"
                         style={{ aspectRatio: p.ratio }}
                       >
-                        <img src={asset(p.src)} alt={p.alt} loading="lazy" />
+                        <img
+                          src={asset(p.src)}
+                          alt={p.alt}
+                          loading="lazy"
+                          style={p.imgStyle}
+                        />
                       </div>
                       <figcaption className="photo-caption">
                         {p.caption[lang]}
@@ -1069,8 +1206,8 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
             </h2>
             <p className="lead" style={{ marginTop: "1.4rem", maxWidth: "34rem" }}>
               {es
-                ? `Cada Generación en 54D ${cityLabel(studio.city)} termina de la misma manera: resultados sobre la mesa y una sala llena de gente que lo logró.`
-                : `Every Generation at 54D ${cityLabel(studio.city)} ends the same way: results on the table and a room full of people who made it.`}
+                ? `Cada Generación en 54D ${cityLabel(studio.city, lang)} termina de la misma manera: resultados sobre la mesa y una sala llena de gente que lo logró.`
+                : `Every Generation at 54D ${cityLabel(studio.city, lang)} ends the same way: results on the table and a room full of people who made it.`}
             </p>
             <div className="hero-ctas">
               <a href="#reserva" className="btn btn-primary">
@@ -1105,14 +1242,23 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                 gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
                 gap: "1.1rem",
                 marginTop: "3rem",
-                alignItems: "start",
+                /* stretch: ambos paneles a altura pareja en desktop */
+                alignItems: "stretch",
               }}
             >
               {/* Horarios estáticos fase 1: Mindbody live en fase 2 */}
               <div style={panelStyle}>
+                {/* "Studio hours": el horario de operación no es el horario
+                    de entrenamiento; la aclaración de bloques va ARRIBA de
+                    la tabla para encuadrar la lectura */}
                 <div className="method-name" style={{ marginTop: 0 }}>
-                  {es ? "Horarios" : "Schedule"}
+                  {es ? "Horario del studio" : "Studio hours"}
                 </div>
+                <p className="method-desc" style={{ marginTop: "0.9rem" }}>
+                  {es
+                    ? "El horario de tu grupo se confirma en tu consulta: cada Generación entrena en bloques fijos."
+                    : "Your group's schedule is confirmed in your consultation: each Generation trains in fixed blocks."}
+                </p>
                 {/* .schedule: tabular-nums vía global CSS (DESIGN_FIXES_V4 §2).
                     Con datos de Mindbody: la semana real, agrupada por dia.
                     Sin datos (sin go-live / sede sin match): franjas estaticas. */}
@@ -1192,11 +1338,6 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                     ))}
                   </div>
                 )}
-                <p className="method-desc" style={{ marginTop: "1.2rem" }}>
-                  {es
-                    ? "El horario de tu grupo se confirma en tu consulta: cada Generación entrena en bloques fijos."
-                    : "Your group's schedule is confirmed in your consultation: each Generation trains in fixed blocks."}
-                </p>
               </div>
               <div style={panelStyle}>
                 <div className="method-name" style={{ marginTop: 0 }}>
@@ -1235,12 +1376,14 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                     </a>
                   )}
                   {studio.phone && (
+                    /* Formato visible unificado con el del WhatsApp de al
+                       lado: "+1 786 817 7008" (espacios, con país) */
                     <a
                       href={`tel:${studio.phone.replace(/[^+\d]/g, "")}`}
                       className="btn btn-ghost"
                     >
                       {es ? "Llamar" : "Call"} ·{" "}
-                      {studio.phone.replace("+1 ", "")}
+                      {studio.phone.replace(/-/g, " ")}
                     </a>
                   )}
                   {hasRealWhatsapp && (
@@ -1256,46 +1399,74 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                 </div>
               </div>
             </div>
-            {/* Interlinking cross-country (LOCAL_SEO §4): las 5 sedes,
-                la actual sin link. Reparte autoridad entre paises.
-                Separador coma: "Mexico City · Carso, Mexico City · Santa Fe"
-                se lee como dos sedes y no cuatro. */}
-            <p className="method-desc" style={{ marginTop: "1.6rem" }}>
-              {es ? "Todos los 54D Studios:" : "All 54D Studios:"}{" "}
-              {STUDIOS.map((s, i) => (
-                <span key={s.slug}>
-                  {i > 0 && ", "}
-                  {s.slug === studio.slug ? (
-                    <span style={{ color: "var(--c-white)" }}>
-                      {cityLabel(s.city)}
-                    </span>
-                  ) : (
-                    <Link
-                      to={`/studios/${s.slug}`}
-                      style={{ color: "var(--c-yellow)", textDecoration: "none" }}
-                    >
-                      {cityLabel(s.city)}
-                    </Link>
-                  )}
-                </span>
-              ))}
-            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ============ PRENSA (validación de terceros pre-form) ============
+          Logos reales ya aprobados en el gate, tratamiento quiet: gris,
+          mudos, sin links. Cero datos nuevos. */}
+      <section className="section section-tight" aria-label="Featured on">
+        <div className="section-inner">
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              gap: "1.2rem clamp(1.8rem, 4vw, 3.2rem)",
+              padding: "1.7rem 0",
+              borderTop: "1px solid var(--hairline)",
+              borderBottom: "1px solid var(--hairline)",
+            }}
+          >
+            <span
+              style={{
+                fontFamily: "var(--font-label)",
+                fontWeight: 500,
+                fontSize: "0.6rem",
+                letterSpacing: "0.16em",
+                textTransform: "uppercase",
+                color: "var(--c-faint)",
+              }}
+            >
+              {es ? "En los medios" : "Featured on"}
+            </span>
+            {PRESS.map(([file, name, h]) => (
+              <img
+                key={file}
+                src={asset(`images/press/${file}`)}
+                alt={name}
+                loading="lazy"
+                style={{
+                  height: h,
+                  width: "auto",
+                  filter: "grayscale(1)",
+                  opacity: 0.4,
+                }}
+              />
+            ))}
           </div>
         </div>
       </section>
 
       {/* ============ FORMULARIO DE LEAD ============ */}
       {/* FIXES_V5 §3.2: único campo de luz de la página (ember pre-CTA) */}
-      <section className="section section-tight bloom-ember" id="reserva">
+      <section
+        className="section section-tight bloom-ember"
+        id="reserva"
+        style={{ scrollMarginTop: "5rem" }}
+      >
         <div className="section-inner" ref={lead.ref}>
           <div className={lead.className}>
             <div className="apply-split">
               <div>
-                <span className="day-marker">{es ? "Aplica" : "Apply"}</span>
+                <span className="day-marker">
+                  {es ? "Solicitud" : "Apply"}
+                </span>
                 <h2 className="section-title">
                   {es ? (
                     <>
-                      Aplica por tu lugar en la próxima{" "}
+                      Solicita tu lugar en la próxima{" "}
                       <span className="accent">Generación.</span>
                     </>
                   ) : (
@@ -1308,14 +1479,45 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                 {/* Guardrail high-ticket (SEPARATION_SPEC §4, verbatim en EN) */}
                 <p className="lead" style={{ marginTop: "1.4rem", maxWidth: "36rem" }}>
                   {es
-                    ? "54D Studios es nuestro nivel insignia, un programa con atención de cliente privado. Tu consulta define tres cosas: si el programa es para ti, la fecha de inicio de tu Generación y la inversión."
+                    ? "54D Studios es nuestro nivel insignia, un programa con trato de cliente privado. Tu consulta define tres cosas: si el programa es para ti, la fecha de inicio de tu Generación y la inversión."
                     : "54D Studios is our flagship tier, a private-client level program. Your consultation covers fit, your Generation's start date, and the investment."}
+                </p>
+                {/* Interlinking cross-country (LOCAL_SEO §4) al fondo de la
+                    columna izquierda: las 5 sedes, la actual sin link.
+                    Separador coma: "Ciudad de México · Carso, ..." se lee
+                    como dos sedes y no cuatro. Targets con padding táctil. */}
+                <p className="method-desc" style={{ marginTop: "2.4rem" }}>
+                  {es ? "Todos los 54D Studios:" : "All 54D Studios:"}{" "}
+                  {STUDIOS.map((s, i) => (
+                    <span key={s.slug}>
+                      {i > 0 && ", "}
+                      {s.slug === studio.slug ? (
+                        <span style={{ color: "var(--c-white)" }}>
+                          {cityLabel(s.city, lang)}
+                        </span>
+                      ) : (
+                        <Link
+                          to={`/studios/${s.slug}`}
+                          style={{
+                            color: "var(--c-yellow)",
+                            textDecoration: "none",
+                            display: "inline-block",
+                            padding: "0.6rem 0.25rem",
+                            margin: "-0.6rem -0.25rem",
+                          }}
+                        >
+                          {cityLabel(s.city, lang)}
+                        </Link>
+                      )}
+                    </span>
+                  ))}
                 </p>
               </div>
               <LeadForm
-              locationSlug={studio.slug}
-              countryCode={studio.countryCode}
-            />
+                locationSlug={studio.slug}
+                countryCode={studio.countryCode}
+                whatsappUrl={hasRealWhatsapp ? whatsappUrl : undefined}
+              />
             </div>
           </div>
         </div>

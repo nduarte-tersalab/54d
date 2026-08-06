@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 /**
  * Sticky CTA mobile compartida (FIXES_V5 §4 / MOBILE_COMMERCE F5).
  * Extraída de pricing.tsx: barra fija inferior en ≤900px que aparece
- * al 25% de scroll y compensa el footer con paddingBottom en el body.
+ * tras ~1.2 pantallas de scroll (umbral ABSOLUTO: el 25% relativo dejaba
+ * 3+ pantallas sin CTA en páginas largas como /on) y compensa el footer
+ * con paddingBottom en el body.
  */
 export function StickyCta({ href, label }: { href: string; label: string }) {
   const [visible, setVisible] = useState(false);
@@ -11,9 +13,7 @@ export function StickyCta({ href, label }: { href: string; label: string }) {
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 900px)");
     const update = () => {
-      const doc = document.documentElement;
-      const max = doc.scrollHeight - window.innerHeight;
-      setVisible(mq.matches && max > 0 && window.scrollY / max >= 0.25);
+      setVisible(mq.matches && window.scrollY > window.innerHeight * 1.2);
     };
     update();
     window.addEventListener("scroll", update, { passive: true });

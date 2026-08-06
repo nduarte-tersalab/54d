@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router";
-import { STUDIOS } from "../data/studios";
+import { STUDIOS, cityLabel } from "../data/studios";
 import { asset } from "../lib/asset";
 import { AppStoreBadges } from "./badges";
 import { LangToggle, useLang } from "../lib/i18n";
@@ -155,10 +155,12 @@ export function Nav() {
           {lang === "es" ? "Contacto" : "Contact"}
         </Link>
         <LangToggle style={{ marginTop: "1.2rem" }} />
+        {/* En el drawer el CTA de consulta ES el primario de la vista
+            (mobile no tiene otro botón a la vista): btn-primary */}
         {inStudios ? (
           <a
             href={consultHref}
-            className="btn btn-ghost btn-nav"
+            className="btn btn-primary btn-nav"
             onClick={close}
           >
             {STUDIOS_CTA_COPY[lang]}
@@ -174,11 +176,8 @@ export function Nav() {
   );
 }
 
-/** Regla de copy v3 (COPY_V3 §1-2): nada de em/en dashes visibles.
- *  Nombres de sede "City <dash> Area" se muestran "City · Area".
- *  (\u2014 = em dash, \u2013 = en dash; escapados por el grep de CI) */
-const cityLabel = (city: string): string =>
-  city.replace(/\s*[\u2014\u2013]\s*/g, " · ");
+/* cityLabel compartido y localizado: vive en data/studios.ts (una sola
+   fuente para footer, index de sedes y detalle de sede). */
 
 /** Footer global. Sedes desde app/data/studios.ts.
  *  En /studios* (SEPARATION_SPEC §5): sin badges de la app 54D On (los
@@ -210,7 +209,7 @@ export function Footer() {
             <p className="footer-trust">
               {inStudios ? (
                 <>
-                  <span>{es ? "Por aplicación" : "By application"}</span>
+                  <span>{es ? "Admisión por solicitud" : "By application"}</span>
                   <span>{es ? "Cupos limitados por Generación" : "Limited places per Generation"}</span>
                   <span>{es ? "Miami · Ciudad de México · Bogotá" : "Miami · Mexico City · Bogotá"}</span>
                 </>
@@ -234,7 +233,7 @@ export function Footer() {
             <h4>Studios</h4>
             {STUDIOS.map((s) => (
               <Link key={s.slug} to={`/studios/${s.slug}`}>
-                {cityLabel(s.city)}
+                {cityLabel(s.city, lang)}
               </Link>
             ))}
           </div>

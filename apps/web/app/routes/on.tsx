@@ -7,6 +7,7 @@ import { AppStoreBadges } from "../components/badges";
 import { StickyCta } from "../components/sticky-cta";
 import { asset } from "../lib/asset";
 import { startCheckout } from "../lib/attribution";
+import { useLang, type Lang } from "../lib/i18n";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -14,7 +15,7 @@ export function meta({}: Route.MetaArgs) {
     {
       name: "description",
       content:
-        "Twelve real programs in the 54D On app: daily training, nutrition protocols, and a real coach who follows you. Try it free for 7 days.",
+        "Thirteen real programs in the 54D On app: daily training, nutrition protocols, and a real coach who follows you. Try it free for 7 days.",
     },
   ];
 }
@@ -70,74 +71,103 @@ type Program = {
    Stripe PRICE_IDs pendientes de las keys del cliente. */
 type MembershipTier = {
   priceId: string;
-  plan: string;
+  plan: Record<Lang, string>;
   perMonth: number;
   regularPerMonth: number;
-  billed: string;
+  billed: Record<Lang, string>;
   featured?: boolean;
   photo: string;
   photoAlt: string;
-  tagline: string;
+  /** objectPosition de la franja de 120px: encuadre que no decapite rostros */
+  photoPos: string;
+  tagline: Record<Lang, string>;
 };
 const MEMBERSHIP_TIERS: MembershipTier[] = [
   {
     priceId: "PENDING_membership_monthly",
-    plan: "Monthly",
+    plan: { en: "Monthly", es: "Mensual" },
     perMonth: 54,
     regularPerMonth: 99,
-    billed: "Billed monthly",
+    billed: { en: "Billed monthly", es: "Facturación mensual" },
     photo: "images/hd2/spare-man-running.jpg",
     photoAlt: "Athlete running with visible effort on the 54D floor",
-    tagline: "Start at your pace",
+    photoPos: "center 33%",
+    tagline: { en: "Start at your pace", es: "Empieza a tu ritmo" },
   },
   {
     priceId: "PENDING_membership_quarterly",
-    plan: "Quarterly",
+    plan: { en: "Quarterly", es: "Trimestral" },
     perMonth: 52,
     regularPerMonth: 89,
-    billed: "$156 every 3 months",
+    billed: { en: "$156 every 3 months", es: "$156 cada 3 meses" },
     featured: true,
     photo: "images/hd/cg-effort-yellow-d.jpg",
     photoAlt: "Athlete grimacing with effort in front of the yellow 54D letter",
-    tagline: "The full 54 days",
+    photoPos: "center 36%",
+    tagline: { en: "The full 54 days", es: "Los 54 días completos" },
   },
   {
     priceId: "PENDING_membership_yearly",
-    plan: "Yearly",
+    plan: { en: "Yearly", es: "Anual" },
     perMonth: 49,
     regularPerMonth: 79,
-    billed: "$588 a year · lowest per month",
+    billed: { en: "$588 a year · lowest per month", es: "$588 al año · el mes más bajo" },
     photo: "images/hd2/blog-spin-smile.jpg",
     photoAlt: "Member smiling mid ride on a spin bike at 54D",
-    tagline: "Make it your life",
+    photoPos: "center 32%",
+    tagline: { en: "Make it your life", es: "Hazlo tu estilo de vida" },
   },
 ];
 
 /* Punteos EXACTOS de la membresía (MEMBERSHIP_SALES §4), verbo primero.
    Se usan 5 de 6: el de guarantee se omite de la lista y vive como
    microcopy de riesgo junto a los CTA (§2). */
-const MEMBERSHIP_POINTS = [
-  {
-    strong: "Train every program",
-    rest: ": all 13, including 54D ON, with 650+ recorded sessions",
-  },
-  {
-    strong: "Get a real coach",
-    rest: " in your corner: unlimited chat, corrections, and follow-up",
-  },
-  {
-    strong: "Eat with a plan",
-    rest: ": 12+ nutrition protocols and 120+ recipes built by the team",
-  },
-  {
-    strong: "Start free",
-    rest: ": 7 full days with everything unlocked before you pay a cent",
-  },
-  {
-    strong: "Cancel in one click",
-    rest: ": from your account, no calls, no retention tricks",
-  },
-];
+const MEMBERSHIP_POINTS: Record<Lang, { strong: string; rest: string }[]> = {
+  en: [
+    {
+      strong: "Train every program",
+      rest: ": all 13, including 54D ON, with 650+ recorded sessions",
+    },
+    {
+      strong: "Get a real coach",
+      rest: " in your corner: unlimited chat, corrections, and follow-up",
+    },
+    {
+      strong: "Eat with a plan",
+      rest: ": 12+ nutrition protocols and 120+ recipes built by the team",
+    },
+    {
+      strong: "Start free",
+      rest: ": 7 full days with everything unlocked before you pay a cent",
+    },
+    {
+      strong: "Cancel in one click",
+      rest: ": from your account, no calls, no retention tricks",
+    },
+  ],
+  es: [
+    {
+      strong: "Entrena todos los programas",
+      rest: ": los 13, incluido 54D ON, con 650+ sesiones grabadas",
+    },
+    {
+      strong: "Ten un coach real",
+      rest: " en tu esquina: chat ilimitado, correcciones y seguimiento",
+    },
+    {
+      strong: "Come con un plan",
+      rest: ": 12+ protocolos de nutrición y 120+ recetas creadas por el equipo",
+    },
+    {
+      strong: "Empieza gratis",
+      rest: ": 7 días completos con todo desbloqueado antes de pagar un centavo",
+    },
+    {
+      strong: "Cancela en un clic",
+      rest: ": desde tu cuenta, sin llamadas ni trucos de retención",
+    },
+  ],
+};
 
 const PROGRAMS: Program[] = [
   {
@@ -361,36 +391,68 @@ const VS_STUDIOS: [string, string, string][] = [
   ["The commitment", "A subscription you control, from $54 a month", "A private-client level program, discussed in your consultation"],
 ];
 
-const FAQ = [
-  {
-    q: "Should I get the membership or buy one program?",
-    a: "The membership includes every program, unlimited coaching, and the community, and starts with a free week: it's the way to go if you want the full method or aren't sure where to start. Buying a single program makes sense when you want exactly one run, one payment, no subscription. Same training, same coach, either way.",
-  },
-  {
-    q: "Which program should I start with?",
-    a: "If you want the full transformation, start with 54D ON: it's the signature program. If you've never trained, start with First Move. If you're coming back after a rough patch, Reset 7. With the membership you can switch or enroll in more than one at a time.",
-  },
-  {
-    q: "Do I need equipment or prior experience?",
-    a: "No. Most programs use elastic or resistance bands at most, and First Move needs nothing at all. You start at your level, and intensity rises week by week, with you.",
-  },
-  {
-    q: "Is the coach a real person?",
-    a: "Yes. Not a bot, not an automated notification: a coach from the 54D team who reviews your progress, corrects you, and writes to you every day.",
-  },
-  {
-    q: "How much time do I need each day?",
-    a: "Sessions are designed to be completed in under an hour. What the method asks of you isn't time. It's consistency.",
-  },
-  {
-    q: "Can I cancel anytime?",
-    a: "Yes. The first 7 days are free: cancel before day 8 and you pay nothing. After that, you cancel straight from your account: no calls, no tricks.",
-  },
-  {
-    q: "Does it work in my country?",
-    a: "54D ON works wherever you are: the United States, Mexico, Colombia, or anywhere with a connection. All you need is your phone.",
-  },
-];
+const FAQ: Record<Lang, { q: string; a: string }[]> = {
+  en: [
+    {
+      q: "Should I get the membership or buy one program?",
+      a: "The membership includes every program, unlimited coaching, and the community, and starts with a free week: it's the way to go if you want the full method or aren't sure where to start. Buying a single program makes sense when you want exactly one run, one payment, no subscription. Same training, same coach, either way.",
+    },
+    {
+      q: "Which program should I start with?",
+      a: "If you want the full transformation, start with 54D ON: it's the signature program. If you've never trained, start with First Move. If you're coming back after a rough patch, Reset 7. With the membership you can switch or enroll in more than one at a time.",
+    },
+    {
+      q: "Do I need equipment or prior experience?",
+      a: "No. Most programs use elastic or resistance bands at most, and First Move needs nothing at all. You start at your level, and intensity rises week by week, with you.",
+    },
+    {
+      q: "Is the coach a real person?",
+      a: "Yes. Not a bot, not an automated notification: a coach from the 54D team who reviews your progress, corrects you, and writes to you every day.",
+    },
+    {
+      q: "How much time do I need each day?",
+      a: "Sessions are designed to be completed in under an hour. What the method asks of you isn't time. It's consistency.",
+    },
+    {
+      q: "Can I cancel anytime?",
+      a: "Yes. The first 7 days are free: cancel before day 8 and you pay nothing. After that, you cancel straight from your account: no calls, no tricks.",
+    },
+    {
+      q: "Does it work in my country?",
+      a: "54D ON works wherever you are: the United States, Mexico, Colombia, or anywhere with a connection. All you need is your phone.",
+    },
+  ],
+  es: [
+    {
+      q: "¿Me conviene la membresía o comprar un solo programa?",
+      a: "La membresía incluye todos los programas, coaching ilimitado y la comunidad, y empieza con una semana gratis: es el camino si quieres el método completo o no sabes por dónde empezar. Comprar un solo programa tiene sentido cuando quieres exactamente un ciclo, un pago, sin suscripción. Mismo entrenamiento, mismo coach, en ambos casos.",
+    },
+    {
+      q: "¿Con qué programa empiezo?",
+      a: "Si quieres la transformación completa, empieza con 54D ON: es el programa insignia. Si nunca has entrenado, empieza con First Move. Si vuelves después de una mala racha, Reset 7. Con la membresía puedes cambiar o inscribirte en más de uno a la vez.",
+    },
+    {
+      q: "¿Necesito equipo o experiencia previa?",
+      a: "No. La mayoría de los programas usan como máximo bandas elásticas o de resistencia, y First Move no necesita nada. Empiezas en tu nivel, y la intensidad sube semana a semana, contigo.",
+    },
+    {
+      q: "¿El coach es una persona real?",
+      a: "Sí. No es un bot ni una notificación automática: es un coach del equipo 54D que revisa tu progreso, te corrige y te escribe todos los días.",
+    },
+    {
+      q: "¿Cuánto tiempo necesito al día?",
+      a: "Las sesiones están diseñadas para completarse en menos de una hora. Lo que el método te pide no es tiempo. Es constancia.",
+    },
+    {
+      q: "¿Puedo cancelar cuando quiera?",
+      a: "Sí. Los primeros 7 días son gratis: cancela antes del día 8 y no pagas nada. Después, cancelas directo desde tu cuenta: sin llamadas, sin trucos.",
+    },
+    {
+      q: "¿Funciona en mi país?",
+      a: "54D ON funciona donde estés: Estados Unidos, México, Colombia o cualquier lugar con conexión. Solo necesitas tu teléfono.",
+    },
+  ],
+};
 
 /* ============ Estilos puntuales (tablas, lista editorial, app) ============ */
 
@@ -402,9 +464,10 @@ const tableWrap: CSSProperties = {
   backdropFilter: "blur(10px)",
   overflowX: "auto",
 };
+/* min-width vive en .cmp-table (app.css): ≤640px la tabla se re-apila
+   por fila en vez de scrollear */
 const table: CSSProperties = {
   width: "100%",
-  minWidth: "42rem",
   borderCollapse: "collapse",
   fontSize: "0.98rem",
   lineHeight: 1.5,
@@ -692,9 +755,10 @@ function CompareTable({
   accentCol: 1 | 2;
 }) {
   return (
-    /* .table-wrap: affordance de scroll horizontal (fade mask 88%, F7) */
+    /* .table-wrap: affordance de scroll horizontal (fade mask 88%, solo
+       donde hay scroll); .cmp-table re-apila por fila en ≤640px */
     <div style={tableWrap} className="table-wrap">
-      <table style={table}>
+      <table style={table} className="cmp-table">
         <thead>
           <tr>
             <th style={th} scope="col">
@@ -797,20 +861,36 @@ function AppPhone() {
 /* ============ Página ============ */
 
 export default function On() {
+  const { lang } = useLang();
+  const es = lang === "es";
   const incluye = useReveal();
   const membresia = useReveal();
   const programas = useReveal();
   const [busy, setBusy] = useState<string | null>(null);
   const [checkoutErr, setCheckoutErr] = useState<string | null>(null);
+  /* El error se ancla a la card/fila tapeada: aparece donde el usuario
+     está mirando, no dos pantallas más abajo */
+  const [errPlan, setErrPlan] = useState<string | null>(null);
+  /* Colapso mobile del catálogo (≤900px vía CSS .prog-collapsed) */
+  const [showAllPrograms, setShowAllPrograms] = useState(false);
   const buy = async (priceId: string) => {
     setBusy(priceId);
     setCheckoutErr(null);
+    setErrPlan(null);
     try {
       await startCheckout(priceId);
     } catch (e) {
+      /* Solo pasan los mensajes intencionales de startCheckout (503 de
+         Stripe sin configurar); un fallo de red crudo ("Failed to fetch")
+         cae al copy amable bilingue, igual que en /pricing */
       setCheckoutErr(
-        e instanceof Error ? e.message : "We couldn't start checkout."
+        e instanceof Error && e.message.startsWith("Payments are being connected")
+          ? e.message
+          : es
+            ? "No pudimos iniciar el pago. Revisa tu conexión e intenta de nuevo en unos segundos."
+            : "We couldn't start checkout. Check your connection and try again in a few seconds."
       );
+      setErrPlan(priceId);
       setBusy(null);
     }
   };
@@ -837,21 +917,25 @@ export default function On() {
         <div className="hero-content">
           <span className="day-marker">54D ON · Online</span>
           <h1 className="hero-title">
-            The full method.
+            {es ? "El método completo." : "The full method."}
             <br />
-            <span className="accent">Wherever you are.</span>
+            <span className="accent">
+              {es ? "Donde estés." : "Wherever you are."}
+            </span>
           </h1>
           <p className="hero-sub">
-            The full 54D program in the 54D On app: your training, your
-            nutrition protocol, and a real coach in your corner. No gym, no
-            scheduling excuses.
+            {es
+              ? "El programa 54D completo en la app 54D On: tu entrenamiento, tu protocolo de nutrición y un coach real en tu esquina. Sin gimnasio, sin excusas de agenda."
+              : "The full 54D program in the 54D On app: your training, your nutrition protocol, and a real coach in your corner. No gym, no scheduling excuses."}
           </p>
+          {/* Un solo destino para la misma acción en toda la página:
+              #membership (los precios viven acá mismo) */}
           <div className="hero-ctas">
-            <Link to="/pricing" className="btn btn-primary">
-              Start free. 7 days.
-            </Link>
+            <a href="#membership" className="btn btn-primary">
+              {es ? "Empieza gratis. 7 días." : "Start free. 7 days."}
+            </a>
             <Link to="/studios" className="btn btn-ghost">
-              Explore the studios
+              {es ? "Explora los studios" : "Explore the studios"}
             </Link>
           </div>
         </div>
@@ -907,13 +991,16 @@ export default function On() {
                 />
                 <div style={membPitchVeil} aria-hidden="true" />
                 <div style={membPitchInner}>
-                  <span className="day-marker">The membership</span>
+                  <span className="day-marker">
+                    {es ? "La membresía" : "The membership"}
+                  </span>
                   <h2 className="section-title">
-                    One membership. <span style={solidAccent}>Everything.</span>
+                    {es ? "Una membresía." : "One membership."}{" "}
+                    <span style={solidAccent}>{es ? "Todo." : "Everything."}</span>
                   </h2>
                   {/* Punteos §4: verbo en blanco, resto en mist */}
                   <ul style={checkList}>
-                    {MEMBERSHIP_POINTS.map((pt) => (
+                    {MEMBERSHIP_POINTS[lang].map((pt) => (
                       <li style={checkItem} key={pt.strong}>
                         <span style={checkTick} aria-hidden="true">
                           ✓
@@ -926,7 +1013,9 @@ export default function On() {
                     ))}
                   </ul>
                   <p style={membRisk}>
-                    30-day money-back guarantee · secure payment by Stripe
+                    {es
+                      ? "Garantía de devolución de 30 días · pago seguro con Stripe"
+                      : "30-day money-back guarantee · secure payment by Stripe"}
                   </p>
                 </div>
               </div>
@@ -934,7 +1023,7 @@ export default function On() {
                 {MEMBERSHIP_TIERS.map((t) => (
                   <div
                     className={t.featured ? "pricing-card featured" : "pricing-card"}
-                    key={t.plan}
+                    key={t.priceId}
                     style={{ overflow: "hidden" }}
                   >
                     {/* Cabecera fotográfica del plan: cada tier con su
@@ -949,7 +1038,8 @@ export default function On() {
                           maxWidth: "none",
                           height: "120px",
                           objectFit: "cover",
-                          objectPosition: "center 30%",
+                          /* Encuadre por foto: la franja de 120px no corta rostros */
+                          objectPosition: t.photoPos,
                           display: "block",
                           filter: "saturate(0.85) contrast(1.05)",
                         }}
@@ -976,51 +1066,70 @@ export default function On() {
                           color: "var(--c-mist)",
                         }}
                       >
-                        {t.tagline}
+                        {t.tagline[lang]}
                       </span>
                     </div>
-                    {t.featured && <span style={tierBadge}>Most chosen</span>}
+                    {t.featured && (
+                      <span style={tierBadge}>
+                        {es ? "El más elegido" : "Most chosen"}
+                      </span>
+                    )}
                     <div style={tierRow}>
                       <div style={tierInfo}>
-                        <div className="pricing-plan">{t.plan}</div>
+                        <div className="pricing-plan">{t.plan[lang]}</div>
                         <div className="pricing-price">
                           <s style={tierStrike}>${t.regularPerMonth}</s>
                           ${t.perMonth}
-                          <span style={tierPerMonth}>/mo</span>
+                          <span style={tierPerMonth}>
+                            {es ? "/mes" : "/mo"}
+                          </span>
                         </div>
-                        <div className="pricing-period">{t.billed}</div>
+                        <div className="pricing-period">{t.billed[lang]}</div>
                       </div>
                       <div style={tierAction}>
+                        {/* UN primario por vista (QUIET v6): solo la featured;
+                            los otros dos tiers van en ghost */}
                         <button
                           type="button"
-                          className="btn btn-primary"
+                          className={
+                            t.featured ? "btn btn-primary" : "btn btn-ghost"
+                          }
                           style={{ marginTop: 0, width: "100%" }}
                           disabled={busy === t.priceId}
                           onClick={() => buy(t.priceId)}
                         >
                           {busy === t.priceId
-                            ? "Opening checkout…"
-                            : "Start free trial"}
+                            ? es
+                              ? "Abriendo el pago…"
+                              : "Opening checkout…"
+                            : es
+                              ? "Empieza tu prueba gratis"
+                              : "Start free trial"}
                         </button>
-                        <span style={riskline}>7 days free · cancel anytime</span>
+                        <span style={riskline}>
+                          {es
+                            ? "7 días gratis · cancela cuando quieras"
+                            : "7 days free · cancel anytime"}
+                        </span>
                       </div>
                     </div>
+                    {/* El error vive DENTRO de la card tapeada */}
+                    {checkoutErr && errPlan === t.priceId && (
+                      <p
+                        role="alert"
+                        style={{
+                          marginTop: "1rem",
+                          fontSize: "0.88rem",
+                          color: "var(--c-red)",
+                        }}
+                      >
+                        {checkoutErr}
+                      </p>
+                    )}
                   </div>
                 ))}
               </div>
             </div>
-            {checkoutErr && (
-              <p
-                role="alert"
-                style={{
-                  marginTop: "1.2rem",
-                  fontSize: "0.9rem",
-                  color: "var(--c-yellow)",
-                }}
-              >
-                {checkoutErr}
-              </p>
-            )}
             {/* Cierre: un solo CTA secundario a /pricing + ancla a #programs */}
             <div
               style={{
@@ -1032,15 +1141,17 @@ export default function On() {
               }}
             >
               <Link to="/pricing" className="btn btn-ghost">
-                Compare plans →
+                {es ? "Compara los planes →" : "Compare plans →"}
               </Link>
               <span style={{ fontSize: "0.85rem", color: "var(--c-faint)" }}>
-                Prefer to pay once?{" "}
+                {es ? "¿Prefieres pagar una sola vez?" : "Prefer to pay once?"}{" "}
                 <a
                   href="#programs"
                   style={{ color: "var(--c-yellow)", textDecoration: "none" }}
                 >
-                  Every program below is also sold on its own.
+                  {es
+                    ? "Cada programa de abajo también se vende por separado."
+                    : "Every program below is also sold on its own."}
                 </a>
               </span>
             </div>
@@ -1067,7 +1178,12 @@ export default function On() {
                 program for the full breakdown.
               </p>
             </div>
-            <div style={{ borderBottom: "1px solid var(--hairline)" }}>
+            {/* ≤900px: los programas 6-13 se pliegan tras el toggle (CSS
+                .prog-collapsed); en desktop la lista entera sigue visible */}
+            <div
+              className={`prog-list${showAllPrograms ? "" : " prog-collapsed"}`}
+              style={{ borderBottom: "1px solid var(--hairline)" }}
+            >
               {PROGRAMS.map((p) => (
                 <article className="prog-row" key={p.num}>
                   <div style={progHead}>
@@ -1138,6 +1254,15 @@ export default function On() {
                           {busy === p.priceId ? "Opening…" : "Buy this program"}
                         </button>
                         <span style={progPriceNote}>one payment</span>
+                        {/* El error de checkout aparece en la fila tapeada */}
+                        {checkoutErr && errPlan === p.priceId && (
+                          <span
+                            role="alert"
+                            style={{ fontSize: "0.78rem", color: "var(--c-red)" }}
+                          >
+                            {checkoutErr}
+                          </span>
+                        )}
                       </>
                     ) : (
                       <span style={progPriceNote}>Membership only</span>
@@ -1149,6 +1274,15 @@ export default function On() {
                 </article>
               ))}
             </div>
+            {!showAllPrograms && (
+              <button
+                type="button"
+                className="btn btn-ghost prog-toggle"
+                onClick={() => setShowAllPrograms(true)}
+              >
+                {es ? "Ver los 13 programas" : "Show all 13 programs"}
+              </button>
+            )}
             <div
               style={{
                 marginTop: "2.4rem",
@@ -1158,11 +1292,13 @@ export default function On() {
                 flexWrap: "wrap",
               }}
             >
-              <Link to="/pricing" className="btn btn-primary">
-                Start free. 7 days.
-              </Link>
+              <a href="#membership" className="btn btn-primary">
+                {es ? "Empieza gratis. 7 días." : "Start free. 7 days."}
+              </a>
               <span style={{ fontSize: "0.85rem", color: "var(--c-faint)" }}>
-                Not sure which one? The free week includes them all.
+                {es
+                  ? "¿No sabes cuál? La semana gratis los incluye todos."
+                  : "Not sure which one? The free week includes them all."}
               </span>
             </div>
           </div>
@@ -1188,12 +1324,13 @@ export default function On() {
             >
               <AppPhone />
               <div>
+                {/* Sentence case (QUIET v6): las caps quedan solo en
+                    eyebrows/metadata */}
                 <h3
                   style={{
                     fontFamily: "var(--font-display)",
                     fontWeight: 800,
                     fontSize: "clamp(1.4rem, 2.6vw, 1.9rem)",
-                    textTransform: "uppercase",
                     lineHeight: 1.05,
                     color: "var(--c-white)",
                   }}
@@ -1335,7 +1472,9 @@ export default function On() {
                 gridTemplateColumns:
                   "repeat(auto-fit, minmax(min(100%, 320px), 1fr))",
                 gap: "clamp(2.5rem, 6vw, 5rem)",
-                alignItems: "center",
+                /* start: la columna derecha nace a la altura de la izquierda
+                   (reparto de canvas, lección .gen-split) */
+                alignItems: "start",
                 marginTop: "var(--space-block)",
               }}
             >
@@ -1409,7 +1548,7 @@ export default function On() {
                 display: "grid",
                 gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))",
                 gap: "clamp(2rem, 5vw, 4.5rem)",
-                alignItems: "center",
+                alignItems: "start",
                 marginTop: "1.4rem",
               }}
             >
@@ -1446,13 +1585,13 @@ export default function On() {
               rows={VS_STUDIOS}
               accentCol={1}
             />
-            {/* CTAs desiguales a proposito: ON a checkout, Studios a consulta */}
+            {/* CTAs desiguales a proposito: ON a #membership, Studios a consulta */}
             <div className="hero-ctas" style={{ marginTop: "2rem" }}>
-              <Link to="/pricing" className="btn btn-primary">
-                Start free. 7 days.
-              </Link>
+              <a href="#membership" className="btn btn-primary">
+                {es ? "Empieza gratis. 7 días." : "Start free. 7 days."}
+              </a>
               <Link to="/studios" className="btn btn-ghost">
-                Request a consultation
+                {es ? "Solicita una consulta" : "Request a consultation"}
               </Link>
             </div>
           </div>
@@ -1466,10 +1605,26 @@ export default function On() {
           <div className={faq.className}>
             <span className="day-marker">FAQ</span>
             <h2 className="section-title">
-              Before you <span style={solidAccent}>start.</span>
+              {es ? (
+                <>
+                  Antes de <span style={solidAccent}>empezar.</span>
+                </>
+              ) : (
+                <>
+                  Before you <span style={solidAccent}>start.</span>
+                </>
+              )}
             </h2>
-            <div className="faq-list">
-              {FAQ.map((f) => (
+            {/* 2 columnas en desktop: mismo patrón que /pricing */}
+            <div
+              className="faq-list"
+              style={{
+                maxWidth: "none",
+                gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 24rem), 1fr))",
+                alignItems: "start",
+              }}
+            >
+              {FAQ[lang].map((f) => (
                 <details className="faq-item" key={f.q}>
                   <summary>{f.q}</summary>
                   <p>{f.a}</p>
@@ -1487,22 +1642,35 @@ export default function On() {
         <div className="section-inner" ref={cta.ref}>
           <div className={`final-wrap ${cta.className}`}>
             <h2 className="final-title">
-              Your Day 1 doesn't need <span className="accent">a gym.</span>
+              {es ? (
+                <>
+                  Tu Día 1 no necesita <span className="accent">gimnasio.</span>
+                </>
+              ) : (
+                <>
+                  Your Day 1 doesn't need <span className="accent">a gym.</span>
+                </>
+              )}
             </h2>
             <div className="hero-ctas">
-              <Link to="/pricing" className="btn btn-primary">
-                Start free. 7 days.
-              </Link>
+              <a href="#membership" className="btn btn-primary">
+                {es ? "Empieza gratis. 7 días." : "Start free. 7 days."}
+              </a>
             </div>
             <p style={{ marginTop: "1.2rem", fontSize: "0.85rem", color: "var(--c-faint)" }}>
-              7 days free · cancel anytime
+              {es
+                ? "7 días gratis · cancela cuando quieras"
+                : "7 days free · cancel anytime"}
             </p>
           </div>
         </div>
       </section>
 
       {/* Página de 15.458px sin CTA persistente → sticky compartida (FIXES_V5 §4) */}
-      <StickyCta href="#membership" label="Start free trial" />
+      <StickyCta
+        href="#membership"
+        label={es ? "Empieza tu prueba gratis" : "Start free trial"}
+      />
 
       <Footer />
     </div>

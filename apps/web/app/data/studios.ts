@@ -13,6 +13,16 @@
 
 export type CountryCode = "US" | "MX" | "CO";
 
+/** Display de ciudad compartido (footer, index y sedes): normaliza el
+ *  separador legacy (em/en dash, escapados por el grep de CI) a " · " y
+ *  localiza el nombre visible en ES. Slugs, SEO y schema quedan EN. */
+export const cityLabel = (city: string, lang: "en" | "es" = "en"): string => {
+  const dotted = city.replace(/\s*[\u2014\u2013]\s*/g, " · ");
+  return lang === "es"
+    ? dotted.replace("Mexico City", "Ciudad de México")
+    : dotted;
+};
+
 export interface Studio {
   slug: string;
   /** Display name of the location (as shown in the UI) */

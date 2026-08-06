@@ -180,7 +180,13 @@ const GATE_CSS = `
   letter-spacing: 0.06em;
   color: rgba(255, 255, 255, 0.3);
 }
-.gate-legal a { color: inherit; }
+/* Target táctil ≥44px sin mover el layout (padding compensado con margin) */
+.gate-legal a {
+  color: inherit;
+  display: inline-block;
+  padding: 1.05rem 0.55rem;
+  margin: -1.05rem -0.55rem;
+}
 @media (max-width: 900px) {
   .gate { justify-content: flex-start; padding-top: clamp(3rem, 8vh, 4.5rem); }
   .gate-desc { font-size: 0.92rem; }
@@ -208,8 +214,8 @@ const GATE_COPY = {
     studiosEyebrow: "La experiencia insignia",
     studiosDesc:
       "El método completo, presencial: coaches, nutrición, fisioterapia. Una Generación, cupos limitados.",
-    studiosCta: "Aplica a la admisión",
-    studiosMicro: "Por aplicación · Miami, Ciudad de México, Bogotá",
+    studiosCta: "Solicita tu admisión",
+    studiosMicro: "Admisión por solicitud · Miami, Ciudad de México, Bogotá",
     onEyebrow: "Online, donde estés",
     onDesc:
       "El programa de 54 días en la app: entrenamiento diario, tu protocolo de nutrición y un coach real contigo.",

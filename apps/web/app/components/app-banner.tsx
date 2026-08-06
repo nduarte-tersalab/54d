@@ -16,7 +16,7 @@ const APP_STORE_URL = "https://apps.apple.com/us/app/54d-on/id1520445334";
 const PLAY_URL =
   "https://play.google.com/store/apps/details?id=com.trainerize.fiftyfourdays";
 const DISMISS_KEY = "54d-app-banner-dismissed";
-const BANNER_H = "56px";
+const BANNER_H = "60px"; /* = height de .app-banner en app.css */
 
 export function SmartAppBanner() {
   const [platform, setPlatform] = useState<"android" | "ios" | null>(null);
