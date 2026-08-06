@@ -594,27 +594,12 @@ const progPriceNote: CSSProperties = {
   color: "var(--c-faint)",
 };
 /* Badge "Best value" de la card destacada */
-const tierBadge: CSSProperties = {
-  position: "absolute",
-  top: "1rem",
-  right: "1rem",
-  fontFamily: "var(--font-label)",
-  fontWeight: 700,
-  fontSize: "0.68rem",
-  textTransform: "uppercase",
-  letterSpacing: "var(--track-label, 0.14em)",
-  color: "var(--c-black)",
-  background: "var(--c-yellow)",
-  borderRadius: "var(--r-control)",
-  padding: "0.3rem 0.6rem",
-};
 /* ============ Membresía mini-pitch (MEMBERSHIP_SALES §2) ============
    plans-split 5/7 replicado inline: flex-wrap apila en pantallas angostas
    (pitch primero). check-list y btn-riskline replican §1.2 y §3.4. */
 const membSplit: CSSProperties = {
-  display: "flex",
-  flexWrap: "wrap",
-  alignItems: "stretch",
+  display: "grid",
+  gridTemplateColumns: "1fr",
   gap: "var(--space-block)",
 };
 const membPitch: CSSProperties = {
@@ -650,13 +635,6 @@ const membPitchInner: CSSProperties = {
   display: "flex",
   flexDirection: "column",
   padding: "clamp(1.8rem, 3.5vw, 2.8rem)",
-};
-const membStack: CSSProperties = {
-  flex: "1.4 1 24rem",
-  minWidth: 0,
-  display: "flex",
-  flexDirection: "column",
-  gap: "1.1rem",
 };
 const checkList: CSSProperties = {
   listStyle: "none",
@@ -695,26 +673,6 @@ const riskline: CSSProperties = {
   color: "var(--c-faint)",
 };
 /* Card compacta: plan+precio a la izquierda, CTA a la derecha; wrap en mobile */
-const tierRow: CSSProperties = {
-  display: "flex",
-  flexWrap: "wrap",
-  alignItems: "center",
-  gap: "1.1rem 2.2rem",
-};
-const tierInfo: CSSProperties = { flex: "1 1 13rem", minWidth: 0 };
-const tierAction: CSSProperties = { flex: "1 1 12rem", minWidth: 0 };
-const tierStrike: CSSProperties = {
-  fontSize: "0.5em",
-  color: "var(--c-faint)",
-  fontWeight: 500,
-  marginRight: "0.4em",
-};
-const tierPerMonth: CSSProperties = {
-  fontSize: "0.38em",
-  fontWeight: 700,
-  color: "var(--c-mist)",
-  marginLeft: "0.15em",
-};
 /* Nombre de programa → landing /programs/{slug}: dos caminos por fila */
 const progNameLink: CSSProperties = { color: "inherit", textDecoration: "none" };
 const progNameArrow: CSSProperties = {
@@ -1008,82 +966,56 @@ export default function On() {
                   </p>
                 </div>
               </div>
-              <div style={membStack}>
+              <div className="plans-trio" style={{ marginTop: 0 }}>
                 {MEMBERSHIP_TIERS.map((t) => (
-                  <div
+                  <article
                     className={t.featured ? "pricing-card featured" : "pricing-card"}
                     key={t.priceId}
-                    style={{ overflow: "hidden" }}
                   >
-                    {/* Cabecera fotográfica del plan: cada tier con su
-                        significado (arrancar / el esfuerzo / el largo plazo) */}
-                    <div style={{ position: "relative", margin: "-2.2rem -1.9rem 1.4rem" }}>
+                    <div className="plan-photo">
                       <img
                         src={asset(t.photo)}
                         alt={t.photoAlt}
                         loading="lazy"
-                        style={{
-                          width: "100%",
-                          maxWidth: "none",
-                          height: "120px",
-                          objectFit: "cover",
-                          /* Encuadre por foto: la franja de 120px no corta rostros */
-                          objectPosition: t.photoPos,
-                          display: "block",
-                          filter: "saturate(0.85) contrast(1.05)",
-                        }}
+                        style={{ objectPosition: t.photoPos }}
                       />
-                      <div
-                        aria-hidden="true"
-                        style={{
-                          position: "absolute",
-                          inset: 0,
-                          background:
-                            "linear-gradient(180deg, rgba(7,7,7,0.1) 40%, rgba(7,7,7,0.82) 100%)",
-                        }}
-                      />
-                      <span
-                        style={{
-                          position: "absolute",
-                          left: "1.9rem",
-                          bottom: "0.55rem",
-                          fontFamily: "var(--font-label)",
-                          fontWeight: 700,
-                          fontSize: "0.7rem",
-                          letterSpacing: "var(--track-label, 0.14em)",
-                          textTransform: "uppercase",
-                          color: "var(--c-mist)",
-                        }}
-                      >
-                        {t.tagline[lang]}
-                      </span>
+                      <span className="plan-chip">{t.tagline[lang]}</span>
                     </div>
-                    {t.featured && (
-                      <span style={tierBadge}>
-                        {es ? "El más elegido" : "Most chosen"}
-                      </span>
-                    )}
-                    <div style={tierRow}>
-                      <div style={tierInfo}>
+                    <div className="plan-body">
+                      <header>
                         <div className="pricing-plan">{t.plan[lang]}</div>
                         <div className="pricing-price">
-                          <s style={tierStrike}>${t.regularPerMonth}</s>
+                          <s
+                            style={{
+                              fontSize: "0.45em",
+                              color: "var(--c-faint)",
+                              fontWeight: 500,
+                              marginRight: "0.4em",
+                            }}
+                          >
+                            ${t.regularPerMonth}
+                          </s>
                           ${t.perMonth}
-                          <span style={tierPerMonth}>
+                          <span
+                            style={{
+                              fontSize: "0.4em",
+                              fontWeight: 500,
+                              color: "var(--c-faint)",
+                              marginLeft: "0.2em",
+                            }}
+                          >
                             {es ? "/mes" : "/mo"}
                           </span>
                         </div>
                         <div className="pricing-period">{t.billed[lang]}</div>
-                      </div>
-                      <div style={tierAction}>
-                        {/* UN primario por vista (QUIET v6): solo la featured;
-                            los otros dos tiers van en ghost */}
+                      </header>
+                      <footer>
                         <button
                           type="button"
                           className={
                             t.featured ? "btn btn-primary" : "btn btn-ghost"
                           }
-                          style={{ marginTop: 0, width: "100%" }}
+                          style={{ width: "100%", textAlign: "center", marginTop: "1.4rem" }}
                           disabled={busy === t.priceId}
                           onClick={() => buy(t.priceId)}
                         >
@@ -1095,27 +1027,27 @@ export default function On() {
                               ? "Empieza tu prueba gratis"
                               : "Start free trial"}
                         </button>
-                        <span style={riskline}>
+                        <span className="btn-riskline">
                           {es
                             ? "7 días gratis · cancela cuando quieras"
                             : "7 days free · cancel anytime"}
                         </span>
-                      </div>
+                        {checkoutErr && errPlan === t.priceId && (
+                          <p
+                            role="alert"
+                            style={{
+                              marginTop: "0.8rem",
+                              fontSize: "0.88rem",
+                              color: "var(--c-red)",
+                              textAlign: "center",
+                            }}
+                          >
+                            {checkoutErr}
+                          </p>
+                        )}
+                      </footer>
                     </div>
-                    {/* El error vive DENTRO de la card tapeada */}
-                    {checkoutErr && errPlan === t.priceId && (
-                      <p
-                        role="alert"
-                        style={{
-                          marginTop: "1rem",
-                          fontSize: "0.88rem",
-                          color: "var(--c-red)",
-                        }}
-                      >
-                        {checkoutErr}
-                      </p>
-                    )}
-                  </div>
+                  </article>
                 ))}
               </div>
             </div>

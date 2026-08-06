@@ -74,6 +74,12 @@ export function Nav() {
   const { pathname } = useLocation();
   const { lang } = useLang();
   const inStudios = pathname.startsWith("/studios");
+  /* Contexto ONLINE (cliente 07/08): en /on, /pricing y las landings de
+     programas el nav lleva el lockup oficial de 54D ON */
+  const inOn =
+    pathname === "/on" ||
+    pathname.startsWith("/pricing") ||
+    pathname.startsWith("/programs");
   /* CTA de consulta pathname-aware: en la sede ancla al form de ESA pagina
      (#reserva); en el index, al grid de sedes (#sedes). Anchor nativo
      same-page: el browser scrollea solo, sin sacar al visitante de la
@@ -111,7 +117,15 @@ export function Nav() {
     <nav className={`nav${scrolled ? " scrolled" : ""}${isGateway ? " nav-minimal" : ""}`}>
       <div className="nav-inner">
       <Link to="/" className="nav-logo" onClick={close} aria-label="54D home">
-        <img src={asset("images/brand/logo-54d.png")} alt="54D" width={52} height={52} />
+        {inOn ? (
+          <img
+            src={asset("images/brand/logo-54d-on.svg")}
+            alt="54D ON"
+            className="logo-on"
+          />
+        ) : (
+          <img src={asset("images/brand/logo-54d.png")} alt="54D" width={52} height={52} />
+        )}
       </Link>
       <div className="nav-links">
         {links.map((item) => (

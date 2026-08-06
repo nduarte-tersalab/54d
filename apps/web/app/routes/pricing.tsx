@@ -25,25 +25,8 @@ export function meta({}: Route.MetaArgs) {
    .check-list, .btn-riskline. Todo lo demás reusa app.css.
    ============================================================ */
 const PLANS_CSS = `
-/* Trio de planes lado a lado (cliente 07/08, referencia landing evergreen):
-   comparacion escaneable en UNA vista; cada tier con foto de identidad y
-   chip de beneficio. Lenguaje quiet: glass, un solo primario (featured). */
-.plans-trio { display: grid; grid-template-columns: 1fr; gap: 1.4rem; margin-top: var(--space-block); }
-@media (min-width: 1000px) { .plans-trio { grid-template-columns: repeat(3, 1fr); } }
-.plans-trio .pricing-card { display: flex; flex-direction: column; padding: 0; overflow: hidden; }
-.plan-photo { position: relative; height: 152px; }
-.plan-photo img { width: 100%; height: 100%; object-fit: cover; display: block;
-  filter: saturate(0.82) contrast(1.03); }
-.plan-photo::after { content: ''; position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(180deg, rgba(7,7,7,0.05) 45%, rgba(7,7,7,0.72) 100%); }
-.plan-chip { position: absolute; left: 1.5rem; bottom: 0.9rem; z-index: 1;
-  font-family: var(--font-label); font-weight: 500; font-size: 0.66rem;
-  letter-spacing: 0.15em; text-transform: uppercase; color: var(--c-mist); }
-.pricing-card.featured .plan-chip { color: var(--c-yellow); }
-.plan-body { padding: 1.5rem 1.6rem 1.7rem; display: flex; flex-direction: column; flex: 1; }
-.plan-body > header { display: flex; flex-direction: column; gap: 0.4rem; }
-.plan-body .check-list { margin: 1.2rem 0 1.6rem; }
-.plan-body > footer { margin-top: auto; display: flex; flex-direction: column; }
+/* El trio de planes (.plans-trio y familia) vive en app.css: lo comparten
+   /pricing y la membresia de /on. Aca quedan solo las reglas propias. */
 
 /* §1.2 Punteos con checkmarks duros: sin circulo, sin fondo, sin pills */
 .check-list { display: grid; gap: 0.55rem; margin-top: 1.1rem; list-style: none; padding: 0; }
@@ -60,10 +43,6 @@ const PLANS_CSS = `
 .photo-grid .check-list { margin-top: 1.6rem; max-width: 36rem; display: grid; gap: 0.9rem; }
 .photo-grid .check-list li { font-size: 1.05rem; padding-left: 1.7rem; }
 
-@media (max-width: 999px) {
-  /* Mobile commerce: la featured abre el stack */
-  .plans-trio .pricing-card.featured { order: -1; background: var(--glass-hover); }
-}
 `;
 
 /* ============================================================

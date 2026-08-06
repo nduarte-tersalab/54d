@@ -273,6 +273,32 @@ body {
   background: rgba(255, 210, 0, 0.05); /* ATMOSPHERE §3.6: ≤0.08, es luz, no fill */
   box-shadow: none;
 }
+/* Trio de planes (compartido /pricing y /on): tres tiers lado a lado,
+   foto de identidad + chip por plan. Quiet: un solo primario (featured). */
+.plans-trio { display: grid; grid-template-columns: 1fr; gap: 1.4rem; margin-top: var(--space-block); }
+@media (min-width: 1000px) { .plans-trio { grid-template-columns: repeat(3, 1fr); } }
+.plans-trio .pricing-card { display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+.plan-photo { position: relative; height: 152px; }
+.plan-photo img { width: 100%; height: 100%; object-fit: cover; display: block;
+  filter: saturate(0.82) contrast(1.03); }
+.plan-photo::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(7,7,7,0.05) 45%, rgba(7,7,7,0.72) 100%); }
+.plan-chip { position: absolute; left: 1.5rem; bottom: 0.9rem; z-index: 1;
+  font-family: var(--font-label); font-weight: 500; font-size: 0.66rem;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--c-mist); }
+.pricing-card.featured .plan-chip { color: var(--c-yellow); }
+.plan-body { padding: 1.5rem 1.6rem 1.7rem; display: flex; flex-direction: column; flex: 1; }
+.plan-body > header { display: flex; flex-direction: column; gap: 0.4rem; }
+.plan-body .check-list { margin: 1.2rem 0 1.6rem; }
+.plan-body > footer { margin-top: auto; display: flex; flex-direction: column; }
+@media (max-width: 999px) {
+  .plans-trio .pricing-card.featured { order: -1; background: var(--glass-hover); }
+}
+
+/* Lockup 54D ON en el nav (contexto online): alto fijo, ancho natural */
+.nav-logo img.logo-on { width: auto; height: 40px; }
+@media (max-width: 820px) { .nav-logo img.logo-on { width: auto; height: 34px; } }
+
 /* Reseñas de Google por sede (testimonios reales): cards glass quiet,
    regla amarilla chica como unico acento */
 .review-grid {
