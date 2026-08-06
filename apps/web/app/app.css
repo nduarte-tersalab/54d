@@ -1463,3 +1463,72 @@ p.lead, .lead {
     padding-bottom: 0.4rem !important;
   }
 }
+
+/* ============================================================
+   /programs/:slug · quick wins + CTA inline (landings de Meta)
+   ============================================================ */
+
+/* Quick wins: fila compacta de pruebas de baja friccion en el hero y en
+   el cierre. Hairline puro, sin fill ni amarillo (QUIET v6): el unico
+   acento de la vista sigue siendo el boton primario. */
+.qw-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: 1.4rem;
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+  max-width: 44rem;
+}
+.qw { padding: 0.75rem 0.9rem; border-left: 1px solid var(--hairline); }
+.qw:first-child { border-left: 0; padding-left: 0; }
+.qw-value {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: 0.98rem; line-height: 1.2; color: var(--c-white);
+}
+.qw-label {
+  margin-top: 0.25rem; font-family: var(--font-label); font-weight: 700;
+  font-size: 0.62rem; text-transform: uppercase;
+  letter-spacing: var(--track-label, 0.14em); color: var(--c-faint);
+}
+.final-wrap .qw-row { margin-inline: auto; text-align: center; }
+.final-wrap .qw:first-child { padding-left: 0.9rem; }
+@media (max-width: 640px) {
+  .qw-row { grid-template-columns: 1fr 1fr; }
+  .qw:nth-child(odd) { border-left: 0; padding-left: 0; }
+  .qw:nth-child(n + 3) { border-top: 1px solid var(--hairline); }
+  .final-wrap .qw:nth-child(odd) { padding-left: 0; }
+}
+
+/* CTA inline: camino de compra a un tap en cada punto del scroll.
+   SIEMPRE ghost: el amarillo queda para hero, sticky y cierre. */
+.inline-cta {
+  margin-top: var(--space-block);
+  padding-top: 1.6rem;
+  border-top: 1px solid var(--hairline);
+  display: grid; justify-items: start; gap: 0.7rem; max-width: 38rem;
+}
+.inline-cta-eyebrow {
+  font-family: var(--font-label); font-weight: 700; font-size: 0.72rem;
+  text-transform: uppercase; letter-spacing: var(--track-eyebrow, 0.22em);
+  color: var(--c-faint);
+}
+.inline-cta-btn { min-height: 48px; }
+.inline-cta-note {
+  font-family: var(--font-label); font-weight: 700; font-size: 0.7rem;
+  text-transform: uppercase; letter-spacing: var(--track-label, 0.14em);
+  color: var(--c-faint);
+}
+@media (max-width: 640px) {
+  .inline-cta { justify-items: stretch; }
+  .inline-cta-btn { display: block; width: 100%; text-align: center; }
+  .inline-cta-note { text-align: center; }
+}
+
+/* Stats de /programs en telefono: los valores de palabra (Intermediate,
+   Principiante, Scalable) no entran en la columna de 160px con el display
+   a 2rem y desbordaban la fila en los 3 landings de runners. Se limita a
+   .prog-stats: los stats de Studios son numeros cortos y no se tocan. */
+@media (max-width: 640px) {
+  .prog-stats .stat { min-width: 0; padding: 1.5rem 1.1rem; }
+  .prog-stats .stat-value { font-size: 1.5rem; overflow-wrap: break-word; }
+}

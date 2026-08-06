@@ -38,9 +38,17 @@ export function captureAttribution(): void {
       utm_term: params.get("utm_term") ?? existing?.utm_term,
       fbclid: params.get("fbclid") ?? existing?.fbclid,
       gclid: params.get("gclid") ?? existing?.gclid,
-      landing_path: existing?.landing_path ?? window.location.pathname,
-      referrer: existing?.referrer ?? document.referrer ?? undefined,
-      ts: existing?.ts ?? Date.now(),
+      /* Campaña nueva = touch nuevo: landing_path es el único campo que
+         dice CUÁL de las 13 landings generó la venta, así que se refresca
+         junto con los utm. Si no, todo visitante recurrente y todo el
+         retargeting quedan pegados al primer visit de siempre. */
+      landing_path: hasNewCampaign
+        ? window.location.pathname
+        : (existing?.landing_path ?? window.location.pathname),
+      referrer: hasNewCampaign
+        ? (document.referrer || undefined)
+        : (existing?.referrer ?? document.referrer ?? undefined),
+      ts: hasNewCampaign ? Date.now() : (existing?.ts ?? Date.now()),
     };
     localStorage.setItem(KEY, JSON.stringify(attr));
   } catch {
@@ -86,10 +94,41 @@ export async function getFullAttribution() {
   };
 }
 
-/** Inicia el checkout de Stripe con la atribución adjunta */
-export async function startCheckout(priceId: string): Promise<void> {
+/** Inicia el checkout de Stripe con la atribución adjunta.
+ *  meta (opcional): dispara InitiateCheckout en el pixel y begin_checkout
+ *  en GA4 con la posición del CTA, para poder iterar los 7 puntos de compra
+ *  de las landings. Segundo argumento opcional: pricing.tsx y on.tsx
+ *  siguen llamando startCheckout(priceId) sin cambios. */
+export async function startCheckout(
+  priceId: string,
+  meta?: { item?: string; position?: string; value?: number; contentId?: string }
+): Promise<void> {
+  /* content_id canonico: el slug del programa cuando lo hay (asi Meta
+     empalma ViewContent con InitiateCheckout); si no, el priceId. */
+  const contentId = meta?.contentId ?? priceId;
   const attribution = await getFullAttribution();
   const apiUrl = import.meta.env.VITE_API_URL ?? "http://localhost:8788";
+  try {
+    const w = window as unknown as {
+      fbq?: (...a: unknown[]) => void;
+      gtag?: (...a: unknown[]) => void;
+    };
+    w.fbq?.("track", "InitiateCheckout", {
+      content_ids: [contentId],
+      content_name: meta?.item,
+      content_type: "product",
+      value: meta?.value,
+      currency: "USD",
+    });
+    w.gtag?.("event", "begin_checkout", {
+      items: [{ item_id: contentId, item_name: meta?.item }],
+      value: meta?.value,
+      currency: "USD",
+      cta_position: meta?.position,
+    });
+  } catch {
+    // Sin pixel/gtag cargados: el checkout sigue igual
+  }
   const res = await fetch(`${apiUrl}/checkout`, {
     method: "POST",
     headers: { "content-type": "application/json" },

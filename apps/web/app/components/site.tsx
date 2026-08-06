@@ -84,6 +84,10 @@ export function Nav() {
      (#reserva); en el index, al grid de sedes (#sedes). Anchor nativo
      same-page: el browser scrollea solo, sin sacar al visitante de la
      pagina del form. */
+  /* En /programs/* el unico amarillo de la vista tiene que ser el boton
+     que cobra: el CTA del nav baja a ghost (QUIET v6, un primario por
+     vista). Destino y copy no cambian. */
+  const inPrograms = pathname.startsWith("/programs");
   const inStudioDetail = /^\/studios\/./.test(pathname);
   const consultHref = inStudioDetail ? "#reserva" : "#sedes";
   /* SEPARACION DURA (cliente 01/08): en contexto Studios el nav no ofrece
@@ -139,7 +143,10 @@ export function Nav() {
             {STUDIOS_CTA_COPY[lang]}
           </a>
         ) : (
-          <Link to="/pricing" className="btn btn-primary btn-nav">
+          <Link
+            to="/pricing"
+            className={`btn ${inPrograms ? "btn-ghost" : "btn-primary"} btn-nav`}
+          >
             {CTA_COPY[lang]}
           </Link>
         )}
@@ -180,7 +187,11 @@ export function Nav() {
             {STUDIOS_CTA_COPY[lang]}
           </a>
         ) : (
-          <Link to="/pricing" className="btn btn-primary btn-nav" onClick={close}>
+          <Link
+            to="/pricing"
+            className={`btn ${inPrograms ? "btn-ghost" : "btn-primary"} btn-nav`}
+            onClick={close}
+          >
             {CTA_COPY[lang]}
           </Link>
         )}

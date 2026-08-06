@@ -43,8 +43,16 @@ export function SmartAppBanner() {
     };
   }, [platform]);
 
-  /* SEPARATION_SPEC: cero menciones a la app ON en contexto Studios */
-  if (!platform || pathname === "/" || pathname.startsWith("/studios"))
+  /* SEPARATION_SPEC: cero menciones a la app ON en contexto Studios.
+     /programs/*: el banner pone un boton amarillo Get app arriba del
+     hero y desvia el clic pagado a descargar una app gratis en vez de
+     comprar. La app se sigue vendiendo en PROOF, despues del argumento. */
+  if (
+    !platform ||
+    pathname === "/" ||
+    pathname.startsWith("/studios") ||
+    pathname.startsWith("/programs")
+  )
     return null;
 
   const dismiss = () => {
