@@ -786,7 +786,8 @@ function CompareTable({
   );
 }
 
-/** Telefono en CSS puro. Sin screenshot verificado de la app: gradiente + wordmark. */
+/** Telefono con captura REAL de la app 54D ON (screenshots del cliente,
+    06/08/2026): la sesion del dia con coach. El marco sigue siendo CSS. */
 function AppPhone() {
   return (
     <div
@@ -822,37 +823,21 @@ function AppPhone() {
           height: "100%",
           borderRadius: "32px",
           overflow: "hidden",
-          background: "linear-gradient(200deg, #1a1a1a 0%, #0b0b0b 100%)",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "0.5rem",
+          background: "#0b0b0b",
         }}
       >
-        <span
+        <img
+          src={asset("images/app/on-workout-coach.jpg")}
+          alt="54D ON app: today's strength session with your coach, ready to start"
+          loading="lazy"
           style={{
-            fontFamily: "var(--font-display)",
-            fontWeight: 800,
-            fontSize: "2.8rem",
-            letterSpacing: "0.02em",
-            color: "var(--c-white)",
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "top",
+            display: "block",
           }}
-        >
-          54D
-        </span>
-        <span
-          style={{
-            fontFamily: "var(--font-display)",
-            fontWeight: 700,
-            fontSize: "0.78rem",
-            textTransform: "uppercase",
-            letterSpacing: "var(--track-eyebrow, 0.22em)",
-            color: "var(--c-yellow)",
-          }}
-        >
-          On
-        </span>
+        />
       </div>
     </div>
   );
