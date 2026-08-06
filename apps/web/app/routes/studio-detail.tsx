@@ -910,25 +910,29 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
             <span className="day-marker">
               {es ? "Próxima Generación" : "Next Generation"}
             </span>
+            {/* Copy claro-primero (cliente 05/08): el titulo dice lo concreto
+                en lenguaje llano; "Generacion" aparece recien en el lead,
+                donde se define sola en su primera mencion. */}
             <h2 className="section-title">
               {es ? (
                 <>
-                  Las Generaciones <span className="accent">se llenan.</span>
+                  Una sola fecha de inicio.{" "}
+                  <span className="accent">Cupos limitados.</span>
                 </>
               ) : (
                 <>
-                  Generations <span className="accent">fill up.</span>
+                  One start date. <span className="accent">Limited places.</span>
                 </>
               )}
             </h2>
             <p className="lead" style={{ marginTop: "1.4rem", maxWidth: "38rem" }}>
               {generation
                 ? es
-                  ? `La tuya comienza el ${generation.start}. La admisión es por Generación: una fecha de inicio, cupos limitados, nadie entra después.`
-                  : `Yours starts ${generation.start}. Admission is by Generation: one start date, limited places, no rolling entry.`
+                  ? `Tu Generación es el grupo con el que empiezas y terminas. La próxima comienza el ${generation.start}, y nadie entra después del día uno.`
+                  : `Your Generation is the group you start and finish with. The next one begins ${generation.start}, and no one joins after day one.`
                 : es
-                  ? "La admisión es por Generación: una fecha de inicio, cupos limitados, nadie entra después."
-                  : "Admission is by Generation: one start date, limited places, no rolling entry."}
+                  ? "Tu Generación es el grupo con el que empiezas y terminas. La admisión es por aplicación, y nadie entra después del día uno."
+                  : "Your Generation is the group you start and finish with. Admission is by application, and no one joins after day one."}
             </p>
             {generation && (
               <div
