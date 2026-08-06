@@ -80,29 +80,39 @@ export const STUDIOS: Studio[] = [
     city: "Mexico City · Carso",
     country: "Mexico",
     countryCode: "MX",
-    address: "Lago Zúrich 245, Ampliación Granada, Miguel Hidalgo, 11529 CDMX", // PLACEHOLDER
+    address: "C. Lago Zurich 219, Amp Granada, Miguel Hidalgo, 11529 CDMX",
     whatsapp: "+52 55 2337 8937",
     timezone: "America/Mexico_City",
+    phone: "+52 55 5250 5301",
     instagram: "https://www.instagram.com/54d.mx/",
+    mapsUrl: "https://www.google.com/maps/search/54D+Plaza+Carso+Ciudad+de+Mexico",
+    napVerified: true,
   },
   {
     slug: "mexico-santa-fe",
     city: "Mexico City · Santa Fe",
     country: "Mexico",
     countryCode: "MX",
-    address: "Av. Vasco de Quiroga 3800, Santa Fe, Cuajimalpa, 05348 CDMX", // PLACEHOLDER
+    address: "Av. Javier Barros Sierra 540, Santa Fe, Álvaro Obregón, 01376 CDMX",
     whatsapp: "+52 55 2337 8937",
     timezone: "America/Mexico_City",
+    phone: "+52 55 1809 0259",
     instagram: "https://www.instagram.com/54d.mx/",
+    mapsUrl: "https://www.google.com/maps/search/54D+Santa+Fe+Ciudad+de+Mexico",
+    napVerified: true,
   },
   {
     slug: "bogota",
     city: "Bogotá",
     country: "Colombia",
     countryCode: "CO",
-    address: "Cra. 11 #93-10, Chapinero, Bogotá", // PLACEHOLDER
+    /* GBP de Bogotá SIN RECLAMAR al 06/08/2026: dirección del perfil
+       (Cl. 109), CONFIRMAR con cliente antes de darla por definitiva */
+    address: "Cl. 109 #18b-51, Bogotá",
     whatsapp: "+57 300 228 3913",
     timezone: "America/Bogota",
+    phone: "+57 1 6949016",
     instagram: "https://www.instagram.com/54d.col",
+    mapsUrl: "https://www.google.com/maps/search/54D+Bogota",
   },
 ];

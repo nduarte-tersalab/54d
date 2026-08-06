@@ -273,6 +273,60 @@ body {
   background: rgba(255, 210, 0, 0.05); /* ATMOSPHERE §3.6: ≤0.08, es luz, no fill */
   box-shadow: none;
 }
+/* Reseñas de Google por sede (testimonios reales): cards glass quiet,
+   regla amarilla chica como unico acento */
+.review-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 1.4rem;
+  margin-top: var(--space-block);
+}
+.review-card {
+  margin: 0;
+  padding: 2rem 1.8rem 1.7rem;
+  background: var(--glass);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-card);
+  display: flex;
+  flex-direction: column;
+}
+.review-card blockquote {
+  margin: 0;
+  font-size: 1.02rem;
+  line-height: 1.7;
+  color: var(--c-mist);
+}
+.review-card figcaption {
+  margin-top: auto;
+  padding-top: 1.2rem;
+  font-family: var(--font-label);
+  font-weight: 500;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-faint);
+  position: relative;
+}
+.review-card figcaption::before {
+  content: '';
+  display: block;
+  width: 22px;
+  height: 1px;
+  background: var(--c-yellow);
+  margin-bottom: 0.8rem;
+}
+.review-all-link {
+  display: inline-block;
+  margin-top: 1.8rem;
+  font-size: 0.9rem;
+  color: var(--c-mist);
+  text-decoration: none;
+  border-bottom: 1px solid var(--hairline);
+  padding-bottom: 2px;
+  transition: color var(--transition), border-color var(--transition);
+}
+.review-all-link:hover { color: var(--c-white); border-color: rgba(255, 255, 255, 0.4); }
+
 /* FAB de WhatsApp por sede (solo /studios/<sede>, numero real gateado).
    Verde oficial: es un affordance funcional reconocible, como los store
    badges; unico elemento de color ajeno a la paleta en la pagina. */

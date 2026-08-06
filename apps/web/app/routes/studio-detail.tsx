@@ -6,6 +6,7 @@ import { STUDIOS, cityLabel } from "../data/studios";
 import { asset } from "../lib/asset";
 import { useLang, type Lang } from "../lib/i18n";
 import { DIAL_CODES, FREQUENT_ISO, isoFlag } from "../data/dial-codes";
+import { GOOGLE_REVIEWS } from "../data/testimonials";
 
 /* ============================================================
    /studios/:slug: detalle de sede (54D Studios)
@@ -94,7 +95,7 @@ const LOCAL_META: Record<string, { title: string; desc: string }> = {
   },
   bogota: {
     title: "54 Day Transformation Program in Bogota | 54D",
-    desc: "Train the 54D Method steps from Parque de la 93 in Chapinero: small groups, coaches, nutrition and physiotherapy. Join the next Generation.",
+    desc: "Train the 54D Method on Calle 109 in Bogota: small groups, coaches, nutrition and physiotherapy. Join the next Generation.",
   },
 };
 
@@ -161,30 +162,34 @@ const STUDIO_SCHEMA: Record<string, object> = {
   "mexico-carso": {
     "@context": "https://schema.org", "@type": "ExerciseGym",
     name: "54D Mexico City Carso", url: "https://54d.com/studios/mexico-carso",
-    address: { "@type": "PostalAddress", streetAddress: "Lago Zurich 245, Ampliacion Granada", // DATO_PENDIENTE
+    address: { "@type": "PostalAddress", streetAddress: "C. Lago Zurich 219, Amp Granada",
       addressLocality: "Miguel Hidalgo", addressRegion: "CDMX", postalCode: "11529", addressCountry: "MX" },
-    geo: { "@type": "GeoCoordinates", latitude: 19.4404, longitude: -99.2046 },
-    /* telephone: DATO_PENDIENTE — no publicar NAP falso (jurado HT fix 1) */
+    geo: { "@type": "GeoCoordinates", latitude: 19.4421, longitude: -99.2041 },
+    telephone: "+525552505301",
+    hasMap: "https://www.google.com/maps/search/54D+Plaza+Carso+Ciudad+de+Mexico",
     priceRange: "$$$$",
     sameAs: ["https://www.instagram.com/54d.mx"], parentOrganization: ORG,
   },
   "mexico-santa-fe": {
     "@context": "https://schema.org", "@type": "ExerciseGym",
     name: "54D Mexico City Santa Fe", url: "https://54d.com/studios/mexico-santa-fe",
-    address: { "@type": "PostalAddress", streetAddress: "Av. Vasco de Quiroga 3800", // DATO_PENDIENTE
-      addressLocality: "Cuajimalpa", addressRegion: "CDMX", postalCode: "05348", addressCountry: "MX" },
-    geo: { "@type": "GeoCoordinates", latitude: 19.3599, longitude: -99.2743 },
-    /* telephone: DATO_PENDIENTE — no publicar NAP falso (jurado HT fix 1) */
+    address: { "@type": "PostalAddress", streetAddress: "Av. Javier Barros Sierra 540",
+      addressLocality: "Álvaro Obregón", addressRegion: "CDMX", postalCode: "01376", addressCountry: "MX" },
+    geo: { "@type": "GeoCoordinates", latitude: 19.3647, longitude: -99.2597 },
+    telephone: "+525518090259",
+    hasMap: "https://www.google.com/maps/search/54D+Santa+Fe+Ciudad+de+Mexico",
     priceRange: "$$$$",
     sameAs: ["https://www.instagram.com/54d.mx"], parentOrganization: ORG,
   },
   bogota: {
     "@context": "https://schema.org", "@type": "ExerciseGym",
     name: "54D Bogota", url: "https://54d.com/studios/bogota",
-    address: { "@type": "PostalAddress", streetAddress: "Cra. 11 #93-10, Chapinero", // DATO_PENDIENTE
+    address: { "@type": "PostalAddress", streetAddress: "Cl. 109 #18b-51", // GBP sin reclamar: CONFIRMAR
       addressLocality: "Bogota", addressRegion: "Bogota D.C.", addressCountry: "CO" },
-    geo: { "@type": "GeoCoordinates", latitude: 4.6768, longitude: -74.0484 },
-    /* telephone: DATO_PENDIENTE — no publicar NAP falso (jurado HT fix 1) */
+    /* geo removido: el pin viejo era del placeholder de Chapinero; el GBP
+       (sin reclamar) no expone plus code. Reponer cuando el cliente confirme. */
+    telephone: "+5716949016",
+    hasMap: "https://www.google.com/maps/search/54D+Bogota",
     priceRange: "$$$$",
     sameAs: ["https://www.instagram.com/54d.col"], parentOrganization: ORG,
   },
@@ -215,7 +220,7 @@ const LOCAL_COPY: Record<Lang, Record<string, string>> = {
     "mexico-santa-fe":
       "Our Santa Fe studio sits on Av. Vasco de Quiroga, in the corporate district that runs from Centro Santa Fe to Parque La Mexicana. If you work in the towers of Santa Fe or live in Bosques de las Lomas, Interlomas or Contadero, your Generation trains here: before the office, or right after, without crossing the city.",
     bogota:
-      "54D Bogota lives in Chapinero, steps from Parque de la 93 on Carrera 11. The studio draws members from Chico, Rosales and Usaquen, many walking over from the offices along the Calle 93 corridor. Sessions start at 5:30 AM, before the Septima fills up, and the neighborhood's cafes have adopted our Generations as their post workout ritual.",
+      "54D Bogota lives on Calle 109, in the Santa Barbara area of Usaquen. The studio draws members from Chico, Rosales and Santa Ana, minutes from the offices along the Carrera 19 corridor. Morning Generations finish before the city's traffic builds, and the neighborhood's cafes have adopted our members as their post workout ritual.",
   },
   es: {
     "coral-gables":
@@ -227,7 +232,7 @@ const LOCAL_COPY: Record<Lang, Record<string, string>> = {
     "mexico-santa-fe":
       "Nuestro studio de Santa Fe está sobre Av. Vasco de Quiroga, en el distrito corporativo que va de Centro Santa Fe a Parque La Mexicana. Si trabajas en las torres de Santa Fe o vives en Bosques de las Lomas, Interlomas o Contadero, tu Generación entrena aquí: antes de la oficina, o justo después, sin cruzar la ciudad.",
     bogota:
-      "54D Bogotá vive en Chapinero, a pasos del Parque de la 93 sobre la Carrera 11. El studio recibe miembros de Chicó, Rosales y Usaquén, muchos llegan caminando desde las oficinas del corredor de la Calle 93. Las sesiones comienzan a las 5:30 AM, antes de que se llene la Séptima, y los cafés del barrio ya adoptaron a nuestras Generaciones como su ritual post entrenamiento.",
+      "54D Bogotá vive sobre la Calle 109, en la zona de Santa Bárbara, Usaquén. El studio recibe miembros de Chicó, Rosales y Santa Ana, a minutos de las oficinas del corredor de la Carrera 19. Las Generaciones de la mañana terminan antes de que se llene el tráfico, y los cafés del barrio ya adoptaron a nuestros miembros como su ritual post entrenamiento.",
   },
 };
 
@@ -238,14 +243,14 @@ const ZONE: Record<Lang, Record<string, string>> = {
     hallandale: "Between Miami and Fort Lauderdale, on N Federal Hwy.",
     "mexico-carso": "In Nuevo Polanco, right by Plaza Carso.",
     "mexico-santa-fe": "In the corporate heart of Santa Fe.",
-    bogota: "In Chapinero, steps from Parque de la 93.",
+    bogota: "On Calle 109, Santa Barbara, Usaquen.",
   },
   es: {
     "coral-gables": "En el corazón de Coral Gables, sobre Ponce de Leon Blvd.",
     hallandale: "Entre Miami y Fort Lauderdale, sobre N Federal Hwy.",
     "mexico-carso": "En Nuevo Polanco, junto a Plaza Carso.",
     "mexico-santa-fe": "En el corazón corporativo de Santa Fe.",
-    bogota: "En Chapinero, a pasos del Parque de la 93.",
+    bogota: "Sobre la Calle 109, Santa Bárbara, Usaquén.",
   },
 };
 
@@ -904,6 +909,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
   const bandPhoto = BAND_PHOTO[studio.slug];
 
   const gen = useReveal();
+  const reviewsReveal = useReveal();
   const includes = useReveal();
   const gallery = useReveal();
   const location = useReveal();
@@ -1212,6 +1218,60 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
             <div className="hero-ctas">
               <a href="#reserva" className="btn btn-primary">
                 {ctaLabel}
+              </a>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ============ RESEÑAS DE GOOGLE (testimonios reales, verificables) ============ */}
+      {GOOGLE_REVIEWS[studio.slug] && (
+        <section className="section section-tight">
+          <div className="section-inner" ref={reviewsReveal.ref}>
+            <div className={reviewsReveal.className}>
+              <span className="day-marker">
+                {es ? "Reseñas de Google" : "From Google reviews"}
+              </span>
+              <h2 className="section-title">
+                {es
+                  ? "Lo que dice la gente que entrena aquí."
+                  : "What the people training here say."}
+              </h2>
+              <p
+                className="method-desc"
+                style={{ marginTop: "1rem", color: "var(--c-faint)" }}
+              >
+                {GOOGLE_REVIEWS[studio.slug].rating} / 5 ·{" "}
+                {GOOGLE_REVIEWS[studio.slug].count}{" "}
+                {es ? "reseñas en Google" : "reviews on Google"}
+              </p>
+              <div className="review-grid">
+                {GOOGLE_REVIEWS[studio.slug].quotes.map((q) => (
+                  <figure className="review-card" key={q.name}>
+                    <blockquote>
+                      {"\u201C"}
+                      {es ? q.textEs : q.textEn}
+                      {"\u201D"}
+                    </blockquote>
+                    <figcaption>
+                      {q.name} ·{" "}
+                      {es
+                        ? "Reseña de Google"
+                        : "Translated from a Google review"}
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
+              <a
+                href={GOOGLE_REVIEWS[studio.slug].url}
+                target="_blank"
+                rel="noreferrer"
+                className="review-all-link"
+              >
+                {es
+                  ? "Leer todas las reseñas en Google"
+                  : "Read all reviews on Google"}{" "}
+                {"\u2197"}
               </a>
             </div>
           </div>
