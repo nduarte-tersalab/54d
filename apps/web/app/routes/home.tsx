@@ -316,7 +316,22 @@ export default function Home() {
             </Link>
             <Link to="/on" className="gate-door gate-door-on">
               <span className="gate-eyebrow">{c.onEyebrow}</span>
-              <span className="gate-title">54D ON</span>
+              <img
+                src={asset("images/brand/logo-54d-on.svg")}
+                alt=""
+                style={{ height: "52px", width: "auto", marginTop: "0.85rem" }}
+              />
+              <span
+                style={{
+                  position: "absolute",
+                  width: 1,
+                  height: 1,
+                  overflow: "hidden",
+                  clipPath: "inset(50%)",
+                }}
+              >
+                54D ON
+              </span>
               <span className="gate-desc">{c.onDesc}</span>
               <span className="gate-cta gate-cta-on">{c.onCta}</span>
               <span className="gate-micro">{c.onMicro}</span>

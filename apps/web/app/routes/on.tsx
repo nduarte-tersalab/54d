@@ -900,7 +900,11 @@ export default function On() {
         </div>
         <div className="hero-veil" />
         <div className="hero-content">
-          <span className="day-marker">54D ON · Online</span>
+          <img
+            src={asset("images/brand/logo-54d-on.svg")}
+            alt="54D ON"
+            style={{ height: "62px", width: "auto", marginBottom: "var(--space-4)" }}
+          />
           <h1 className="hero-title">
             {es ? "El método completo." : "The full method."}
             <br />

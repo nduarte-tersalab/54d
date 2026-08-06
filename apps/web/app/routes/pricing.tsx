@@ -25,20 +25,25 @@ export function meta({}: Route.MetaArgs) {
    .check-list, .btn-riskline. Todo lo demás reusa app.css.
    ============================================================ */
 const PLANS_CSS = `
-/* §1.1 Split 5/7: foto vertical izquierda, planes apilados derecha.
-   stretch: la foto llena la columna a la altura del stack (cero canvas
-   medio vacío, lección .gen-split). */
-.plans-split { display: grid; grid-template-columns: 5fr 7fr; gap: var(--space-block); align-items: stretch; margin-top: var(--space-block); }
-.plans-photo { margin: 0; display: flex; flex-direction: column; }
-.plans-photo .photo-card { position: relative; flex: 1; min-height: 24rem; }
-/* Overlay: negro 60% desde abajo (patron photo-band) para que la foto
-   no compita en luminancia con el precio */
-.plans-photo .photo-card::after { content: ''; position: absolute; inset: 0; pointer-events: none;
-  background: linear-gradient(180deg, rgba(7, 7, 7, 0) 40%, rgba(7, 7, 7, 0.6) 100%); }
-.plans-stack { display: grid; gap: 1.1rem; align-content: start; }
-.plans-stack .pricing-card > header { display: flex; flex-direction: column; gap: 0.4rem; }
-.plans-stack .pricing-card .check-list { margin-bottom: 1.5rem; }
-.plans-stack .pricing-card > footer { margin-top: auto; display: flex; flex-direction: column; }
+/* Trio de planes lado a lado (cliente 07/08, referencia landing evergreen):
+   comparacion escaneable en UNA vista; cada tier con foto de identidad y
+   chip de beneficio. Lenguaje quiet: glass, un solo primario (featured). */
+.plans-trio { display: grid; grid-template-columns: 1fr; gap: 1.4rem; margin-top: var(--space-block); }
+@media (min-width: 1000px) { .plans-trio { grid-template-columns: repeat(3, 1fr); } }
+.plans-trio .pricing-card { display: flex; flex-direction: column; padding: 0; overflow: hidden; }
+.plan-photo { position: relative; height: 152px; }
+.plan-photo img { width: 100%; height: 100%; object-fit: cover; display: block;
+  filter: saturate(0.82) contrast(1.03); }
+.plan-photo::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(7,7,7,0.05) 45%, rgba(7,7,7,0.72) 100%); }
+.plan-chip { position: absolute; left: 1.5rem; bottom: 0.9rem; z-index: 1;
+  font-family: var(--font-label); font-weight: 500; font-size: 0.66rem;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--c-mist); }
+.pricing-card.featured .plan-chip { color: var(--c-yellow); }
+.plan-body { padding: 1.5rem 1.6rem 1.7rem; display: flex; flex-direction: column; flex: 1; }
+.plan-body > header { display: flex; flex-direction: column; gap: 0.4rem; }
+.plan-body .check-list { margin: 1.2rem 0 1.6rem; }
+.plan-body > footer { margin-top: auto; display: flex; flex-direction: column; }
 
 /* §1.2 Punteos con checkmarks duros: sin circulo, sin fondo, sin pills */
 .check-list { display: grid; gap: 0.55rem; margin-top: 1.1rem; list-style: none; padding: 0; }
@@ -55,25 +60,9 @@ const PLANS_CSS = `
 .photo-grid .check-list { margin-top: 1.6rem; max-width: 36rem; display: grid; gap: 0.9rem; }
 .photo-grid .check-list li { font-size: 1.05rem; padding-left: 1.7rem; }
 
-@media (min-width: 1240px) {
-  /* §1.1 Cards apiladas pasan a layout horizontal interno (patron Peloton):
-     plan+precio izquierda, diferenciales centro, CTA derecha.
-     Un solo eje vertical de comparacion de precios. */
-  .plans-stack .pricing-card { display: grid; grid-template-columns: minmax(9rem, 10.5rem) 1fr minmax(11rem, 12.5rem); align-items: center; column-gap: 1.6rem; }
-  .plans-stack .pricing-card .check-list { margin: 0; }
-  .plans-stack .pricing-card > footer { margin-top: 0; }
-}
-@media (max-width: 1080px) {
-  /* Mobile/tablet: apila con los PRECIOS arriba (el CTA del hero aterriza
-     en la decisión, no en una foto); la foto cierra la sección */
-  .plans-split { grid-template-columns: 1fr; }
-  .plans-photo { order: 2; }
-  .plans-photo .photo-card { height: 46vh; min-height: 0; flex: none; }
-}
-@media (max-width: 900px) {
-  /* Replica del refuerzo featured de app.css (alli scoped a .pricing-grid):
-     la featured abre el stack en mobile commerce */
-  .plans-stack .pricing-card.featured { order: -1; background: var(--glass-hover); box-shadow: 0 16px 48px rgba(255, 200, 0, 0.10); }
+@media (max-width: 999px) {
+  /* Mobile commerce: la featured abre el stack */
+  .plans-trio .pricing-card.featured { order: -1; background: var(--glass-hover); }
 }
 `;
 
@@ -92,6 +81,12 @@ type Plan = {
   features: { lead: Record<Lang, string>; rest: Record<Lang, string> }[];
   featured: boolean;
   badge?: Record<Lang, string>;
+  /* Trio audiovisual (cliente 07/08): foto de identidad + chip de
+     beneficio por tier, mismas fotos que los tiers de /on */
+  photo: string;
+  photoAlt: string;
+  photoPos: string;
+  chip: Record<Lang, string>;
 };
 
 /* Precios reales de store.54d.com/packs, verificados 25/07/2026.
@@ -104,6 +99,10 @@ const PLANS: Plan[] = [
     price: "$54",
     regular: "$99",
     period: { en: "/ month · billed monthly", es: "/ mes · facturación mensual" },
+    photo: "images/hd2/spare-man-running.jpg",
+    photoAlt: "Athlete running with visible effort on the 54D floor",
+    photoPos: "center 33%",
+    chip: { en: "Most flexible", es: "El más flexible" },
     features: [
       {
         lead: { en: "Start", es: "Empieza" },
@@ -136,6 +135,10 @@ const PLANS: Plan[] = [
     regular: "$89",
     period: { en: "/ month · $156 every 3 months", es: "/ mes · $156 cada 3 meses" },
     badge: { en: "Most chosen", es: "El más elegido" },
+    photo: "images/hd/cg-effort-yellow-d.jpg",
+    photoAlt: "Athlete grimacing with effort in front of the yellow 54D letter",
+    photoPos: "center 36%",
+    chip: { en: "Most chosen", es: "El más elegido" },
     features: [
       {
         lead: { en: "Get", es: "Recibe" },
@@ -167,6 +170,10 @@ const PLANS: Plan[] = [
     price: "$49",
     regular: "$79",
     period: { en: "/ month · $588 a year", es: "/ mes · $588 al año" },
+    photo: "images/hd2/blog-spin-smile.jpg",
+    photoAlt: "Member smiling mid ride on the 54D bike floor",
+    photoPos: "center 32%",
+    chip: { en: "Best value", es: "Mejor precio" },
     features: [
       {
         lead: { en: "Get", es: "Recibe" },
@@ -455,8 +462,13 @@ export default function Pricing() {
         </div>
         <div className="hero-veil" />
         <div className="hero-content">
+          <img
+            src={asset("images/brand/logo-54d-on.svg")}
+            alt="54D ON"
+            style={{ height: "54px", width: "auto", marginBottom: "var(--space-4)" }}
+          />
           <span className="day-marker">
-            {es ? "54D ON · Prueba gratis de 7 días" : "54D ON · 7-day free trial"}
+            {es ? "Prueba gratis de 7 días" : "7-day free trial"}
           </span>
           <h1 className="hero-title">
             {es ? "Empieza hoy." : "Start today."}
@@ -512,53 +524,27 @@ export default function Pricing() {
               </Link>
             </p>
 
-            {/* §1.1 Split 5/7: la foto es contexto emocional; el precio sigue
-                siendo el elemento de mayor contraste de la sección */}
-            <div className="plans-split">
-              <figure className="plans-photo">
-                <div className="photo-card">
-                  <img
-                    src={asset("images/hd/cg-mural-seated.jpg")}
-                    alt="A 54D generation seated on the training floor under the yellow 54D mural in Coral Gables"
-                    loading="lazy"
-                  />
-                </div>
-                {/* Caption neutral: sin número de Generación (dato no
-                    verificado); la sede sí es real */}
-                <figcaption className="photo-caption">
-                  54D Coral Gables
-                </figcaption>
-              </figure>
-
-              <div className="plans-stack">
-                {PLANS.map((p) => (
-                  <article
-                    key={p.priceId}
-                    className={`pricing-card${p.featured ? " featured" : ""}`}
-                  >
-                    {p.badge && (
-                      <span
-                        className="day-marker"
-                        style={{
-                          position: "absolute",
-                          top: "-0.95rem",
-                          right: "1.4rem",
-                          marginBottom: 0,
-                          background: "var(--c-ink)",
-                          fontSize: "0.68rem",
-                          letterSpacing: "var(--track-label, 0.14em)",
-                          whiteSpace: "nowrap",
-                          padding: "0.4rem 0.8rem",
-                        }}
-                      >
-                        {p.badge[lang]}
-                      </span>
-                    )}
-                    {/* §3.6 Un decisor por card: plan, precio, 3 diferenciales, CTA, riskline */}
+            {/* Trio audiovisual (cliente 07/08): tres tiers lado a lado,
+                cada uno con foto de identidad, chip de beneficio y precio
+                protagonista. Un solo primario (featured). */}
+            <div className="plans-trio">
+              {PLANS.map((p) => (
+                <article
+                  key={p.priceId}
+                  className={`pricing-card${p.featured ? " featured" : ""}`}
+                >
+                  <div className="plan-photo">
+                    <img
+                      src={asset(p.photo)}
+                      alt={p.photoAlt}
+                      loading="lazy"
+                      style={{ objectPosition: p.photoPos }}
+                    />
+                    <span className="plan-chip">{p.chip[lang]}</span>
+                  </div>
+                  <div className="plan-body">
                     <header>
                       <span className="pricing-plan">{p.plan[lang]}</span>
-                      {/* §3.1 ancla tachada + §3.2 per-month framing: el número
-                          grande es SIEMPRE el mensual */}
                       <div className="pricing-price">
                         <s
                           style={{
@@ -583,7 +569,6 @@ export default function Pricing() {
                       ))}
                     </ul>
                     <footer>
-                      {/* §3.5 CTA verbo de inicio, nunca de pago */}
                       <button
                         type="button"
                         className={`btn ${p.featured ? "btn-primary" : "btn-ghost"}`}
@@ -600,9 +585,7 @@ export default function Pricing() {
                             ? "Empieza tu prueba gratis"
                             : "Start free trial"}
                       </button>
-                      {/* §3.4 riesgo pegado al botón */}
                       <span className="btn-riskline">{RISKLINE[lang]}</span>
-                      {/* El error vive DENTRO de la card tapeada, junto al botón */}
                       {error && errorPlan === p.priceId && (
                         <p
                           role="alert"
@@ -617,9 +600,9 @@ export default function Pricing() {
                         </p>
                       )}
                     </footer>
-                  </article>
-                ))}
-              </div>
+                  </div>
+                </article>
+              ))}
             </div>
 
             <p
