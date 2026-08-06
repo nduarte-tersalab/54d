@@ -31,8 +31,8 @@ export function meta({}: Route.MetaArgs) {
    (una sola fuente con footer y detalle de sede). */
 
 /* Thumbnail por sede para el chooser: SOLO sedes con galería curada
-   propia (CG y Hallandale); el resto espera fotos del cliente.
-   Assets ya verificados contra la lista de PROHIBIDAS. */
+   propia. LATAM: fotos de los perfiles de Google de cada sede
+   (pedido cliente 06/08). Verificadas sin bolsas/conos. */
 const SEDE_THUMBS: Record<string, { src: string; alt: string }> = {
   "coral-gables": {
     src: "images/studios/coral-gables/mural-54d-editorial-wide.jpg",
@@ -41,6 +41,18 @@ const SEDE_THUMBS: Record<string, { src: string; alt: string }> = {
   hallandale: {
     src: "images/studios/hallandale/mural-54d-members-wide.jpg",
     alt: "Two 54D members standing under the giant 54D mural at the Hallandale studio",
+  },
+  "mexico-carso": {
+    src: "images/studios/mexico-carso/reception-54d.jpg",
+    alt: "Reception desk with the 54D logo at the Plaza Carso studio",
+  },
+  "mexico-santa-fe": {
+    src: "images/studios/mexico-santa-fe/facade-generation.jpg",
+    alt: "A full 54D Generation posing outside the glass facade of the Santa Fe studio",
+  },
+  bogota: {
+    src: "images/studios/bogota/container-facade.jpg",
+    alt: "The black and yellow container facade of the 54D Bogota studio",
   },
 };
 

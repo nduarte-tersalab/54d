@@ -417,6 +417,15 @@ const HERO_PHOTO: Record<string, { src: string; alt: string }> = {
     src: hl("mural-54d-members-wide.jpg"),
     alt: "Two 54D members standing under the giant 54D mural at the Hallandale studio",
   },
+  /* LATAM: fotos de los perfiles de Google de cada sede (cliente 06/08) */
+  "mexico-santa-fe": {
+    src: "images/studios/mexico-santa-fe/facade-generation.jpg",
+    alt: "A full 54D Generation posing outside the glass facade of the Santa Fe studio",
+  },
+  bogota: {
+    src: "images/studios/bogota/container-facade.jpg",
+    alt: "The black and yellow container facade of the 54D Bogota studio",
+  },
 };
 
 const GALLERY_ROWS: Record<string, GalleryRow[]> = {
@@ -811,6 +820,46 @@ function LeadForm({
           : "We contact you for one thing: scheduling your consultation. No spam, no endless calls."}
       </p>
     </form>
+  );
+}
+
+/** Fila de estrellas del rating agregado de Google (relleno fraccional:
+    4.5 pinta 4 llenas y media). Solo datos reales del perfil. */
+function Stars({ rating }: { rating: string }) {
+  const val = parseFloat(rating);
+  const path =
+    "M12 2l2.9 6.26 6.6.56-5 4.4 1.5 6.48L12 16.2 5.99 19.7l1.5-6.48-5-4.4 6.6-.56z";
+  return (
+    <span
+      style={{ display: "inline-flex", gap: "3px", verticalAlign: "-2px" }}
+      aria-hidden="true"
+    >
+      {[0, 1, 2, 3, 4].map((i) => {
+        const fill = Math.max(0, Math.min(1, val - i));
+        return (
+          <span
+            key={i}
+            style={{ position: "relative", width: 15, height: 15, display: "inline-block" }}
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" style={{ position: "absolute", inset: 0 }}>
+              <path d={path} fill="rgba(255,255,255,0.16)" />
+            </svg>
+            <span
+              style={{
+                position: "absolute",
+                inset: 0,
+                overflow: "hidden",
+                width: `${fill * 100}%`,
+              }}
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24">
+                <path d={path} fill="var(--c-yellow)" />
+              </svg>
+            </span>
+          </span>
+        );
+      })}
+    </span>
   );
 }
 
@@ -1239,11 +1288,21 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
               </h2>
               <p
                 className="method-desc"
-                style={{ marginTop: "1rem", color: "var(--c-faint)" }}
+                style={{
+                  marginTop: "1rem",
+                  color: "var(--c-faint)",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.7rem",
+                  flexWrap: "wrap",
+                }}
               >
-                {GOOGLE_REVIEWS[studio.slug].rating} / 5 ·{" "}
-                {GOOGLE_REVIEWS[studio.slug].count}{" "}
-                {es ? "reseñas en Google" : "reviews on Google"}
+                <Stars rating={GOOGLE_REVIEWS[studio.slug].rating} />
+                <span>
+                  {GOOGLE_REVIEWS[studio.slug].rating} / 5 ·{" "}
+                  {GOOGLE_REVIEWS[studio.slug].count}{" "}
+                  {es ? "reseñas en Google" : "reviews on Google"}
+                </span>
               </p>
               <div className="review-grid">
                 {GOOGLE_REVIEWS[studio.slug].quotes.map((q) => (
@@ -1463,52 +1522,6 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
         </div>
       </section>
 
-      {/* ============ PRENSA (validación de terceros pre-form) ============
-          Logos reales ya aprobados en el gate, tratamiento quiet: gris,
-          mudos, sin links. Cero datos nuevos. */}
-      <section className="section section-tight" aria-label="Featured on">
-        <div className="section-inner">
-          <div
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              alignItems: "center",
-              gap: "1.2rem clamp(1.8rem, 4vw, 3.2rem)",
-              padding: "1.7rem 0",
-              borderTop: "1px solid var(--hairline)",
-              borderBottom: "1px solid var(--hairline)",
-            }}
-          >
-            <span
-              style={{
-                fontFamily: "var(--font-label)",
-                fontWeight: 500,
-                fontSize: "0.6rem",
-                letterSpacing: "0.16em",
-                textTransform: "uppercase",
-                color: "var(--c-faint)",
-              }}
-            >
-              {es ? "En los medios" : "Featured on"}
-            </span>
-            {PRESS.map(([file, name, h]) => (
-              <img
-                key={file}
-                src={asset(`images/press/${file}`)}
-                alt={name}
-                loading="lazy"
-                style={{
-                  height: h,
-                  width: "auto",
-                  filter: "grayscale(1)",
-                  opacity: 0.4,
-                }}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ============ FORMULARIO DE LEAD ============ */}
       {/* FIXES_V5 §3.2: único campo de luz de la página (ember pre-CTA) */}
       <section
@@ -1542,6 +1555,46 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                     ? "54D Studios es nuestro nivel insignia, un programa con trato de cliente privado. Tu consulta define tres cosas: si el programa es para ti, la fecha de inicio de tu Generación y la inversión."
                     : "54D Studios is our flagship tier, a private-client level program. Your consultation covers fit, your Generation's start date, and the investment."}
                 </p>
+                {/* Prensa quiet junto a la decision (antes era una banda
+                    huerfana entre dos zonas muertas — feedback cliente) */}
+                <div
+                  style={{
+                    marginTop: "2.2rem",
+                    display: "flex",
+                    flexWrap: "wrap",
+                    alignItems: "center",
+                    gap: "0.9rem clamp(1.4rem, 2.6vw, 2.4rem)",
+                  }}
+                  aria-label={es ? "En los medios" : "Featured on"}
+                >
+                  <span
+                    style={{
+                      fontFamily: "var(--font-label)",
+                      fontWeight: 500,
+                      fontSize: "0.6rem",
+                      letterSpacing: "0.16em",
+                      textTransform: "uppercase",
+                      color: "var(--c-faint)",
+                      flexBasis: "100%",
+                    }}
+                  >
+                    {es ? "En los medios" : "Featured on"}
+                  </span>
+                  {PRESS.map(([file, name, h]) => (
+                    <img
+                      key={file}
+                      src={asset(`images/press/${file}`)}
+                      alt={name}
+                      loading="lazy"
+                      style={{
+                        height: Math.round((h as number) * 0.85),
+                        width: "auto",
+                        filter: "grayscale(1)",
+                        opacity: 0.38,
+                      }}
+                    />
+                  ))}
+                </div>
                 {/* Interlinking cross-country (LOCAL_SEO §4) al fondo de la
                     columna izquierda: las 5 sedes, la actual sin link.
                     Separador coma: "Ciudad de México · Carso, ..." se lee
