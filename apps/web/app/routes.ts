@@ -13,6 +13,7 @@ export default [
   route("terms", "routes/legal.tsx", { id: "terms" }),
   route("admin/login", "routes/admin-login.tsx"),
   route("admin", "routes/admin.tsx"),
+  route("admin/leads", "routes/admin-leads.tsx"),
   route("admin/blog", "routes/admin-blog.tsx"),
   route("admin/blog/:id", "routes/admin-blog-edit.tsx"),
   route("admin/programs", "routes/admin-programs.tsx"),

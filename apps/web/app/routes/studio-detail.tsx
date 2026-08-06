@@ -5,6 +5,7 @@ import { Nav, Footer, useReveal } from "../components/site";
 import { STUDIOS } from "../data/studios";
 import { asset } from "../lib/asset";
 import { useLang, type Lang } from "../lib/i18n";
+import { DIAL_CODES, FREQUENT_ISO, isoFlag } from "../data/dial-codes";
 
 /* ============================================================
    /studios/:slug: detalle de sede (54D Studios)
@@ -552,22 +553,9 @@ const BAND_PHOTO: Record<string, { src: string; alt: string }> = {
   },
 };
 
-/* Codigos de pais del form: los 3 de las sedes primero (default segun la
-   sede), despues los mercados frecuentes del publico latino de Miami */
-const PHONE_COUNTRIES = [
-  { code: "+1", label: "\u{1F1FA}\u{1F1F8} US +1" },
-  { code: "+52", label: "\u{1F1F2}\u{1F1FD} MX +52" },
-  { code: "+57", label: "\u{1F1E8}\u{1F1F4} CO +57" },
-  { code: "+58", label: "\u{1F1FB}\u{1F1EA} VE +58" },
-  { code: "+54", label: "\u{1F1E6}\u{1F1F7} AR +54" },
-  { code: "+55", label: "\u{1F1E7}\u{1F1F7} BR +55" },
-  { code: "+56", label: "\u{1F1E8}\u{1F1F1} CL +56" },
-  { code: "+51", label: "\u{1F1F5}\u{1F1EA} PE +51" },
-  { code: "+593", label: "\u{1F1EA}\u{1F1E8} EC +593" },
-  { code: "+507", label: "\u{1F1F5}\u{1F1E6} PA +507" },
-  { code: "+34", label: "\u{1F1EA}\u{1F1F8} ES +34" },
-] as const;
-
+/* Lista COMPLETA de paises (data/dial-codes.ts): el cliente contacta el
+   100% de los leads por WhatsApp — ningun pais puede faltar. Frecuentes
+   arriba; el resto alfabetico segun el idioma del visitante. */
 const DEFAULT_DIAL: Record<string, string> = {
   US: "+1",
   MX: "+52",
@@ -665,11 +653,28 @@ function LeadForm({
             defaultValue={DEFAULT_DIAL[countryCode] ?? "+1"}
             style={{ flex: "0 0 auto", width: "8.6rem" }}
           >
-            {PHONE_COUNTRIES.map((c) => (
-              <option key={c.code + c.label} value={c.code}>
-                {c.label}
-              </option>
-            ))}
+            <optgroup label={es ? "Frecuentes" : "Frequent"}>
+              {FREQUENT_ISO.map((iso) => {
+                const c = DIAL_CODES.find((d) => d[0] === iso);
+                if (!c) return null;
+                return (
+                  <option key={`f-${c[0]}`} value={c[1]}>
+                    {isoFlag(c[0])} {c[0]} {c[1]}
+                  </option>
+                );
+              })}
+            </optgroup>
+            <optgroup label={es ? "Todos los países" : "All countries"}>
+              {[...DIAL_CODES]
+                .sort((a, b) =>
+                  (es ? a[3] : a[2]).localeCompare(es ? b[3] : b[2], lang)
+                )
+                .map((c) => (
+                  <option key={c[0]} value={c[1]}>
+                    {isoFlag(c[0])} {es ? c[3] : c[2]} {c[1]}
+                  </option>
+                ))}
+            </optgroup>
           </select>
           <input
             id="lead-phone"

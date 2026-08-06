@@ -12,7 +12,7 @@ import { getSupabase } from "../lib/supabase";
    página compartan un solo chequeo (una sola query a profiles).
    ============================================================ */
 
-export type AdminSection = "/admin" | "/admin/blog" | "/admin/programs";
+export type AdminSection = "/admin" | "/admin/leads" | "/admin/blog" | "/admin/programs";
 
 export interface AdminUser {
   email: string;
@@ -91,6 +91,7 @@ export function useAdminGuard(): AdminGuardState {
 
 const NAV: ReadonlyArray<{ href: AdminSection; label: string }> = [
   { href: "/admin", label: "Resumen" },
+  { href: "/admin/leads", label: "Leads" },
   { href: "/admin/blog", label: "Blog" },
   { href: "/admin/programs", label: "Programas" },
 ];
