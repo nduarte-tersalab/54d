@@ -277,6 +277,25 @@ body {
   background: rgba(255, 210, 0, 0.05); /* ATMOSPHERE §3.6: ≤0.08, es luz, no fill */
   box-shadow: none;
 }
+/* FAB de WhatsApp por sede (solo /studios/<sede>, numero real gateado).
+   Verde oficial: es un affordance funcional reconocible, como los store
+   badges; unico elemento de color ajeno a la paleta en la pagina. */
+.wa-fab {
+  position: fixed;
+  right: clamp(1rem, 3vw, 1.6rem);
+  bottom: calc(clamp(1rem, 3vw, 1.6rem) + env(safe-area-inset-bottom, 0px));
+  z-index: 90;
+  width: 54px; height: 54px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: #25D366;
+  color: #fff;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.wa-fab:hover { transform: scale(1.06); box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55); }
+.wa-fab svg { display: block; }
+
 /* Selector de idioma quiet (i18n fase 1): dos letras, punto medio */
 .lang-toggle {
   display: inline-flex; align-items: center; gap: 0.45rem;
