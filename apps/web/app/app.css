@@ -1020,7 +1020,7 @@ body {
 .stat-label { margin-top: 0.5rem; font-size: 0.78rem; text-transform: uppercase; letter-spacing: var(--track-label); color: var(--c-faint); }
 
 /* ---------- Studios: splits de layout (reparto del canvas desktop) ---------- */
-.gen-split { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(3rem, 6vw, 6rem); align-items: start; margin-top: 1.4rem; }
+.gen-split { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(3rem, 6vw, 6rem); align-items: start; }
 .gen-split .timeline { margin-top: 0.4rem; }
 .apply-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 28rem); gap: clamp(3rem, 6vw, 6rem); align-items: start; }
 @media (max-width: 900px) { .gen-split, .apply-split { grid-template-columns: 1fr; } }

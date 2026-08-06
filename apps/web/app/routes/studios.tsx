@@ -369,20 +369,23 @@ export default function Studios() {
       <section className="section">
         <div className="section-inner" ref={generations.ref}>
           <div className={generations.className}>
-            <span className="day-marker">
-              {es ? "Generaciones" : "Generations"}
-            </span>
-            <h2 className="section-title">
-              {es
-                ? "No entras cuando quieres. Entras con tu"
-                : "You don't join whenever you want. You join with your"}{" "}
-              <span className="accent">
-                {es ? "Generación." : "Generation."}
-              </span>
-            </h2>
+            {/* Split desde el titulo (cliente 06/08: la derecha quedaba muy
+                abajo): izquierda = eyebrow + titulo + leads; el timeline
+                sube hasta la altura del titulo y llena el canvas */}
             <div className="gen-split">
               <div>
-                <p className="lead" style={{ maxWidth: "38rem" }}>
+                <span className="day-marker">
+                  {es ? "Generaciones" : "Generations"}
+                </span>
+                <h2 className="section-title">
+                  {es
+                    ? "No entras cuando quieres. Entras con tu"
+                    : "You don't join whenever you want. You join with your"}{" "}
+                  <span className="accent">
+                    {es ? "Generación." : "Generation."}
+                  </span>
+                </h2>
+                <p className="lead" style={{ maxWidth: "38rem", marginTop: "1.6rem" }}>
                   {es
                     ? "Cada studio abre Generaciones: el grupo con el que empiezas y terminas. Una fecha de inicio, cupo limitado y 54 días juntos. Por eso funciona. Esto no es una membresía abierta. Es un compromiso con fecha."
                     : "Each studio opens Generations: the group you start and finish with. A start date, limited spots, and 54 days together. That's why it works. This is not an open membership. It's a commitment with a date."}
