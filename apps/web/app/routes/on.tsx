@@ -52,16 +52,18 @@ type Program = {
   num: string;
   name: string;
   slug: string; // landing /programs/{slug} (PROGRAM_LANDINGS.md)
-  line: string;
+  line: Record<Lang, string>;
   equipment: string;
-  intensity: string;
+  intensity: Record<Lang, string>;
   audience: string;
-  tag?: string;
+  tag?: Record<Lang, string>;
   followUp?: boolean;
-  duration: string;
+  duration: Record<Lang, string>;
   oneTime?: number;
   priceId?: string;
-  startNote?: string;
+  startNote?: Record<Lang, string>;
+  /* Vitrina con imagen: la card usa images/programs/<slug>.jpg */
+  kicker: Record<Lang, string>;
 };
 
 /* Tiers reales de la membresía (store.54d.com/packs, 25/07/2026).
@@ -174,27 +176,29 @@ const PROGRAMS: Program[] = [
     num: "01",
     name: "54D ON",
     slug: "54d-on",
-    tag: "Signature",
-    line: "The signature program. 54 days to lose fat, build muscle, and rebuild your habits.",
+    kicker: { en: "The full transformation", es: "La transformación completa" },
+    tag: { en: "Signature", es: "Insignia" },
+    line: { en: "The signature program. 54 days to lose fat, build muscle, and rebuild your habits.", es: "El programa insignia. 54 días para bajar grasa, ganar músculo y reconstruir tus hábitos." },
     equipment: "Elastic bands suggested",
-    intensity: "High",
+    intensity: { en: "High", es: "Alta" },
     audience: "The full transformation, start to finish",
     followUp: true,
-    duration: "9 weeks",
+    duration: { en: "9 weeks", es: "9 semanas" },
     oneTime: 385,
     priceId: "PENDING_54d-on_onetime",
-    startNote: "Starts Mondays",
+    startNote: { en: "Starts Mondays", es: "Empieza los lunes" },
   },
   {
     num: "02",
     name: "Step 2",
     slug: "step-2",
-    line: "You finished 54D ON. This is what comes after.",
+    kicker: { en: "For 54D ON graduates", es: "Para graduados de 54D ON" },
+    line: { en: "You finished 54D ON. This is what comes after.", es: "Terminaste 54D ON. Esto es lo que sigue." },
     equipment: "Elastic bands suggested",
-    intensity: "Extreme",
+    intensity: { en: "Extreme", es: "Extrema" },
     audience: "54D ON graduates and advanced athletes",
     followUp: true,
-    duration: "9 weeks",
+    duration: { en: "9 weeks", es: "9 semanas" },
     oneTime: 400,
     priceId: "PENDING_step-2_onetime",
   },
@@ -202,12 +206,13 @@ const PROGRAMS: Program[] = [
     num: "03",
     name: "Emergency Kit",
     slug: "emergency-kit",
-    tag: "Most popular",
-    line: "Two weeks. Up to 4 pounds down. Our most popular program.",
+    kicker: { en: "Fat loss, fast", es: "Quema de grasa, rápido" },
+    tag: { en: "Most popular", es: "El más popular" },
+    line: { en: "Two weeks. Up to 4 pounds down. Our most popular program.", es: "Dos semanas. Hasta 2 kilos menos. Nuestro programa más popular." },
     equipment: "Resistance bands needed",
-    intensity: "High",
+    intensity: { en: "High", es: "Alta" },
     audience: "Fast fat loss on a deadline",
-    duration: "14 days",
+    duration: { en: "14 days", es: "14 días" },
     oneTime: 39,
     priceId: "PENDING_emergency-kit_onetime",
   },
@@ -215,11 +220,12 @@ const PROGRAMS: Program[] = [
     num: "04",
     name: "Max Burn",
     slug: "max-burn",
-    line: "Thirty minutes a day, built to burn. Nothing decorative about it.",
+    kicker: { en: "Burn and endurance", es: "Quema y resistencia" },
+    line: { en: "Thirty minutes a day, built to burn. Nothing decorative about it.", es: "Treinta minutos al día, hechos para quemar. Nada decorativo." },
     equipment: "Resistance bands needed",
-    intensity: "High",
+    intensity: { en: "High", es: "Alta" },
     audience: "Accelerated fat loss in short sessions",
-    duration: "14 days",
+    duration: { en: "14 days", es: "14 días" },
     oneTime: 39,
     priceId: "PENDING_max-burn_onetime",
   },
@@ -227,11 +233,12 @@ const PROGRAMS: Program[] = [
     num: "05",
     name: "Reset 7",
     slug: "reset-7",
-    line: "Don't let four days of excess define the next four months. Seven days to correct course.",
+    kicker: { en: "Reset your habits", es: "Reinicia tus hábitos" },
+    line: { en: "Don't let four days of excess define the next four months. Seven days to correct course.", es: "No dejes que cuatro días de excesos definan los próximos cuatro meses. Siete días para corregir el rumbo." },
     equipment: "Elastic bands suggested",
-    intensity: "Full body work, short format",
+    intensity: { en: "Full body work, short format", es: "Cuerpo completo, formato corto" },
     audience: "Getting back on track after you fell off",
-    duration: "7 days",
+    duration: { en: "7 days", es: "7 días" },
     oneTime: 19,
     priceId: "PENDING_reset-7_onetime",
   },
@@ -239,11 +246,12 @@ const PROGRAMS: Program[] = [
     num: "06",
     name: "First Move",
     slug: "first-move",
-    line: "The first step. Low impact, daily discipline, zero assumptions.",
+    kicker: { en: "Your first program", es: "Tu primer programa" },
+    line: { en: "The first step. Low impact, daily discipline, zero assumptions.", es: "El primer paso. Bajo impacto, disciplina diaria, cero supuestos." },
     equipment: "None",
-    intensity: "Low impact",
+    intensity: { en: "Low impact", es: "Bajo impacto" },
     audience: "Beginners, sedentary starters, and advanced ages",
-    duration: "14 days",
+    duration: { en: "14 days", es: "14 días" },
     oneTime: 39,
     priceId: "PENDING_first-move_onetime",
   },
@@ -251,11 +259,12 @@ const PROGRAMS: Program[] = [
     num: "07",
     name: "Full Body",
     slug: "full-body",
-    line: "Don't do things halfway. Tone and strengthen every area of the body.",
+    kicker: { en: "Head to toe", es: "De pies a cabeza" },
+    line: { en: "Don't do things halfway. Tone and strengthen every area of the body.", es: "No hagas las cosas a medias. Tonifica y fortalece cada zona del cuerpo." },
     equipment: "Resistance bands needed",
-    intensity: "Medium, mixed training",
+    intensity: { en: "Medium, mixed training", es: "Media, entrenamiento mixto" },
     audience: "Overall conditioning, head to toe",
-    duration: "4 weeks",
+    duration: { en: "4 weeks", es: "4 semanas" },
     oneTime: 95,
     priceId: "PENDING_full-body_onetime",
   },
@@ -263,11 +272,12 @@ const PROGRAMS: Program[] = [
     num: "08",
     name: "Lower Body",
     slug: "lower-body",
-    line: "Turn on the power in your lower half.",
+    kicker: { en: "Lower body focus", es: "Foco en tren inferior" },
+    line: { en: "Turn on the power in your lower half.", es: "Enciende la potencia de tu tren inferior." },
     equipment: "Resistance bands needed",
-    intensity: "Focused strength work",
+    intensity: { en: "Focused strength work", es: "Trabajo de fuerza focalizado" },
     audience: "Thighs and glutes",
-    duration: "9 weeks",
+    duration: { en: "9 weeks", es: "9 semanas" },
     oneTime: 185,
     priceId: "PENDING_lower-body_onetime",
   },
@@ -275,11 +285,12 @@ const PROGRAMS: Program[] = [
     num: "09",
     name: "Upper Body",
     slug: "upper-body",
-    line: "Strong arms. A back that shows the work.",
+    kicker: { en: "Arms, back, chest", es: "Brazos, espalda, pecho" },
+    line: { en: "Strong arms. A back that shows the work.", es: "Brazos fuertes. Una espalda que muestra el trabajo." },
     equipment: "Resistance bands needed",
-    intensity: "Focused strength work",
+    intensity: { en: "Focused strength work", es: "Trabajo de fuerza focalizado" },
     audience: "Arm and back strength and definition",
-    duration: "9 weeks",
+    duration: { en: "9 weeks", es: "9 semanas" },
     oneTime: 185,
     priceId: "PENDING_upper-body_onetime",
   },
@@ -287,11 +298,12 @@ const PROGRAMS: Program[] = [
     num: "10",
     name: "Booty on Fire",
     slug: "booty-on-fire",
-    line: "Glute work that earns the name.",
+    kicker: { en: "Glutes and legs", es: "Glúteos y piernas" },
+    line: { en: "Glute work that earns the name.", es: "Trabajo de glúteos que se gana el nombre." },
     equipment: "Resistance bands needed",
-    intensity: "Targeted, high effort",
+    intensity: { en: "Targeted, high effort", es: "Focalizada, alto esfuerzo" },
     audience: "Maximum glute results in less time",
-    duration: "14 days",
+    duration: { en: "14 days", es: "14 días" },
     oneTime: 39,
     priceId: "PENDING_booty-on-fire_onetime",
   },
@@ -299,31 +311,34 @@ const PROGRAMS: Program[] = [
     num: "11",
     name: "Runners 5K",
     slug: "runners-5k",
-    line: "Your first 5K, or a faster one.",
+    kicker: { en: "Run your first 5K", es: "Corre tus primeros 5K" },
+    line: { en: "Your first 5K, or a faster one.", es: "Tus primeros 5K, o unos más rápidos." },
     equipment: "Your running shoes",
-    intensity: "Beginner, intermediate, or advanced tracks",
+    intensity: { en: "Beginner, intermediate, or advanced tracks", es: "Rutas principiante, intermedia o avanzada" },
     audience: "First-time and short-distance runners",
-    duration: "Self-paced",
+    duration: { en: "Self-paced", es: "A tu ritmo" },
   },
   {
     num: "12",
     name: "Runners 10K",
     slug: "runners-10k",
-    line: "The next distance. Take it seriously.",
+    kicker: { en: "Step up to 10K", es: "Sube a 10K" },
+    line: { en: "The next distance. Take it seriously.", es: "La siguiente distancia. Tómatela en serio." },
     equipment: "Your running shoes",
-    intensity: "Intermediate and advanced tracks",
+    intensity: { en: "Intermediate and advanced tracks", es: "Rutas intermedia y avanzada" },
     audience: "Runners moving up to medium distance",
-    duration: "Self-paced",
+    duration: { en: "Self-paced", es: "A tu ritmo" },
   },
   {
     num: "13",
     name: "Runner 21K",
     slug: "runners-21k",
-    line: "The half marathon. Prepare like you mean it.",
+    kicker: { en: "Half marathon ready", es: "Listo para la media maratón" },
+    line: { en: "The half marathon. Prepare like you mean it.", es: "La media maratón. Prepárate en serio." },
     equipment: "Your running shoes",
-    intensity: "Single advanced track",
+    intensity: { en: "Single advanced track", es: "Una sola ruta avanzada" },
     audience: "Long-distance runners pushing their limit",
-    duration: "Self-paced",
+    duration: { en: "Self-paced", es: "A tu ritmo" },
   },
 ];
 
@@ -1088,108 +1103,113 @@ export default function On() {
       >
         <div className="section-inner" ref={programas.ref}>
           <div className={programas.className}>
-            <span className="day-marker">Programs</span>
+            <span className="day-marker">{es ? "Programas" : "Programs"}</span>
             <div className="method-intro">
               <h2 className="section-title">
-                Thirteen programs. <span style={solidAccent}>Two ways in.</span>
+                {es ? "Trece programas. " : "Thirteen programs. "}
+                <span style={solidAccent}>
+                  {es ? "Dos maneras de entrar." : "Two ways in."}
+                </span>
               </h2>
               <p>
-                All of them come with the membership. Or buy just the one you
-                need: one payment, the full run, your coach included. Open any
-                program for the full breakdown.
+                {es
+                  ? "Todos vienen con la membresía. O compra solo el que necesitas: un pago, el ciclo completo, tu coach incluido. Abre cualquiera para verlo en detalle."
+                  : "All of them come with the membership. Or buy just the one you need: one payment, the full run, your coach included. Open any program for the full breakdown."}
               </p>
             </div>
-            {/* ≤900px: los programas 6-13 se pliegan tras el toggle (CSS
-                .prog-collapsed); en desktop la lista entera sigue visible */}
+            {/* Vitrina con imagen (cliente 07/08): cada card empuja a SU
+                landing, que es la pieza que convierte en Meta Ads. El
+                checkout directo sigue disponible en la card. En <=900px
+                se pliegan los programas 6-13 tras el toggle. */}
             <div
-              className={`prog-list${showAllPrograms ? "" : " prog-collapsed"}`}
-              style={{ borderBottom: "1px solid var(--hairline)" }}
+              className={`prog-grid${showAllPrograms ? "" : " prog-collapsed"}`}
             >
               {PROGRAMS.map((p) => (
-                <article className="prog-row" key={p.num}>
-                  <div style={progHead}>
-                    <span style={progNum}>{p.num}</span>
-                    {/* Dos caminos por fila (PROGRAM_LANDINGS.md): el nombre
-                        abre la landing del programa; el botón de abajo sigue
-                        siendo checkout directo. Runners también linkean. */}
-                    <h3 style={progName}>
-                      <Link to={`/programs/${p.slug}`} style={progNameLink}>
-                        {p.name}
-                        <span aria-hidden="true" style={progNameArrow}>
-                          →
-                        </span>
-                      </Link>
+                <article className="prog-card" key={p.num}>
+                  <Link
+                    to={`/programs/${p.slug}`}
+                    className="prog-card-media"
+                    aria-label={
+                      es ? `Ver el programa ${p.name}` : `See the ${p.name} program`
+                    }
+                  >
+                    <img
+                      src={asset(`images/programs/${p.slug}.jpg`)}
+                      alt=""
+                      loading="lazy"
+                    />
+                    <span className="prog-card-kicker">{p.kicker[lang]}</span>
+                    {p.tag && <span className="prog-card-tag">{p.tag[lang]}</span>}
+                  </Link>
+                  <div className="prog-card-body">
+                    <h3 className="prog-card-name">
+                      <Link to={`/programs/${p.slug}`}>{p.name}</Link>
                     </h3>
-                    {p.tag && <span style={progTag}>{p.tag}</span>}
-                  </div>
-                  <div style={progBody}>
-                    <p style={progLine}>{p.line}</p>
-                    {/* Pares key/valor en <span> propios: en ≤640px .prog-meta
-                        pasa a grid apilado y los puntos se ocultan (F4) */}
-                    <p style={progMeta} className="prog-meta">
-                      <span style={metaKey}>Equipment</span>
-                      <span>{p.equipment}</span>
-                      <span
-                        style={metaDot}
-                        className="meta-dot"
-                        aria-hidden="true"
-                      >
-                        ·
+                    <p className="prog-card-line">{p.line[lang]}</p>
+                    <p className="prog-card-meta">
+                      <span>{p.duration[lang]}</span>
+                      <span aria-hidden="true">·</span>
+                      <span>
+                        {es ? "Intensidad" : "Intensity"} {p.intensity[lang]}
                       </span>
-                      <span style={metaKey}>Intensity</span>
-                      <span>{p.intensity}</span>
-                      <span
-                        style={metaDot}
-                        className="meta-dot"
-                        aria-hidden="true"
-                      >
-                        ·
-                      </span>
-                      <span style={metaKey}>For</span>
-                      <span>{p.audience}</span>
+                      {p.followUp && (
+                        <>
+                          <span aria-hidden="true">·</span>
+                          <span>
+                            {es ? "Seguimiento incluido" : "Follow-up included"}
+                          </span>
+                        </>
+                      )}
                     </p>
-                    {p.followUp && (
-                      <span style={progFollowUp}>
-                        Includes unlimited personalized follow-up
+                    <div className="prog-card-foot">
+                      <span className="prog-card-price">
+                        {p.oneTime ? (
+                          <>
+                            <b>${p.oneTime}</b>{" "}
+                            <em>{es ? "pago único" : "one payment"}</em>
+                          </>
+                        ) : (
+                          <em>{es ? "Solo con membresía" : "Membership only"}</em>
+                        )}
                       </span>
-                    )}
-                  </div>
-                  <div className="prog-price">
-                    <span style={progDuration}>{p.duration}</span>
-                    {p.oneTime && p.priceId ? (
+                      <Link to={`/programs/${p.slug}`} className="prog-card-cta">
+                        {es ? "Ver programa" : "See program"}
+                        <span aria-hidden="true"> →</span>
+                      </Link>
+                    </div>
+                    {p.oneTime && p.priceId && (
                       <>
-                        <span style={progAmount}>${p.oneTime}</span>
-                        {/* Target ≥44px: antes 168×35px con font 11.5px (F2) */}
                         <button
                           type="button"
-                          className="btn btn-ghost"
-                          style={{
-                            padding: "0.8rem 1.5rem",
-                            fontSize: "0.8rem",
-                            minHeight: "44px",
-                            marginTop: "0.6rem",
-                          }}
+                          className="btn btn-ghost prog-card-buy"
                           disabled={busy === p.priceId}
                           onClick={() => buy(p.priceId!)}
                         >
-                          {busy === p.priceId ? "Opening…" : "Buy this program"}
+                          {busy === p.priceId
+                            ? es
+                              ? "Abriendo…"
+                              : "Opening…"
+                            : es
+                              ? "Comprar este programa"
+                              : "Buy this program"}
                         </button>
-                        <span style={progPriceNote}>one payment</span>
-                        {/* El error de checkout aparece en la fila tapeada */}
                         {checkoutErr && errPlan === p.priceId && (
                           <span
                             role="alert"
-                            style={{ fontSize: "0.78rem", color: "var(--c-red)" }}
+                            style={{
+                              fontSize: "0.78rem",
+                              color: "var(--c-red)",
+                              marginTop: "0.5rem",
+                              display: "block",
+                            }}
                           >
                             {checkoutErr}
                           </span>
                         )}
                       </>
-                    ) : (
-                      <span style={progPriceNote}>Membership only</span>
                     )}
                     {p.startNote && (
-                      <span style={progPriceNote}>{p.startNote}</span>
+                      <span className="prog-card-note">{p.startNote[lang]}</span>
                     )}
                   </div>
                 </article>

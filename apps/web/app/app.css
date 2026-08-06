@@ -273,6 +273,89 @@ body {
   background: rgba(255, 210, 0, 0.05); /* ATMOSPHERE §3.6: ≤0.08, es luz, no fill */
   box-shadow: none;
 }
+/* Vitrina de programas (/on): cards con imagen que empujan a la landing
+   de cada programa, que es la pieza de conversion de los ads. Quiet:
+   glass, cero amarillo salvo el kicker sobre la foto y el CTA de texto. */
+.prog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.4rem;
+  margin-top: var(--space-block);
+}
+.prog-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--glass);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-card);
+  overflow: hidden;
+  transition: border-color var(--transition), background var(--transition);
+}
+.prog-card:hover { border-color: rgba(255, 255, 255, 0.2); background: var(--glass-hover); }
+.prog-card-media { position: relative; display: block; aspect-ratio: 16 / 9; overflow: hidden; }
+.prog-card-media img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  filter: saturate(0.85) contrast(1.03);
+  transition: transform var(--transition-slow);
+}
+.prog-card:hover .prog-card-media img { transform: scale(1.03); }
+.prog-card-media::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, rgba(7,7,7,0.05) 40%, rgba(7,7,7,0.78) 100%);
+}
+.prog-card-kicker {
+  position: absolute; left: 1.2rem; bottom: 0.85rem; z-index: 1;
+  font-family: var(--font-label); font-weight: 500; font-size: 0.64rem;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--c-yellow);
+}
+.prog-card-tag {
+  position: absolute; top: 0.85rem; right: 0.9rem; z-index: 1;
+  font-family: var(--font-label); font-weight: 500; font-size: 0.6rem;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-white);
+  background: rgba(7, 7, 7, 0.55); backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: var(--r-control); padding: 0.3rem 0.6rem;
+}
+.prog-card-body { padding: 1.3rem 1.4rem 1.5rem; display: flex; flex-direction: column; flex: 1; }
+.prog-card-name {
+  font-family: var(--font-display); font-weight: 700; font-size: 1.25rem;
+  line-height: 1.2; letter-spacing: -0.01em;
+}
+.prog-card-name a { color: var(--c-white); text-decoration: none; }
+.prog-card-name a:hover { color: var(--c-yellow); }
+.prog-card-line {
+  margin-top: 0.6rem; font-size: 0.93rem; line-height: 1.6; color: var(--c-mist);
+}
+.prog-card-meta {
+  margin-top: 0.9rem; display: flex; flex-wrap: wrap; gap: 0.4rem;
+  font-family: var(--font-label); font-size: 0.72rem; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--c-faint);
+}
+.prog-card-foot {
+  margin-top: auto; padding-top: 1.2rem;
+  display: flex; align-items: baseline; justify-content: space-between; gap: 1rem;
+  flex-wrap: wrap;
+}
+.prog-card-price { font-size: 0.9rem; color: var(--c-mist); }
+.prog-card-price b {
+  font-family: var(--font-display); font-weight: 700; font-size: 1.4rem;
+  color: var(--c-white); font-variant-numeric: tabular-nums;
+}
+.prog-card-price em { font-style: normal; font-size: 0.75rem; color: var(--c-faint); }
+.prog-card-cta {
+  font-size: 0.88rem; font-weight: 600; color: var(--c-yellow);
+  text-decoration: none; white-space: nowrap;
+  padding: 0.5rem 0; min-height: 44px; display: inline-flex; align-items: center;
+}
+.prog-card-buy { margin-top: 1rem; width: 100%; text-align: center; min-height: 46px; }
+.prog-card-note {
+  margin-top: 0.6rem; font-size: 0.72rem; color: var(--c-faint);
+  font-family: var(--font-label); letter-spacing: 0.06em; text-transform: uppercase;
+}
+@media (max-width: 900px) {
+  .prog-grid.prog-collapsed .prog-card:nth-child(n + 6) { display: none; }
+}
+
 /* Trio de planes (compartido /pricing y /on): tres tiers lado a lado,
    foto de identidad + chip por plan. Quiet: un solo primario (featured). */
 .plans-trio { display: grid; grid-template-columns: 1fr; gap: 1.4rem; margin-top: var(--space-block); }
