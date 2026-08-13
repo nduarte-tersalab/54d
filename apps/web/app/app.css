@@ -59,6 +59,17 @@
   /* Radius — 3 tokens, cero excepciones en UI.
      50% solo geometría (dots, halos). 42/32px SOLO dentro del mockup .phone. */
   --r-control: 2px;   /* botones (primario incluido), inputs, badges, tags */
+  /* ALTURA DE CONTROL (auditoria 12/08): la altura se DECLARA, no se deriva
+     de padding+font+borde. Antes convivian 6 alturas (36/37/40/42/53/57px)
+     y ghost vs primary diferian 4px en la misma fila. */
+  --btn-h: 52px;        /* boton de contenido, desktop */
+  --btn-h-mobile: 54px; /* target tactil comodo en mobile */
+  --btn-h-nav: 40px;    /* modificador .btn-nav */
+  --btn-h-sm: 46px;     /* CTA compacto: filas de programa, CTA inline */
+  /* GAPS de grid: dos escalones, no siete. Antes convivian 1.1/1.2/1.25/
+     1.4/1.5rem (17.6 a 24px) sin criterio. */
+  --gap-grid: 1.5rem;        /* 24px: cards, paneles, splits */
+  --gap-grid-tight: 1rem;    /* 16px: filas densas, stats, pricing */
   --r-card:    8px;   /* cards glass, paneles split, FAQ, pricing, stats, final-wrap */
   --r-media:   2px;   /* fotos y video */
   /* Compat transitorio: rutas admin aún usan --r-md inline. Eliminar al migrarlas. */
@@ -88,7 +99,13 @@
   --transition-slow: 600ms cubic-bezier(0.16, 1, 0.3, 1); /* imágenes y luz */
 }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  /* clip (no hidden): contiene el drawer cerrado sin crear contexto de
+     scroll. body solo no alcanzaba, el overflow se propagaba al html
+     y dejaba 2px de scroll horizontal en /contact mobile */
+  overflow-x: clip;
+}
 
 body {
   font-family: var(--font-body);
@@ -180,7 +197,10 @@ body {
 .nav-drawer::before, .nav-drawer::after { content: ''; flex: 0 0 auto; }
 .nav-drawer::before { margin-top: auto; }
 .nav-drawer::after { margin-bottom: auto; }
-.nav-drawer.open { transform: translateX(0); }
+.nav-drawer.open { transform: translateX(0); visibility: visible; }
+/* Cerrado: fuera del flujo de scroll (causaba overflow-x de 2px en mobile)
+   y fuera del orden de tabulacion */
+.nav-drawer:not(.open) { visibility: hidden; }
 .nav-drawer a {
   font-family: var(--font-display); font-weight: 600;
   font-size: clamp(1.9rem, 7.5vw, 3rem); line-height: 1.2;
@@ -237,10 +257,19 @@ body {
 /* ---------- Botones — QUIET v6: sentence case, planos, sin lift ni glow.
    El amarillo queda reservado al UNICO primario por vista. ---------- */
 .btn {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--btn-h);
+  /* padding-block chico: con una linea manda min-height (todas las variantes
+     miden igual); si el texto envuelve, el boton crece sin recortar */
+  padding-block: 0.7rem;
   font-family: var(--font-body);
   font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.25;
   letter-spacing: 0.01em;
+  text-align: center;
   text-decoration: none;
   border: none;
   border-radius: var(--r-control);
@@ -250,8 +279,7 @@ body {
 .btn-primary {
   background: var(--c-yellow);
   color: var(--c-black) !important;
-  padding: 0.95rem 1.9rem;
-  font-size: 0.95rem;
+  padding-inline: 1.9rem;
 }
 .btn-primary:hover {
   background: #EFC500;
@@ -262,8 +290,8 @@ body {
 .btn-ghost {
   background: transparent;
   color: var(--c-mist) !important;
-  padding: 1rem 2.25rem;
-  font-size: 0.95rem;
+  /* border-box: el borde NO suma altura, mide igual que el primario */
+  padding-inline: 1.9rem;
   border: 1px solid var(--hairline);
   backdrop-filter: none;
 }
@@ -279,7 +307,7 @@ body {
 .prog-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.4rem;
+  gap: var(--gap-grid);
   margin-top: var(--space-block);
 }
 .prog-card {
@@ -347,7 +375,7 @@ body {
   text-decoration: none; white-space: nowrap;
   padding: 0.5rem 0; min-height: 44px; display: inline-flex; align-items: center;
 }
-.prog-card-buy { margin-top: 1rem; width: 100%; text-align: center; min-height: 46px; }
+.prog-card-buy { margin-top: 1rem; width: 100%; text-align: center; min-height: var(--btn-h-sm); }
 .prog-card-note {
   margin-top: 0.6rem; font-size: 0.72rem; color: var(--c-faint);
   font-family: var(--font-label); letter-spacing: 0.06em; text-transform: uppercase;
@@ -358,7 +386,7 @@ body {
 
 /* Trio de planes (compartido /pricing y /on): tres tiers lado a lado,
    foto de identidad + chip por plan. Quiet: un solo primario (featured). */
-.plans-trio { display: grid; grid-template-columns: 1fr; gap: 1.4rem; margin-top: var(--space-block); }
+.plans-trio { display: grid; grid-template-columns: 1fr; gap: var(--gap-grid); margin-top: var(--space-block); }
 @media (min-width: 1000px) { .plans-trio { grid-template-columns: repeat(3, 1fr); } }
 .plans-trio .pricing-card { display: flex; flex-direction: column; padding: 0; overflow: hidden; }
 .plan-photo { position: relative; height: 152px; }
@@ -387,7 +415,7 @@ body {
 .review-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-  gap: 1.4rem;
+  gap: var(--gap-grid);
   margin-top: var(--space-block);
 }
 .review-card {
@@ -479,14 +507,17 @@ body {
 /* Modificador de tamano para CTAs de nav: ULTIMO para ganar el empate
    (el ghost de /studios salia con padding de hero y quedaba pegado al
    borde de la barra — feedback cliente 01/08) */
-.btn.btn-nav { padding: 0.6rem 1.35rem; font-size: 0.85rem; border-radius: var(--r-control); }
+.btn.btn-nav {
+  min-height: var(--btn-h-nav);
+  padding-block: 0;
+  padding-inline: 1.35rem;
+  font-size: 0.85rem;
+  border-radius: var(--r-control);
+}
 .nav-links .btn-nav { margin-left: clamp(0.3rem, 1.2vw, 1.2rem); }
 /* Mobile: UNA sola altura de CTA de contenido (FIXES_V5 §2.6; hoy 50/55/57px) */
 @media (max-width: 640px) {
-  .btn-primary, .btn-ghost { padding: 1.05rem 2rem; font-size: 0.9rem; min-height: 55px; }
-  /* El ghost compensa su borde de 1px: misma altura computada que el primario
-     (aceptación §5.9: una sola altura 55px ±1) */
-  .btn-ghost { padding-block: calc(1.05rem - 1px); }
+  .btn-primary, .btn-ghost, .btn-on { padding-inline: 1.7rem; font-size: 0.9rem; min-height: var(--btn-h-mobile); }
 }
 
 /* ---------- Hero ---------- */
@@ -740,7 +771,7 @@ body {
 .method-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 1.4rem;
+  gap: var(--gap-grid);
 }
 @media (max-width: 1080px) { .method-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .method-grid { grid-template-columns: 1fr; } }
@@ -794,7 +825,7 @@ body {
 .split {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+  gap: var(--gap-grid);
   max-width: var(--container);
   margin: 0 auto;
   /* F2/F3 RHYTHM: media frontera propia — fin del 1px de aire de home-d1
@@ -844,13 +875,12 @@ body {
 .split-desc { max-width: 30rem; margin-top: 1.4rem; font-size: var(--text-body); line-height: 1.65; }
 .split-on .split-desc { color: var(--c-mist); }
 .split-studios .split-desc { color: var(--c-mist); }
-.split-footer { margin-top: var(--space-block); display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+.split-footer { margin-top: var(--space-block); display: flex; align-items: center; gap: var(--gap-grid); flex-wrap: wrap; }
 .split-price { font-family: var(--font-display); font-weight: 700; font-size: 1rem; }
 .btn-on {
   background: var(--c-yellow);
   color: var(--c-black) !important;
-  padding: 0.95rem 1.9rem;
-  font-size: 0.95rem;
+  padding-inline: 1.9rem;
 }
 .btn-on:hover { background: #EFC500; }
 
@@ -860,7 +890,7 @@ body {
   display: grid;
   grid-template-columns: minmax(0, 6fr) minmax(0, 3fr) auto;
   align-items: center;
-  gap: 1.5rem;
+  gap: var(--gap-grid);
   padding: 1.7rem 1.4rem;
   margin: 0 -1.4rem;
   border-radius: var(--r-card);
@@ -1088,7 +1118,7 @@ body {
 .breadcrumb span:last-child { color: var(--c-mist); }
 
 /* ---------- Pricing cards (página /precios) ---------- */
-.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; margin-top: var(--space-block); }
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gap-grid-tight); margin-top: var(--space-block); }
 @media (max-width: 900px) { .pricing-grid { grid-template-columns: 1fr; } }
 .pricing-card { position: relative; display: flex; flex-direction: column; gap: 0.4rem;
   padding: 2.2rem 1.9rem; border-radius: var(--r-card); background: var(--glass);
@@ -1179,7 +1209,7 @@ body {
   font-size: var(--text-body); line-height: 1.65; color: var(--c-mist); }
 
 /* ---------- Stat row (cifras públicas) ---------- */
-.stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.1rem; margin-top: var(--space-block); }
+.stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: var(--gap-grid-tight); margin-top: var(--space-block); }
 .stat { padding: 2rem 1.8rem; border-radius: var(--r-card); background: var(--glass); border: 1px solid var(--hairline); }
 .stat-value { font-family: var(--font-display); font-weight: 700; font-size: clamp(2rem, 3.6vw, 3rem); line-height: 1;
   color: var(--c-white); }
@@ -1204,7 +1234,7 @@ body {
 .sede-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-  gap: 1.1rem;
+  gap: var(--gap-grid-tight);
   margin-top: 3rem;
 }
 .sede-tile {
@@ -1447,7 +1477,7 @@ p.lead, .lead {
   .cmp-table thead tr, .cmp-table tbody tr {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    column-gap: 1.2rem;
+    column-gap: var(--gap-grid-tight);
     padding: 1.1rem 1.4rem;
     border-top: 1px solid var(--hairline);
   }
@@ -1512,7 +1542,7 @@ p.lead, .lead {
   text-transform: uppercase; letter-spacing: var(--track-eyebrow, 0.22em);
   color: var(--c-faint);
 }
-.inline-cta-btn { min-height: 48px; }
+.inline-cta-btn { min-height: var(--btn-h-sm); }
 .inline-cta-note {
   font-family: var(--font-label); font-weight: 700; font-size: 0.7rem;
   text-transform: uppercase; letter-spacing: var(--track-label, 0.14em);

@@ -133,7 +133,7 @@ const GATE_CSS = `
 .gate-cta {
   margin-top: 1.7rem;
   display: inline-flex; align-items: center;
-  height: 48px;
+  min-height: var(--btn-h-sm);
   padding: 0 1.8rem;
   font-family: var(--font-body);
   font-weight: 600;
