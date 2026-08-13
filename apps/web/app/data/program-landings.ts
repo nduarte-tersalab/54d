@@ -231,7 +231,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       ],
     },
     hero: {
-      src: hd("cg-ramp-runners-wide"),
+      src: "images/programs/54d-on-wide.jpg",
       alt: {
         en: "Group of athletes sprinting up the ramp at the 54D Coral Gables studio",
         es: "Grupo de atletas corriendo por la rampa del estudio 54D de Coral Gables",
@@ -385,7 +385,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       ],
     },
     hero: {
-      src: hd("cg-overhead-press"),
+      src: "images/programs/step-2-wide.jpg",
       alt: {
         en: "Athlete driving a loaded barbell overhead under studio lights",
         es: "Atleta empujando una barra cargada por encima de la cabeza bajo las luces del estudio",
@@ -548,7 +548,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       ],
     },
     hero: {
-      src: "images/programs/emergency-kit.jpg",
+      src: "images/programs/emergency-kit-wide.jpg",
       alt: {
         en: "Athlete mid high-intensity set on the 54D training floor",
         es: "Atleta en plena serie de alta intensidad en el piso de entrenamiento de 54D",
@@ -659,7 +659,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       ],
     },
     hero: {
-      src: cg("group-cardio-session-01"),
+      src: "images/programs/max-burn-wide.jpg",
       alt: {
         en: "Group cardio session at full intensity on the 54D training floor",
         es: "Sesión de cardio grupal a máxima intensidad en el piso de entrenamiento de 54D",
@@ -767,7 +767,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       ],
     },
     hero: {
-      src: cg("training-floor-recovery-01"),
+      src: "images/programs/reset-7-wide.jpg",
       alt: {
         en: "Athletes stretching and recovering together on the training floor",
         es: "Atletas estirando y recuperando juntos en el piso de entrenamiento",
@@ -871,7 +871,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       ],
     },
     hero: {
-      src: cg("coach-correction"),
+      src: "images/programs/first-move-wide.jpg",
       alt: {
         en: "A 54D coach correcting an athlete's form mid movement",
         es: "Un coach de 54D corrigiendo la técnica de una atleta en pleno movimiento",
@@ -980,7 +980,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       ],
     },
     hero: {
-      src: cg("group-squat-class-01"),
+      src: "images/programs/booty-on-fire-wide.jpg",
       alt: {
         en: "Full class holding the bottom of a squat together at the studio",
         es: "Clase completa sosteniendo juntos el fondo de una sentadilla en el estudio",
@@ -1082,7 +1082,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       ],
     },
     hero: {
-      src: hd("cg-gym-wide"),
+      src: "images/programs/full-body-wide.jpg",
       alt: {
         en: "Wide view of the 54D Coral Gables training floor mid session",
         es: "Vista amplia del piso de entrenamiento de 54D Coral Gables en plena sesión",
@@ -1229,7 +1229,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       ],
     },
     hero: {
-      src: cg("jump-training-54d-wall-01"),
+      src: "images/programs/lower-body-wide.jpg",
       alt: {
         en: "Athlete mid box jump in front of the 54D wall",
         es: "Atleta en pleno salto al cajón frente al muro de 54D",
@@ -1376,7 +1376,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       ],
     },
     hero: {
-      src: hl("bench-press-54d"),
+      src: "images/programs/upper-body-wide.jpg",
       alt: {
         en: "Athlete bench pressing under the 54D letters at the Hallandale studio",
         es: "Atleta en press de banca bajo las letras 54D del estudio de Hallandale",
