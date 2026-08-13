@@ -83,9 +83,6 @@ const GATE_CSS = `
   grid-template-columns: 1fr;
   gap: 1.25rem;
 }
-@media (min-width: 901px) {
-  .gate-doors { grid-template-columns: 3fr 2fr; }
-}
 .gate-door {
   display: flex; flex-direction: column; align-items: center;
   justify-content: center;
@@ -186,6 +183,22 @@ const GATE_CSS = `
   display: inline-block;
   padding: 1.05rem 0.55rem;
   margin: -1.05rem -0.55rem;
+}
+@media (min-width: 901px) {
+  .gate-doors { grid-template-columns: 3fr 2fr; grid-template-rows: repeat(5, auto); }
+  /* Cada puerta hereda las filas del contenedor: titulo con titulo, CTA con
+     CTA. Antes cada una centraba su contenido por separado y, al tener
+     descripciones de distinto largo, los titulos caian desfasados 12px. */
+  .gate-door {
+    grid-row: span 5;
+    display: grid;
+    grid-template-rows: subgrid;
+    align-content: start;
+    justify-items: center;
+    /* .gate-door hereda align-items:center del flex; en grid eso centraria
+       cada hijo DENTRO de su fila y desalinearia el desc mas corto */
+    align-items: start;
+  }
 }
 @media (max-width: 900px) {
   .gate { justify-content: flex-start; padding-top: clamp(3rem, 8vh, 4.5rem); }
@@ -316,22 +329,10 @@ export default function Home() {
             </Link>
             <Link to="/on" className="gate-door gate-door-on">
               <span className="gate-eyebrow">{c.onEyebrow}</span>
-              <img
-                src={asset("images/brand/logo-54d-on.svg")}
-                alt=""
-                style={{ height: "52px", width: "auto", marginTop: "0.85rem" }}
-              />
-              <span
-                style={{
-                  position: "absolute",
-                  width: 1,
-                  height: 1,
-                  overflow: "hidden",
-                  clipPath: "inset(50%)",
-                }}
-              >
-                54D ON
-              </span>
+              {/* Titulo tipografiado, igual que la puerta de Studios (pedido
+                  cliente): en el gate las dos puertas se leen como pares.
+                  El lockup ON vive en el nav de /on y en sus landings. */}
+              <span className="gate-title">54D ON</span>
               <span className="gate-desc">{c.onDesc}</span>
               <span className="gate-cta gate-cta-on">{c.onCta}</span>
               <span className="gate-micro">{c.onMicro}</span>
