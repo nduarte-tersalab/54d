@@ -7,10 +7,14 @@
    Record<Lang, ...>. Sin em/en dashes (regla COPY_V3), ES neutro
    latino con tuteo, jamas voseo.
    Equipo alineado a la fuente de verdad: on.tsx PROGRAMS[].equipment.
-   REGLA DE ALCANCE: los antes/después y el claim -5kg viven SOLO en
-   /on, /pricing y /programs/54d-on. NO esparcir a las otras 12
-   landings (claim no publicado por programa + riesgo Meta Personal
-   Health).
+   REGLA DE ALCANCE (cliente, 13/08): la banda de antes/despues va en
+   las 13 landings, en slot 2 post-hero. Claim -5kg SOLO en 54d-on y
+   step-2; mid/starter/runners llevan linea puente SIN cifra ni
+   deadline. Microcopy `Los resultados varian segun la persona`
+   SIEMPRE bajo composites. Banda sin CTA ni urgencia. Labels
+   THEN/NOW quemados en EN: aceptado, el contexto ES lo cargan
+   microcaption y captions. Testimonios: SOLO del harvest, verbatim,
+   jamas traducidos ni editados; ver blocklist mas abajo.
    ============================================================ */
 
 import type { Lang } from "../lib/i18n";
@@ -45,6 +49,17 @@ export type LandingImage = {
   alt: Dict;
 };
 
+/** Resena real del App Store (harvest appstore-reviews.json): cita
+    verbatim (recortes contiguos con elipsis; solo se normalizan
+    espacios dobles y espacios antes de puntuacion), autor tal cual,
+    pais y rating reales. JAMAS traducir ni "mejorar" una cita. */
+export type Quote = {
+  quote: string;
+  author: string;
+  country: string;
+  rating: number;
+};
+
 export type ProgramLanding = {
   slug: ProgramSlug;
   name: string;
@@ -53,8 +68,8 @@ export type ProgramLanding = {
   priceId: string;
   /** Precio mostrado, ej. "$385" o "$54" */
   price: string;
-  /** Sufijo del precio (runners: "/mo") */
-  priceSuffix?: string;
+  /** Sufijo del precio, bilingue (runners: "/mo" | "/mes") */
+  priceSuffix?: Dict;
   /** Ancla tachada si aplica (runners: reg $99/mo de la membresía) */
   anchor?: string;
   /** Nota corta junto al precio: "one payment" | "7-day free trial" */
@@ -80,7 +95,21 @@ export type ProgramLanding = {
   /** Quick wins: 4 pruebas de baja friccion, hero y cierre */
   quickWins: Record<Lang, { value: string; label: string }[]>;
   hero: LandingImage;
+  /** Foco de arte del hero por slug: se inyecta como object-position
+      via custom properties (--hero-pos-d / --hero-pos-m). Sin campo,
+      50% 50%. Cero derivados de assets: solo CSS. */
+  heroFocus?: { desktop?: string; mobile?: string };
+  /** Capea h1 y subhead a 62% en >=1200px cuando el sujeto del hero
+      queda bajo el copy (booty-on-fire, step-2) */
+  heroCopyNarrow?: boolean;
   secondary?: LandingImage;
+  /** Composites ANTES/DESPUES oficiales (filenames de images/results/,
+      sin extension). SIEMPRE 3, orden por afinidad de audiencia: el
+      primero es el primero visible en el strip mobile. */
+  results: string[];
+  /** Cita real del App Store bajo el rating 4.9 del PROOF. Idioma de
+      la cita = idioma de la pagina; jamas se traduce. */
+  testimonial?: Record<Lang, Quote>;
   /** Cards oficiales de coaches (images/coaches/*.jpg, nombre y especialidad
       quemados) para el bloque PROOF; sin campo, PROOF usa la foto de manos.
       Matcheados por especialidad. Fucho EXCLUIDO del pool (boxeo). */
@@ -109,6 +138,32 @@ const MEMBERSHIP_MICROCOPY: Dict = {
 };
 const ONE_PAYMENT_NOTE: Dict = { en: "one payment", es: "pago único" };
 const TRIAL_NOTE: Dict = { en: "7-day free trial", es: "prueba gratis de 7 días" };
+const RUNNERS_SUFFIX: Dict = { en: "/mo", es: "/mes" };
+
+/* ============ Testimonios reales (App Store, harvest 13/08) ============
+   Citas verbatim del RSS publico de iTunes de la app 54D On
+   (id 1520445334). Verificadas contra el harvest: autor, pais, rating
+   y texto coinciden; recortes contiguos con elipsis.
+   BLOCKLIST (jamas usar ni "mejorar" editando): angyr54d (31 kilos,
+   cifra corporal extrema), val nadia, tellingwhatistrue, Pilla G
+   (resultado con plazo), turquesabijoux, noseastoomuch (absolutos de
+   eficacia), carolfreite, jdelcastilloe71, Amora064, angelin
+   (promesas en segunda persona), MSM FAN BECAUSE BEST GAME (autor
+   impresentable). */
+
+const Q_MLTERAN: Quote = {
+  quote:
+    "I am a 51 yr old Mom, professional w/a very busy schedule. I also have lots of experience in wellness programs and can tell you this is one of the best programs I’ve done!",
+  author: "MLTeran",
+  country: "US",
+  rating: 5,
+};
+const Q_GABY: Quote = {
+  quote: "You want results? This is it",
+  author: "Gaby bunbury",
+  country: "MX",
+  rating: 5,
+};
 
 /* FAQ compartidas. Las cuatro primeras son verbatim de copy ya
    publicado y aprobado en on.tsx / pricing.tsx: no reescribir. */
@@ -188,9 +243,11 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
     price: "$385",
     priceNote: ONE_PAYMENT_NOTE,
     duration: { en: "9 weeks", es: "9 semanas" },
+    /* Compliance Meta (Personal Health): la identidad "54 dias" se
+       declara; lo que NO va es promesa de cuerpo PARA esa fecha. */
     hook: {
-      en: { plain: "54 days. A different body.", accent: "A different you." },
-      es: { plain: "54 días. Otro cuerpo.", accent: "Otro tú." },
+      en: { plain: "54 days. The complete method.", accent: "Your strongest self." },
+      es: { plain: "54 días. El método completo.", accent: "Tu mejor versión." },
     },
     subhead: {
       en: "The complete 54D transformation method, with a real coach on your side for 9 weeks.",
@@ -219,7 +276,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
     },
     forWho: {
       en: "You're ready to commit 9 weeks and want a coach holding you accountable.",
-      es: "Estás listo para comprometerte 9 semanas y quieres un coach que te exija de verdad.",
+      es: "Vas a comprometerte 9 semanas y quieres un coach que te exija de verdad.",
     },
     notFor: {
       en: "You want a casual workout you can skip without anyone noticing.",
@@ -244,6 +301,19 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       alt: {
         en: "Group of athletes sprinting up the ramp at the 54D Coral Gables studio",
         es: "Grupo de atletas corriendo por la rampa del estudio 54D de Coral Gables",
+      },
+    },
+    /* A 390 el encuadre centrado bisecaba las caras de los fundadores */
+    heroFocus: { desktop: "12% 50%", mobile: "70% 40%" },
+    results: ["elizabeth", "rafael", "laura"],
+    testimonial: {
+      en: Q_MLTERAN,
+      es: {
+        quote:
+          "54D on es un programa especial. No se compara a ningún otro programa de ejercicios. Especialmente sus entrenadores Ro y Rorris no se detienen como muchos entrenadores lo hacen.",
+        author: "amazingtreasure",
+        country: "US",
+        rating: 5,
       },
     },
     secondary: {
@@ -401,6 +471,19 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         es: "Atleta empujando una barra cargada por encima de la cabeza bajo las luces del estudio",
       },
     },
+    /* El H1 ES cruzaba los ojos de la sujeto a 1440 */
+    heroCopyNarrow: true,
+    results: ["silvana", "sebastian", "rafael"],
+    testimonial: {
+      en: Q_GABY,
+      es: {
+        quote:
+          "Ha sido hasta ahora una súper experiencia! Entrenando la mente y el cuerpo! 54D ON ha transformado mi cuerpo y lo más importante mi mente, mis hábitos, mi forma de ver y vivir la vida!",
+        author: "Marce Hernández",
+        country: "CO",
+        rating: 5,
+      },
+    },
     secondary: {
       src: cg("barbell-press-gaze-vertical"),
       alt: {
@@ -533,8 +616,8 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       ],
     },
     forWho: {
-      en: "You have a date on the calendar and want maximum result per day.",
-      es: "Tienes una fecha en el calendario y quieres el máximo resultado por día.",
+      en: "You have a date on the calendar and want to make every day count.",
+      es: "Tienes una fecha en el calendario y quieres aprovechar cada día.",
     },
     notFor: {
       en: "You want long-term transformation: that's a 9-week program.",
@@ -565,6 +648,17 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         es: "Atleta en plena serie de alta intensidad en el piso de entrenamiento de 54D",
       },
     },
+    results: ["elizabeth", "laura", "rafael"],
+    testimonial: {
+      en: Q_GABY,
+      es: {
+        quote:
+          "Me gusta muchísimo su programa ya que no necesitas estar en un gimnasio para estar en forma, lo puedes hacer en cualquier parte, si viajas de trabajo puedes hasta en el cuarto de hotel hacer el programa…",
+        author: "Lestepe",
+        country: "US",
+        rating: 5,
+      },
+    },
     secondary: {
       src: cg("cardio-jump-mural-vertical"),
       alt: {
@@ -590,7 +684,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         },
         es: {
           q: "¿Qué me llevo en 14 días?",
-          a: "14 sesiones diarias de 30 minutos, tu técnica revisada por un coach y el hábito arrancado.",
+          a: "14 sesiones diarias de 30 minutos, tu técnica revisada por un coach y el hábito en marcha.",
         },
       },
       FAQ_MISS,
@@ -675,6 +769,17 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       alt: {
         en: "Group cardio session at full intensity on the 54D training floor",
         es: "Sesión de cardio grupal a máxima intensidad en el piso de entrenamiento de 54D",
+      },
+    },
+    results: ["rafael", "elizabeth", "sebastian"],
+    testimonial: {
+      en: Q_GABY,
+      es: {
+        quote:
+          "Me encantan estos entrenamientos, nos exigen día a día y es un reto conmigo misma.",
+        author: "SR Venezolana Feliz",
+        country: "US",
+        rating: 5,
       },
     },
     secondary: {
@@ -786,6 +891,17 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         es: "Atletas estirando y recuperando juntos en el piso de entrenamiento",
       },
     },
+    results: ["elizabeth", "rafael", "laura"],
+    testimonial: {
+      en: Q_GABY,
+      es: {
+        quote:
+          "Antes no había encontrado una forma de ejercitarme sin depender del clima, transporte, tiempo…identifiqué mi horario ideal y solo es cuestión de respetar la alarma!",
+        author: "Mandril45",
+        country: "CO",
+        rating: 5,
+      },
+    },
     /* PROOF de reset-7 ahora muestra coach cards: coach-hands queda
        libre para el split de 'Lo que vas a hacer' (verificada limpia) */
     secondary: {
@@ -840,7 +956,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
       es: {
         plain: "Lo más difícil es empezar.",
-        accent: "Esto es empezar, hecho fácil.",
+        accent: "Aquí empezar es lo fácil.",
       },
     },
     subhead: {
@@ -898,6 +1014,23 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       alt: {
         en: "A 54D coach correcting an athlete's form mid movement",
         es: "Un coach de 54D corrigiendo la técnica de una atleta en pleno movimiento",
+      },
+    },
+    results: ["elizabeth", "laura", "rafael"],
+    testimonial: {
+      en: {
+        quote:
+          "I’m starting my second round of 54D. The physical strength and looking fit again at age 64 is beautiful but this training is going deep.",
+        author: "Gigi is Strong Again",
+        country: "US",
+        rating: 5,
+      },
+      es: {
+        quote:
+          "Me encanta la forma de hacer ejercicio, amo las rutinas y todos los días es un esfuerzo mental y físico pero es un hábito y me mantiene al 100",
+        author: "guillermooso",
+        country: "MX",
+        rating: 5,
       },
     },
     secondary: {
@@ -1010,6 +1143,19 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         es: "Clase completa sosteniendo juntos el fondo de una sentadilla en el estudio",
       },
     },
+    /* El H1 ES cruzaba los ojos de la sujeto a 1440 */
+    heroCopyNarrow: true,
+    results: ["laura", "silvana", "elizabeth"],
+    testimonial: {
+      en: Q_GABY,
+      es: {
+        quote:
+          "Me encantan todas las funciones que tiene. El programa está increíble y me mantiene motivada todo el tiempo.",
+        author: "Terryberto",
+        country: "MX",
+        rating: 5,
+      },
+    },
     secondary: {
       src: hd2("v-squat-band"),
       alt: {
@@ -1035,7 +1181,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         },
         es: {
           q: "¿Qué me llevo en 14 días?",
-          a: "14 sesiones diarias, tu técnica revisada por un coach y el hábito arrancado.",
+          a: "14 sesiones diarias, tu técnica revisada por un coach y el hábito en marcha.",
         },
       },
       FAQ_MISS,
@@ -1111,6 +1257,16 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       alt: {
         en: "Wide view of the 54D Coral Gables training floor mid session",
         es: "Vista amplia del piso de entrenamiento de 54D Coral Gables en plena sesión",
+      },
+    },
+    results: ["elizabeth", "rafael", "laura"],
+    testimonial: {
+      en: Q_MLTERAN,
+      es: {
+        quote: "Los cambios son increíbles y notorios si lo haces correctamente.",
+        author: "Kolorzito",
+        country: "MX",
+        rating: 5,
       },
     },
     secondary: {
@@ -1261,6 +1417,21 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         es: "Atleta en pleno salto al cajón frente al muro de 54D",
       },
     },
+    /* A 390 el encuadre centrado dejaba a la atleta fuera: en el cover
+       oficial la sujeto vive a ~65% (el 18% del plan v4 apuntaba al
+       fondo vacio del asset viejo del box jump; desviacion documentada) */
+    heroFocus: { mobile: "65% 40%" },
+    results: ["laura", "silvana", "rafael"],
+    testimonial: {
+      en: Q_MLTERAN,
+      es: {
+        quote:
+          "Los mejores entrenamientos que puede haber, dinámicos, exigentes, completos.",
+        author: "dmgarcia27",
+        country: "CO",
+        rating: 5,
+      },
+    },
     secondary: {
       src: cg("ramp-climb-vertical"),
       alt: {
@@ -1353,7 +1524,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
       es: {
         plain: "Hombros, espalda, brazos.",
-        accent: "La construcción de 9 semanas.",
+        accent: "Construidos en 9 semanas.",
       },
     },
     subhead: {
@@ -1409,6 +1580,19 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         es: "Atleta en press de banca bajo las letras 54D del estudio de Hallandale",
       },
     },
+    /* A 390 el encuadre centrado dejaba el hero negro */
+    heroFocus: { mobile: "85% 50%" },
+    results: ["rafael", "sebastian", "silvana"],
+    testimonial: {
+      en: Q_MLTERAN,
+      es: {
+        quote:
+          "Los mejores entrenamientos que puede haber, dinámicos, exigentes, completos.",
+        author: "dmgarcia27",
+        country: "CO",
+        rating: 5,
+      },
+    },
     secondary: {
       src: hd2("v-biceps-plate"),
       alt: {
@@ -1442,8 +1626,8 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
       toLabel: { en: "Week 9", es: "Semana 9" },
       to: {
-        en: "Heavier presses, weighted pulls and core wired into every session. It shows in every shirt.",
-        es: "Presses más pesados, jalones con carga y core integrado en cada sesión. Se nota en cada camiseta.",
+        en: "Heavier presses, weighted pulls and core wired into every session. The strength shows in everything you carry.",
+        es: "Presses más pesados, jalones con carga y core integrado en cada sesión. La fuerza se nota en todo lo que cargas.",
       },
     },
     faq: faqs([
@@ -1485,14 +1669,19 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
     ]),
   },
 
-  /* ============ RUNNERS (solo membresía) ============ */
+  /* ============ RUNNERS (solo membresía) ============
+     Assets VETADOS por conos naranjas (regla dura 3, verificado 13/08):
+     cg/runner-effort.jpg, hd/cg-runner-vertical.jpg, hd2/v-runner-smile.jpg,
+     hd2/spare-man-running.jpg. Hero único de los 3: hd/cg-ramp-runners-wide
+     con heroFocus distinto por slug (tres encuadres, un asset limpio). */
   "runners-5k": {
     slug: "runners-5k",
+    coaches: ["images/coaches/cristian.jpg", "images/coaches/sasha.jpg"],
     name: "Runners 5K",
     tier: "runners",
     priceId: "PENDING_membership_monthly",
     price: "$54",
-    priceSuffix: "/mo",
+    priceSuffix: RUNNERS_SUFFIX,
     priceNote: TRIAL_NOTE,
     duration: { en: "Self-paced", es: "A tu ritmo" },
     hook: {
@@ -1502,7 +1691,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
       es: {
         plain: "Tu primer 5K,",
-        accent: "con coach desde el sillón hasta la meta.",
+        accent: "con coach, del sofá a la meta.",
       },
     },
     subhead: {
@@ -1552,17 +1741,29 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       ],
     },
     hero: {
-      src: cg("runner-effort"),
+      src: hd("cg-ramp-runners-wide"),
       alt: {
-        en: "Runner at full effort, face set, mid stride on the studio floor",
-        es: "Corredora a máximo esfuerzo, la mirada fija, en plena zancada en el piso del estudio",
+        en: "54D members running up the yellow ramp together during a session",
+        es: "Miembros de 54D subiendo juntos la rampa amarilla en plena sesión",
+      },
+    },
+    heroFocus: { desktop: "30% 40%", mobile: "30% 40%" },
+    results: ["rafael", "laura", "silvana"],
+    testimonial: {
+      en: Q_MLTERAN,
+      es: {
+        quote:
+          "…cada semana he tenido mejores resultados, me he sentido muy motivado y me ha ayudado a crear nuevos hábitos.",
+        author: "Santiago94.",
+        country: "ES",
+        rating: 5,
       },
     },
     secondary: {
-      src: hd2("v-runner-smile"),
+      src: hd2("v-spin-rider"),
       alt: {
-        en: "Smiling runner in a 54D tank striding up the studio ramp at an easy pace",
-        es: "Corredora sonriente con top de 54D subiendo la rampa del estudio a ritmo suave",
+        en: "Rider out of the saddle on a spin bike, smiling through the effort",
+        es: "Ciclista de pie sobre la bici de spinning, sonriendo en pleno esfuerzo",
       },
     },
     stats: [
@@ -1619,11 +1820,12 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
 
   "runners-10k": {
     slug: "runners-10k",
+    coaches: ["images/coaches/victor.jpg", "images/coaches/april.jpg"],
     name: "Runners 10K",
     tier: "runners",
     priceId: "PENDING_membership_monthly",
     price: "$54",
-    priceSuffix: "/mo",
+    priceSuffix: RUNNERS_SUFFIX,
     priceNote: TRIAL_NOTE,
     duration: { en: "Self-paced", es: "A tu ritmo" },
     hook: {
@@ -1677,19 +1879,29 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       ],
     },
     hero: {
-      src: hd("cg-runner-vertical"),
-      alt: {
-        en: "Runner in full stride across the Coral Gables studio",
-        es: "Corredora en plena zancada cruzando el estudio de Coral Gables",
-      },
-    },
-    secondary: {
-      /* La candidata de estiramiento quedo VETADA (conos naranjas): la
-         rampa esta verificada limpia y es corredores en pleno trabajo */
       src: hd("cg-ramp-runners-wide"),
       alt: {
         en: "54D members running up the yellow ramp during a session",
         es: "Miembros de 54D subiendo la rampa amarilla en plena sesión",
+      },
+    },
+    heroFocus: { desktop: "50% 40%", mobile: "50% 40%" },
+    results: ["rafael", "laura", "silvana"],
+    testimonial: {
+      en: Q_MLTERAN,
+      es: {
+        quote:
+          "…cada semana he tenido mejores resultados, me he sentido muy motivado y me ha ayudado a crear nuevos hábitos.",
+        author: "Santiago94.",
+        country: "ES",
+        rating: 5,
+      },
+    },
+    secondary: {
+      src: cg("graduation-celebration-01"),
+      alt: {
+        en: "A 54D generation celebrating graduation together on the training floor",
+        es: "Una generación de 54D celebrando su graduación en el piso de entrenamiento",
       },
     },
     stats: [
@@ -1746,11 +1958,12 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
 
   "runners-21k": {
     slug: "runners-21k",
+    coaches: ["images/coaches/alexis.jpg", "images/coaches/alicia.jpg"],
     name: "Runners 21K",
     tier: "runners",
     priceId: "PENDING_membership_monthly",
     price: "$54",
-    priceSuffix: "/mo",
+    priceSuffix: RUNNERS_SUFFIX,
     priceNote: TRIAL_NOTE,
     duration: { en: "Self-paced", es: "A tu ritmo" },
     hook: {
@@ -1816,11 +2029,23 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         es: "Corredores subiendo juntos la rampa del estudio 54D de Coral Gables",
       },
     },
+    heroFocus: { desktop: "85% 35%", mobile: "85% 35%" },
+    results: ["rafael", "laura", "silvana"],
+    testimonial: {
+      en: Q_MLTERAN,
+      es: {
+        quote:
+          "…cada semana he tenido mejores resultados, me he sentido muy motivado y me ha ayudado a crear nuevos hábitos.",
+        author: "Santiago94.",
+        country: "ES",
+        rating: 5,
+      },
+    },
     secondary: {
-      src: hd2("spare-man-running"),
+      src: hl("coach-hands"),
       alt: {
-        en: "Runner grinding up the studio ramp, effort on his face, the group at his back",
-        es: "Corredor peleando la subida de la rampa del estudio, el esfuerzo en la cara y el grupo a su espalda",
+        en: "A 54D coach adjusting a member's form, hands on",
+        es: "Un coach de 54D corrigiendo de cerca la técnica de una miembro",
       },
     },
     stats: [

@@ -8,8 +8,13 @@ import { StickyCta } from "../components/sticky-cta";
 import { asset } from "../lib/asset";
 import { startCheckout } from "../lib/attribution";
 import { useLang, resolveLang } from "../lib/i18n";
+import type { Lang } from "../lib/i18n";
 import { PROGRAM_LANDINGS } from "../data/program-landings";
-import type { ProgramLanding, ProgramSlug } from "../data/program-landings";
+import type {
+  ProgramLanding,
+  ProgramSlug,
+  ProgramTier,
+} from "../data/program-landings";
 
 /* ============================================================
    /programs/:slug: landing por programa para tráfico frío de Meta
@@ -19,10 +24,14 @@ import type { ProgramLanding, ProgramSlug } from "../data/program-landings";
    compra manda su cta_position. La atribución (utm_content={{ad.name}})
    la captura root.tsx y la adjunta el propio startCheckout.
    Copy 100% bilingüe: el idioma sale del loader (SSR) y del contexto.
-   REGLA DE ALCANCE: los antes/después y el claim -5kg viven SOLO en
-   /on, /pricing y /programs/54d-on. NO esparcir a las otras 12
-   landings (claim no publicado por programa + riesgo Meta Personal
-   Health).
+   REGLA DE ALCANCE (cliente, 13/08): la banda de antes/despues va en
+   las 13 landings, en slot 2 post-hero. Claim -5kg SOLO en 54d-on y
+   step-2; mid/starter/runners llevan linea puente SIN cifra ni
+   deadline. Microcopy `Los resultados varian segun la persona`
+   SIEMPRE bajo composites. Banda sin CTA ni urgencia. Labels
+   THEN/NOW quemados en EN: aceptado, el contexto ES lo cargan
+   microcaption y captions. Testimonios: SOLO del harvest, verbatim,
+   jamas traducidos ni editados; ver blocklist en program-landings.ts.
    ============================================================ */
 
 export async function loader({ params, request }: Route.LoaderArgs) {
@@ -83,7 +92,7 @@ const T = {
     proofTitle2: "A real guarantee.",
     guaranteeName: "30-day money-back guarantee",
     guaranteeBody:
-      "Follow the program, and if you don't see results, we refund your money. No interrogation, no fine print.",
+      "Train it for 30 days. If it's not for you, we refund your money. No interrogation, no fine print.",
     coachName: "A real coach, not an algorithm",
     coachBody:
       "A certified 54D coach reviews your form and answers in the app. Every question, every rep, the whole way through.",
@@ -137,7 +146,7 @@ const T = {
     proofTitle2: "Una garantía real.",
     guaranteeName: "Garantía de devolución de 30 días",
     guaranteeBody:
-      "Sigue el programa y, si no ves resultados, te devolvemos tu dinero. Sin interrogatorios, sin letra chica.",
+      "Entrénalo 30 días. Si no es para ti, te devolvemos tu dinero. Sin interrogatorios, sin letra chica.",
     coachName: "Un coach real, no un algoritmo",
     coachBody:
       "Un coach certificado de 54D revisa tu técnica y te responde en la app. Cada pregunta, cada repetición, todo el camino.",
@@ -153,7 +162,7 @@ const T = {
     days: "días",
     membershipEyebrow: "También disponible por mes",
     membershipLine:
-      "¿Prefieres pagar por mes? La membresía 54D ON incluye los 13 programas, coach ilimitado y 650+ sesiones grabadas por $54/mes, con 7 días gratis.",
+      "¿Prefieres pagar por mes? La membresía 54D ON incluye los 13 programas, coach ilimitado y más de 650 sesiones grabadas por $54/mes, con 7 días gratis.",
     membershipYearly:
       "¿Prefieres el plan anual? $588 al año cubren este programa y todo lo demás.",
     membershipLink: "Ver planes de membresía · $54/mes, 7 días gratis →",
@@ -168,6 +177,29 @@ const T = {
     ctaFaq: "¿Todavía lo piensas?",
   },
 } as const;
+
+/* Línea de encuadre de la banda RESULTADOS, por tier (cliente 13/08):
+   el claim oficial -5kg SOLO en flagship (54d-on, step-2); mid, starter
+   y runners llevan línea puente honesta SIN cifra ni deadline (regla
+   dura Meta Personal Health). */
+const RESULTS_FRAME: Record<ProgramTier, Record<Lang, string>> = {
+  flagship: {
+    en: "Average member result: -5 kg in 54 days · Verified by 54D coaches",
+    es: "Resultado promedio de nuestros miembros: -5 kg en 54 días · Verificado por coaches 54D",
+  },
+  mid: {
+    en: "Results from the complete 54D method. This program runs on the same system and the same coach.",
+    es: "Resultados del método completo de 54D. Este programa entrena con el mismo sistema y el mismo coach.",
+  },
+  starter: {
+    en: "These results come from the complete 54D method. This program is your way in.",
+    es: "Estos resultados son del método completo de 54D. Este programa es tu punto de entrada.",
+  },
+  runners: {
+    en: "The complete method behind these results is included in your membership.",
+    es: "El método completo detrás de estos resultados está incluido en tu membresía.",
+  },
+};
 
 /* ============ Estilos puntuales (solo inline + clases de app.css) ============ */
 
@@ -276,10 +308,12 @@ function PriceLine({
   landing,
   note,
   center,
+  lang,
 }: {
   landing: ProgramLanding;
   note: string;
   center?: boolean;
+  lang: Lang;
 }) {
   return (
     <div style={center ? { ...priceRow, justifyContent: "center" } : priceRow}>
@@ -306,7 +340,7 @@ function PriceLine({
               marginLeft: "0.15em",
             }}
           >
-            {landing.priceSuffix}
+            {landing.priceSuffix[lang]}
           </span>
         )}
       </span>
@@ -524,16 +558,32 @@ export default function ProgramLandingPage({
       {/* ============ 1. HERO (100vh, un solo CTA) ============ */}
       <header className="hero">
         <div className="hero-media">
+          {/* heroFocus (data): foco de arte por slug via custom properties;
+              app.css las lee como object-position d/m */}
           <img
             src={asset(p.hero.src)}
             alt={p.hero.alt[lang]}
             fetchPriority="high"
             decoding="async"
             loading="eager"
+            style={
+              {
+                ...(p.heroFocus?.desktop && {
+                  "--hero-pos-d": p.heroFocus.desktop,
+                }),
+                ...(p.heroFocus?.mobile && {
+                  "--hero-pos-m": p.heroFocus.mobile,
+                }),
+              } as CSSProperties
+            }
           />
         </div>
         <div className="hero-veil" />
-        <div className="hero-content">
+        <div
+          className={
+            p.heroCopyNarrow ? "hero-content hero-copy-narrow" : "hero-content"
+          }
+        >
           <span className="day-marker">{kicker}</span>
           <h1 className="hero-title">
             {p.hook[lang].plain}
@@ -541,7 +591,7 @@ export default function ProgramLandingPage({
             <span className="accent">{p.hook[lang].accent}</span>
           </h1>
           <p className="hero-sub">{p.subhead[lang]}</p>
-          <PriceLine landing={p} note={p.priceNote[lang]} />
+          <PriceLine landing={p} note={p.priceNote[lang]} lang={lang} />
           <div className="hero-ctas">{heroButton}</div>
           <p style={microStyle}>{p.microcopy[lang]}</p>
           {/* Los quick wins van DEBAJO del botón a propósito: no empujan
@@ -578,6 +628,80 @@ export default function ProgramLandingPage({
           )}
         </div>
       </header>
+
+      {/* ============ 1b. RESULTADOS (las 13, slot 2 post-hero) ============
+          REGLA DE ALCANCE (cliente, 13/08): la banda de antes/despues va en
+          las 13 landings, en slot 2 post-hero. Claim -5kg SOLO en 54d-on y
+          step-2; mid/starter/runners llevan linea puente SIN cifra ni
+          deadline. Microcopy `Los resultados varian segun la persona`
+          SIEMPRE bajo composites (horneado aqui: imposible renderizar los
+          composites sin el). Banda sin CTA ni urgencia. Labels THEN/NOW
+          quemados en EN: aceptado, el contexto ES lo cargan microcaption y
+          captions. Variante compacta (section-tight, sin H2) en starters y
+          runners. */}
+      <section
+        className={
+          p.tier === "starter" || p.tier === "runners"
+            ? "section section-tight"
+            : "section"
+        }
+      >
+        <div className="section-inner" ref={results.ref}>
+          <div className={results.className}>
+            <span className="day-marker">{es ? "Resultados" : "Results"}</span>
+            {(p.tier === "flagship" || p.tier === "mid") && (
+              <h2 className="section-title">
+                {es ? "El antes y después" : "The before and after"}{" "}
+                <span style={solidAccent}>
+                  {es ? "habla por sí solo." : "speaks for itself."}
+                </span>
+              </h2>
+            )}
+            <p style={{ ...bodyCopy, marginTop: "1.4rem", maxWidth: "38rem" }}>
+              {RESULTS_FRAME[p.tier][lang]}
+            </p>
+            <div className="results-grid">
+              {p.results.map((file) => {
+                const name = file.charAt(0).toUpperCase() + file.slice(1);
+                return (
+                  <figure style={{ margin: 0 }} key={file}>
+                    <img
+                      src={asset(`images/results/${file}.jpg`)}
+                      alt={
+                        es
+                          ? `Antes y después de ${name}, miembro de 54D ON`
+                          : `${name}'s before and after as a 54D ON member`
+                      }
+                      loading="lazy"
+                    />
+                    <figcaption
+                      style={{
+                        ...cardLabel,
+                        color: "var(--c-faint)",
+                        fontSize: "0.7rem",
+                        marginTop: "0.6rem",
+                      }}
+                    >
+                      {name.toUpperCase()}
+                      {es ? " · ANTES Y DESPUÉS" : " · THEN AND NOW"}
+                    </figcaption>
+                  </figure>
+                );
+              })}
+            </div>
+            <p className="photo-caption" style={{ marginTop: "0.9rem" }}>
+              {es
+                ? "Antes y después reales de miembros de 54D ON"
+                : "Real member before-and-afters from 54D ON"}
+            </p>
+            <p className="photo-caption" style={{ marginTop: "0.3rem" }}>
+              {es
+                ? "Los resultados varían según la persona."
+                : "Results vary by person."}
+            </p>
+          </div>
+        </div>
+      </section>
 
       {/* ============ 2. WHAT YOU'LL DO (punteos ✓ + foto vertical) ============ */}
       <section className="section">
@@ -774,20 +898,16 @@ export default function ProgramLandingPage({
             <h2 className="section-title">
               {t.proofTitle1} <span style={solidAccent}>{t.proofTitle2}</span>
             </h2>
-            <div style={twoCol}>
+            {/* alignItems start SOLO aca: las coach cards alinean con la
+                primera hairline de la garantia (las demas secciones siguen
+                center) */}
+            <div style={{ ...twoCol, alignItems: "start" }}>
               {/* Cards oficiales de coaches (nombre y especialidad quemados)
                   cuando la landing tiene equipo asignado; si no, la foto de
                   manos de siempre. Fucho EXCLUIDO del pool (boxeo). */}
               {p.coaches?.length ? (
                 <div>
-                  <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns:
-                        "repeat(auto-fit, minmax(min(100%, 150px), 1fr))",
-                      gap: "var(--gap-grid-tight)",
-                    }}
-                  >
+                  <div className="coach-row">
                     {p.coaches.map((path) => {
                       const file = path.split("/").pop()!.replace(".jpg", "");
                       const coachName =
@@ -855,6 +975,50 @@ export default function ProgramLandingPage({
                     </span>
                   </div>
                 </div>
+                {/* Resena real del App Store (harvest, verbatim, jamas
+                    traducida): la voz humana justo bajo la cifra 4.9.
+                    Rail editorial: sin caja, sin glass. */}
+                {p.testimonial && (
+                  <div
+                    style={{
+                      borderTop: "1px solid var(--hairline)",
+                      marginTop: "1.4rem",
+                      padding: "1.4rem 0 0",
+                    }}
+                  >
+                    <div
+                      aria-hidden="true"
+                      style={{
+                        color: "var(--c-yellow)",
+                        fontSize: "0.7rem",
+                        letterSpacing: "0.2em",
+                      }}
+                    >
+                      {"★".repeat(p.testimonial[lang].rating)}
+                    </div>
+                    <p
+                      style={{
+                        fontSize: "1.05rem",
+                        lineHeight: 1.6,
+                        color: "var(--c-white)",
+                        margin: "0.7rem 0 0",
+                      }}
+                    >
+                      {p.testimonial[lang].quote}
+                    </p>
+                    <div
+                      style={{
+                        ...cardLabel,
+                        color: "var(--c-faint)",
+                        fontSize: "0.7rem",
+                        marginTop: "0.7rem",
+                      }}
+                    >
+                      {p.testimonial[lang].author} · App Store ·{" "}
+                      {p.testimonial[lang].country.toUpperCase()}
+                    </div>
+                  </div>
+                )}
                 <InlineCta
                   eyebrow={p.tier === "runners" ? t.ctaProofRunners : t.ctaProof}
                   position="inline_proof"
@@ -864,52 +1028,6 @@ export default function ProgramLandingPage({
           </div>
         </div>
       </section>
-
-      {/* ============ 5b. RESULTADOS (SOLO flagship 54d-on) ============
-          REGLA DE ALCANCE: antes/después y claim -5kg SOLO en /on, /pricing
-          y /programs/54d-on. NO esparcir a las otras 12 landings. SIN CTA,
-          SIN urgencia: la banda es evidencia, lejos del hero y del cierre. */}
-      {p.slug === "54d-on" && (
-        <section className="section section-tight">
-          <div className="section-inner" ref={results.ref}>
-            <div className={results.className}>
-              <span className="day-marker">
-                {es ? "Resultados" : "Results"}
-              </span>
-              <p style={{ ...bodyCopy, marginTop: "1.4rem", maxWidth: "38rem" }}>
-                {es
-                  ? "Resultado promedio de nuestros miembros: -5 kg en 54 días · Verificado por coaches 54D"
-                  : "Average member result: -5 kg in 54 days · Verified by 54D coaches"}
-              </p>
-              <div className="results-grid">
-                {(
-                  [
-                    ["elizabeth", "Elizabeth"],
-                    ["sebastian", "Sebastian"],
-                  ] as const
-                ).map(([file, name]) => (
-                  <figure style={{ margin: 0 }} key={file}>
-                    <img
-                      src={asset(`images/results/${file}.jpg`)}
-                      alt={
-                        es
-                          ? `Antes y después de ${name}, miembro de 54D ON`
-                          : `${name}'s before and after as a 54D ON member`
-                      }
-                      loading="lazy"
-                    />
-                  </figure>
-                ))}
-              </div>
-              <p className="photo-caption" style={{ marginTop: "0.9rem" }}>
-                {es
-                  ? "Antes y después reales de miembros de 54D ON"
-                  : "Real member before-and-afters from 54D ON"}
-              </p>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* ============ 6. FAQ (único campo de gradiente: pre-CTA) ============ */}
       <section className="section bloom-ember">
@@ -947,7 +1065,7 @@ export default function ProgramLandingPage({
         <div className="section-inner" ref={cta.ref}>
           <div className={`final-wrap ${cta.className}`}>
             <h2 className="final-title">{finalTitle}</h2>
-            <PriceLine landing={p} note={p.priceNote[lang]} center />
+            <PriceLine landing={p} note={p.priceNote[lang]} center lang={lang} />
             <QuickWins items={p.quickWins[lang]} />
             <div className="hero-ctas">{finalButton}</div>
             <p style={{ ...microStyle, marginTop: "1.2rem" }}>

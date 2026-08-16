@@ -423,17 +423,39 @@ body {
 .results-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
-  gap: var(--gap-grid);
+  /* 2.5rem: a 1440 el gap viejo (24px) era apenas 2x el gutter interno del
+     composite y los pares THEN/NOW se ambiguaban entre personas */
+  gap: 2.5rem;
   margin-top: var(--space-block);
 }
 .results-grid img {
+  /* aspect-ratio reservado: mata el layout shift de las cargas lazy que
+     movia #buy mientras el sticky se asienta */
   width: 100%; aspect-ratio: 556 / 641; object-fit: cover; display: block;
   border-radius: var(--r-media, 2px); border: 1px solid var(--hairline);
 }
 @media (max-width: 900px) {
-  .results-grid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  /* gap de vuelta al token en mobile: el 2.5rem es cura desktop y aca
+     se comia el asomo del siguiente composite (cue de swipe) */
+  .results-grid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; gap: var(--gap-grid); }
   .results-grid::-webkit-scrollbar { display: none; }
-  .results-grid figure, .results-grid > * { flex: 0 0 72vw; scroll-snap-align: start; }
+  /* 80vw: mitades THEN/NOW ~156px a 390 ('bien visibles', cliente 13/08)
+     y el siguiente composite sigue asomando como cue de swipe */
+  .results-grid figure, .results-grid > * { flex: 0 0 80vw; scroll-snap-align: start; }
+}
+
+/* Fila de coaches del bloque PROOF (espejo de .coach-strip): grid en
+   desktop; bajo 900px pasa a strip scroll-snap y la tercera card asoma
+   e invita swipe (adios al 2+1 con card decapitada a 390) */
+.coach-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: var(--gap-grid-tight);
+}
+@media (max-width: 899px) {
+  .coach-row { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .coach-row::-webkit-scrollbar { display: none; }
+  .coach-row .coach-card { flex: 0 0 clamp(180px, 45vw, 230px); scroll-snap-align: start; }
 }
 
 /* Membresia de /on en mobile: el trio de precios precede al pitch (la
@@ -616,6 +638,17 @@ body {
   width: 100%; height: 100%;
   object-fit: cover;
   opacity: 0.5;
+}
+/* Foco de arte por slug (data heroFocus): las custom properties llegan
+   inyectadas en el style del img; sin ellas, encuadre centrado */
+.hero-media img { object-position: var(--hero-pos-d, 50% 50%); }
+@media (max-width: 767px) {
+  .hero-media img { object-position: var(--hero-pos-m, var(--hero-pos-d, 50% 50%)); }
+}
+/* Copy angosto en heroes con sujeto bajo el H1 (booty-on-fire, step-2):
+   el titular deja de cruzar la cara de la sujeto a 1440 */
+@media (min-width: 1200px) {
+  .hero-copy-narrow .hero-title, .hero-copy-narrow .hero-sub { max-width: 62%; }
 }
 /* Poster provisional: blooms de luz hasta que llegue el video */
 .hero-poster {
