@@ -1,9 +1,11 @@
 import type { ReactNode } from "react";
+import { useLang } from "../lib/i18n";
 
 /* ============================================================
    Badges de descarga de la app (DESIGN_FIXES_V4 §4, UX Anexo A).
    Glifos monocromos deliberadamente: el Play multicolor pelearía
    con la paleta binaria. Estilos en app.css (.store-badge*).
+   Wording oficial ES de las tiendas via useLang.
    ============================================================ */
 
 const AppleIcon = (
@@ -54,19 +56,21 @@ export function AppStoreBadges({
   appStoreUrl: string;
   googlePlayUrl: string;
 }) {
+  const { lang } = useLang();
+  const es = lang === "es";
   return (
     <div className="store-badges">
       <StoreBadge
         href={appStoreUrl}
-        label="Download on the App Store"
-        lineOne="Download on the"
+        label={es ? "Descárgalo en el App Store" : "Download on the App Store"}
+        lineOne={es ? "Descárgalo en el" : "Download on the"}
         lineTwo="App Store"
         icon={AppleIcon}
       />
       <StoreBadge
         href={googlePlayUrl}
-        label="Get it on Google Play"
-        lineOne="Get it on"
+        label={es ? "Disponible en Google Play" : "Get it on Google Play"}
+        lineOne={es ? "Disponible en" : "Get it on"}
         lineTwo="Google Play"
         icon={PlayIcon}
       />

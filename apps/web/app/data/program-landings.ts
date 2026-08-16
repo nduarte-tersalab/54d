@@ -7,6 +7,10 @@
    Record<Lang, ...>. Sin em/en dashes (regla COPY_V3), ES neutro
    latino con tuteo, jamas voseo.
    Equipo alineado a la fuente de verdad: on.tsx PROGRAMS[].equipment.
+   REGLA DE ALCANCE: los antes/después y el claim -5kg viven SOLO en
+   /on, /pricing y /programs/54d-on. NO esparcir a las otras 12
+   landings (claim no publicado por programa + riesgo Meta Personal
+   Health).
    ============================================================ */
 
 import type { Lang } from "../lib/i18n";
@@ -77,6 +81,10 @@ export type ProgramLanding = {
   quickWins: Record<Lang, { value: string; label: string }[]>;
   hero: LandingImage;
   secondary?: LandingImage;
+  /** Cards oficiales de coaches (images/coaches/*.jpg, nombre y especialidad
+      quemados) para el bloque PROOF; sin campo, PROOF usa la foto de manos.
+      Matcheados por especialidad. Fucho EXCLUIDO del pool (boxeo). */
+  coaches?: string[];
   /** Stat cards de THE STRUCTURE (se omite en starters: página corta) */
   stats?: { value: Dict; label: Dict }[];
   /** Semana tipo week 1 vs week final (solo mids) */
@@ -112,7 +120,7 @@ const FAQ_REFUND = {
   },
   es: {
     q: "¿Cuál es la política de reembolso?",
-    a: "Reembolso completo dentro de los 30 días. Sin interrogatorios, sin letra pequeña.",
+    a: "Reembolso completo dentro de los 30 días. Sin interrogatorios, sin letra chica.",
   },
 };
 
@@ -134,7 +142,7 @@ const FAQ_APP = {
   },
   es: {
     q: "¿Dónde lo entreno?",
-    a: "En la app 54D ON para iOS y Android: ahí viven tus sesiones, tu progreso y el chat con tu coach. La app es gratis de descargar y tiene 4.9 en el App Store.",
+    a: "En la app 54D ON para iOS y Android: ahí viven tus sesiones, tu progreso y el chat con tu coach. La app se descarga gratis y tiene 4.9 en el App Store.",
   },
 };
 
@@ -173,6 +181,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
   /* ============ FLAGSHIP $385/$400 ============ */
   "54d-on": {
     slug: "54d-on",
+    coaches: ["images/coaches/alexis.jpg", "images/coaches/alicia.jpg", "images/coaches/luis.jpg"],
     name: "54D ON",
     tier: "flagship",
     priceId: "PENDING_54d-on_onetime",
@@ -189,7 +198,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
     },
     cta: {
       en: "Reserve my spot · Starts Monday",
-      es: "Reserva mi lugar · Empieza el lunes",
+      es: "Reserva tu lugar · Empieza el lunes",
     },
     microcopy: ONE_PAYMENT,
     bullets: {
@@ -210,7 +219,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
     },
     forWho: {
       en: "You're ready to commit 9 weeks and want a coach holding you accountable.",
-      es: "Estás listo para comprometerte 9 semanas y quieres un coach que te haga responsable.",
+      es: "Estás listo para comprometerte 9 semanas y quieres un coach que te exija de verdad.",
     },
     notFor: {
       en: "You want a casual workout you can skip without anyone noticing.",
@@ -227,7 +236,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         { value: "Lunes", label: "Tu día 1" },
         { value: "45 min", label: "Por sesión" },
         { value: "6 días por semana", label: "Tu ritmo" },
-        { value: "Bandas opcional", label: "Todo lo que necesitas" },
+        { value: "Bandas opcionales", label: "Todo lo que necesitas" },
       ],
     },
     hero: {
@@ -319,6 +328,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
 
   "step-2": {
     slug: "step-2",
+    coaches: ["images/coaches/kevin.jpg", "images/coaches/cristian.jpg", "images/coaches/elliot.jpg"],
     name: "Step 2",
     tier: "flagship",
     priceId: "PENDING_step-2_onetime",
@@ -341,7 +351,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
     },
     cta: {
       en: "Reserve my spot · Starts Monday",
-      es: "Reserva mi lugar · Empieza el lunes",
+      es: "Reserva tu lugar · Empieza el lunes",
     },
     microcopy: ONE_PAYMENT,
     bullets: {
@@ -354,8 +364,8 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       es: [
         "Levantamientos más pesados y progresiones avanzadas",
         "6 sesiones por semana construidas sobre la base de 54D",
-        "Feedback ilimitado del coach en cada repetición",
-        "Benchmarks de rendimiento en cada ciclo de 18 días",
+        "Correcciones ilimitadas del coach en cada repetición",
+        "Pruebas de rendimiento en cada ciclo de 18 días",
       ],
     },
     forWho: {
@@ -381,7 +391,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         { value: "Lunes", label: "Tu día 1" },
         { value: "6 días por semana", label: "Sesiones" },
         { value: "Avanzado", label: "Nivel" },
-        { value: "Bandas opcional", label: "Todo lo que necesitas" },
+        { value: "Bandas opcionales", label: "Todo lo que necesitas" },
       ],
     },
     hero: {
@@ -411,7 +421,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         value: { en: "18", es: "18" },
         label: {
           en: "Day cycles, benchmarked",
-          es: "Ciclos de días, con benchmark",
+          es: "Días por ciclo, con prueba de rendimiento",
         },
       },
       {
@@ -425,7 +435,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         title: { en: "Cycle 1: Recalibrate", es: "Ciclo 1: Recalibrar" },
         desc: {
           en: "Heavier baselines than 54D ON. Performance benchmarks set your new starting line.",
-          es: "Bases más pesadas que en 54D ON. Los benchmarks de rendimiento marcan tu nueva línea de salida.",
+          es: "Bases más pesadas que en 54D ON. Las pruebas de rendimiento marcan tu nueva línea de salida.",
         },
       },
       {
@@ -441,7 +451,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         title: { en: "Cycle 3: Peak", es: "Ciclo 3: Pico" },
         desc: {
           en: "The heaviest lifts of the program and the final benchmarks. This is where most people never go.",
-          es: "Los levantamientos más pesados del programa y los benchmarks finales. Aquí es donde casi nadie llega.",
+          es: "Los levantamientos más pesados del programa y las pruebas finales. Aquí es donde casi nadie llega.",
         },
       },
     ],
@@ -487,6 +497,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
   /* ============ STARTERS $19-$39 ============ */
   "emergency-kit": {
     slug: "emergency-kit",
+    coaches: ["images/coaches/kevin.jpg", "images/coaches/cristian.jpg"],
     name: "Emergency Kit",
     tier: "starter",
     priceId: "PENDING_emergency-kit_onetime",
@@ -518,7 +529,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         "Sesiones diarias de alta intensidad de 30 min",
         "Trabajo de cuerpo completo, sin relleno",
         "Una lista simple para cada día",
-        "Coach en tu esquina los 14 días",
+        "Un coach contigo los 14 días",
       ],
     },
     forWho: {
@@ -592,6 +603,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
 
   "max-burn": {
     slug: "max-burn",
+    coaches: ["images/coaches/elliot.jpg", "images/coaches/luis.jpg"],
     name: "Max Burn",
     tier: "starter",
     priceId: "PENDING_max-burn_onetime",
@@ -605,7 +617,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
       es: {
         plain: "14 días del cardio más duro",
-        accent: "que vas a amar terminar.",
+        accent: "que te va a encantar terminar.",
       },
     },
     subhead: {
@@ -629,7 +641,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         "Sesiones diarias de HIIT de menos de 35 min",
         "Zonas de frecuencia cardíaca que tu coach define en cada sesión",
         "Bandas de resistencia y espacio en el piso, nada más",
-        "Tu coach te mantiene honesto todos los días",
+        "Tu coach no te deja aflojar ni un día",
       ],
     },
     forWho: {
@@ -690,7 +702,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         },
         es: {
           q: "¿Qué nivel necesito?",
-          a: "Cualquiera. La intensidad es escalable y tu coach la mantiene honesta.",
+          a: "Cualquiera. La intensidad es escalable y tu coach se asegura de que no aflojes.",
         },
       },
       FAQ_MISS,
@@ -703,6 +715,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
 
   "reset-7": {
     slug: "reset-7",
+    coaches: ["images/coaches/jennifer.jpg", "images/coaches/sasha.jpg"],
     name: "Reset 7",
     tier: "starter",
     priceId: "PENDING_reset-7_onetime",
@@ -742,7 +755,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
     },
     forWho: {
       en: "You're stuck and need a low-stakes way back in.",
-      es: "Estás estancado y necesitas una forma de volver sin presión.",
+      es: "Te estancaste y necesitas una forma de volver sin presión.",
     },
     notFor: {
       en: "You're already training consistently.",
@@ -771,6 +784,15 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       alt: {
         en: "Athletes stretching and recovering together on the training floor",
         es: "Atletas estirando y recuperando juntos en el piso de entrenamiento",
+      },
+    },
+    /* PROOF de reset-7 ahora muestra coach cards: coach-hands queda
+       libre para el split de 'Lo que vas a hacer' (verificada limpia) */
+    secondary: {
+      src: hl("coach-hands"),
+      alt: {
+        en: "A 54D coach adjusting a member's triceps extension, hands on",
+        es: "Un coach de 54D corrigiendo de cerca la técnica de una miembro",
       },
     },
     faq: faqs([
@@ -804,6 +826,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
 
   "first-move": {
     slug: "first-move",
+    coaches: ["images/coaches/jennifer.jpg", "images/coaches/sasha.jpg"],
     name: "First Move",
     tier: "starter",
     priceId: "PENDING_first-move_onetime",
@@ -822,7 +845,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
     },
     subhead: {
       en: "14 days built for absolute beginners, with a real coach so you never feel lost.",
-      es: "14 días hechos para principiantes absolutos, con un coach real para que nunca te sientas perdido.",
+      es: "14 días hechos para principiantes absolutos, con un coach real para que nunca te pierdas.",
     },
     cta: { en: "Start today", es: "Empieza hoy" },
     microcopy: ONE_PAYMENT,
@@ -840,7 +863,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       es: [
         "Sesiones diarias suaves desde 20 min",
         "Aprende bien los movimientos fundamentales",
-        "Un coach responde cada pregunta, sin vergüenza",
+        "Un coach responde cada pregunta, sin pena",
         "Construye el hábito antes que la intensidad",
       ],
     },
@@ -850,7 +873,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
     },
     notFor: {
       en: "You're an experienced athlete: you'll be bored.",
-      es: "Eres un atleta con experiencia: te vas a aburrir.",
+      es: "Ya tienes años entrenando: te vas a aburrir.",
     },
     notForLink: {
       slug: "54d-on",
@@ -896,7 +919,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         },
         es: {
           q: "Estoy muy fuera de forma. ¿Puedo hacerlo?",
-          a: "Esto existe exactamente para ti. Sesiones suaves, cero suposiciones.",
+          a: "Esto existe exactamente para ti. Sesiones suaves y empezamos desde cero.",
         },
       },
       {
@@ -919,6 +942,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
 
   "booty-on-fire": {
     slug: "booty-on-fire",
+    coaches: ["images/coaches/sol.jpg", "images/coaches/nati.jpg"],
     name: "Booty on Fire",
     tier: "starter",
     priceId: "PENDING_booty-on-fire_onetime",
@@ -1025,6 +1049,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
   /* ============ MIDS $95-$185 ============ */
   "full-body": {
     slug: "full-body",
+    coaches: ["images/coaches/victor.jpg", "images/coaches/april.jpg"],
     name: "Full Body",
     tier: "mid",
     priceId: "PENDING_full-body_onetime",
@@ -1051,8 +1076,8 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       es: [
         "Sesiones de cuerpo completo de 45 min, 5 veces por semana",
         "Fuerza + acondicionamiento en cada entrenamiento",
-        "Feedback de tu coach cuando lo necesites",
-        "Una prueba de meta final en la semana 4",
+        "Correcciones de tu coach cuando las necesites",
+        "Una prueba final en la semana 4",
       ],
     },
     forWho: {
@@ -1122,7 +1147,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       toLabel: { en: "Week 4", es: "Semana 4" },
       to: {
         en: "Same structure, heavier and faster, capped with the finish-line test.",
-        es: "La misma estructura, más pesada y más rápida, y cierra con la prueba de meta final.",
+        es: "La misma estructura, más pesada y más rápida, y cierra con la prueba final.",
       },
     },
     faq: faqs([
@@ -1166,6 +1191,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
 
   "lower-body": {
     slug: "lower-body",
+    coaches: ["images/coaches/sol.jpg", "images/coaches/nati.jpg"],
     name: "Lower Body",
     tier: "mid",
     priceId: "PENDING_lower-body_onetime",
@@ -1313,6 +1339,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
 
   "upper-body": {
     slug: "upper-body",
+    coaches: ["images/coaches/april.jpg", "images/coaches/katia.jpg"],
     name: "Upper Body",
     tier: "mid",
     priceId: "PENDING_upper-body_onetime",
@@ -1343,7 +1370,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         "Unlimited coach form checks",
       ],
       es: [
-        "Divisiones de empuje y jalón, con sobrecarga progresiva",
+        "Rutinas de empuje y jalón, con sobrecarga progresiva",
         "4-5 sesiones por semana",
         "Trabajo de core integrado en cada sesión",
         "Revisiones de técnica ilimitadas con tu coach",
@@ -1436,7 +1463,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
           a: "You'll build lean strength. Size comes from nutrition, not from a program alone.",
         },
         es: {
-          q: "¿Me va a poner muy voluminoso?",
+          q: "¿Voy a ganar demasiado volumen?",
           a: "Vas a construir fuerza magra. El tamaño viene de la nutrición, no de un programa por sí solo.",
         },
       },
@@ -1520,7 +1547,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       es: [
         { value: "Gratis", label: "Tus primeros 7 días" },
         { value: "3 por semana", label: "Salidas" },
-        { value: "Tus zapatillas", label: "Todo lo que necesitas" },
+        { value: "Tus tenis", label: "Todo lo que necesitas" },
         { value: "1 clic", label: "Para cancelar" },
       ],
     },
@@ -1657,10 +1684,12 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: hd2("v-quad-stretch"),
+      /* La candidata de estiramiento quedo VETADA (conos naranjas): la
+         rampa esta verificada limpia y es corredores en pleno trabajo */
+      src: hd("cg-ramp-runners-wide"),
       alt: {
-        en: "Runner airborne mid plyometric jump over the floor ladder beside the studio stairs",
-        es: "Corredora en el aire en pleno salto pliométrico sobre la escalera de piso, junto a las escaleras del estudio",
+        en: "54D members running up the yellow ramp during a session",
+        es: "Miembros de 54D subiendo la rampa amarilla en plena sesión",
       },
     },
     stats: [
@@ -1760,7 +1789,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
     },
     notFor: {
       en: "You're a new runner: the mileage will eat you.",
-      es: "Eres corredor nuevo: el kilometraje te va a comer.",
+      es: "Recién empiezas a correr: el kilometraje te va a comer.",
     },
     notForLink: {
       slug: "runners-5k",
@@ -1776,7 +1805,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       es: [
         { value: "Gratis", label: "Tus primeros 7 días" },
         { value: "4 a 5 por semana", label: "Salidas" },
-        { value: "Tus zapatillas", label: "Todo lo que necesitas" },
+        { value: "Tus tenis", label: "Todo lo que necesitas" },
         { value: "1 clic", label: "Para cancelar" },
       ],
     },

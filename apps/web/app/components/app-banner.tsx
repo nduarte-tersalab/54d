@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router";
 import { asset } from "../lib/asset";
+import { useLang } from "../lib/i18n";
 
 /* ============================================================
    Smart App Banner (mobile only).
@@ -23,6 +24,8 @@ export function SmartAppBanner() {
   /* En el gateway no: la decisión ON/Studios va primero (crítica de diseño);
      el banner aparece al navegar a cualquier otra página. */
   const { pathname } = useLocation();
+  const { lang } = useLang();
+  const es = lang === "es";
 
   useEffect(() => {
     if (localStorage.getItem(DISMISS_KEY)) return;
@@ -65,7 +68,7 @@ export function SmartAppBanner() {
       <button
         type="button"
         className="app-banner-close"
-        aria-label="Dismiss app banner"
+        aria-label={es ? "Cerrar" : "Dismiss app banner"}
         onClick={dismiss}
       >
         ×
@@ -77,7 +80,9 @@ export function SmartAppBanner() {
       />
       <span className="app-banner-text">
         <b>54D On</b>
-        <small>A real coach, every day</small>
+        <small>
+          {es ? "Un coach real, todos los días" : "A real coach, every day"}
+        </small>
       </span>
       <a
         href={platform === "android" ? PLAY_URL : APP_STORE_URL}
@@ -85,7 +90,7 @@ export function SmartAppBanner() {
         rel="noopener noreferrer"
         className="app-banner-get"
       >
-        Get app
+        {es ? "Descargar" : "Get app"}
       </a>
     </div>
   );

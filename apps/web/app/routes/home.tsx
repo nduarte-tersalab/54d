@@ -1,15 +1,25 @@
 import { Link } from "react-router";
 import type { Route } from "./+types/home";
 import { asset } from "../lib/asset";
-import { LangToggle, useLang } from "../lib/i18n";
+import { LangToggle, resolveLang, useLang } from "../lib/i18n";
 
-export function meta({}: Route.MetaArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
+  return { lang: resolveLang(request) };
+}
+
+export function meta({ loaderData }: Route.MetaArgs) {
+  const es = loaderData?.lang === "es";
   return [
-    { title: "54D: The 54-Day Transformation Method" },
+    {
+      title: es
+        ? "54D: el método de transformación de 54 días"
+        : "54D: The 54-Day Transformation Method",
+    },
     {
       name: "description",
-      content:
-        "High-intensity training, personalized nutrition, and a coach on you every day for 54 days. Online, or in our studios in Miami, Mexico City, and Bogotá.",
+      content: es
+        ? "Entrenamiento de alta intensidad, nutrición personalizada y un coach contigo todos los días durante 54 días. Online o en nuestros studios de Miami, Ciudad de México y Bogotá."
+        : "High-intensity training, personalized nutrition, and a coach on you every day for 54 days. Online, or in our studios in Miami, Mexico City, and Bogotá.",
     },
   ];
 }
@@ -203,6 +213,11 @@ const GATE_CSS = `
 @media (max-width: 900px) {
   .gate { justify-content: flex-start; padding-top: clamp(3rem, 8vh, 4.5rem); }
   .gate-desc { font-size: 0.92rem; }
+  /* Compactar: el CTA amarillo de ON (la unica decision del gate) entra
+     COMPLETO en el primer viewport de 844px */
+  .gate-doors { margin-top: clamp(1.6rem, 3.5vh, 2.4rem); }
+  .gate-door { padding: clamp(1.5rem, 2.6vh, 2rem) clamp(1.4rem, 3vw, 2rem); }
+  .gate-press { margin-top: clamp(1.8rem, 3.5vh, 2.6rem); }
 }
 `;
 
@@ -232,7 +247,7 @@ const GATE_COPY = {
     onEyebrow: "Online, donde estés",
     onDesc:
       "El programa de 54 días en la app: entrenamiento diario, tu protocolo de nutrición y un coach real contigo.",
-    onCta: "Empieza gratis 7 días",
+    onCta: "Empieza gratis por 7 días",
     onMicro: "Cancela cuando quieras",
     press: "En los medios",
     chooseLabel: "Elige tu 54D",
@@ -241,6 +256,7 @@ const GATE_COPY = {
 
 export default function Home() {
   const { lang } = useLang();
+  const es = lang === "es";
   const c = GATE_COPY[lang];
   return (
     <div>
@@ -356,8 +372,9 @@ export default function Home() {
 
           {/* Microlinea legal (Meta Ads exige privacy accesible desde la landing) */}
           <p className="gate-legal">
-            © 2026 54D · <Link to="/privacy">Privacy</Link> ·{" "}
-            <Link to="/terms">Terms</Link>
+            © 2026 54D ·{" "}
+            <Link to="/privacy">{es ? "Privacidad" : "Privacy"}</Link> ·{" "}
+            <Link to="/terms">{es ? "Términos" : "Terms"}</Link>
           </p>
         </div>
       </header>

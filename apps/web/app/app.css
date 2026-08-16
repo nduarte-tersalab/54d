@@ -153,6 +153,8 @@ body {
 .nav-logo {
   font-family: var(--font-display); font-weight: 800; font-size: 1.35rem;
   letter-spacing: 0.02em; color: var(--c-white); text-decoration: none;
+  /* Hit area >=44px (WCAG 2.5.5): el logo es el unico camino al home */
+  display: flex; align-items: center; min-height: 44px;
 }
 /* Lockup real (BRAND §2): PNG cuadrado, la tinta se centra sola en el nav de 64px */
 .nav-logo img { display: block; width: 52px; height: 52px; object-fit: contain; }
@@ -379,9 +381,72 @@ body {
 .prog-card-note {
   margin-top: 0.6rem; font-size: 0.72rem; color: var(--c-faint);
   font-family: var(--font-label); letter-spacing: 0.06em; text-transform: uppercase;
+  /* Siempre renderizada (nbsp si no hay nota): los botones de la fila
+     alinean su linea base entre cards con y sin startNote */
+  min-height: 1.1em; display: block;
 }
 @media (max-width: 900px) {
   .prog-grid.prog-collapsed .prog-card:nth-child(n + 6) { display: none; }
+}
+/* Closing tile del grid de programas (/on): pieza 14 que llena las celdas
+   vacias junto a Runner 21K y aloja el CTA con contexto (queja cliente 13/08) */
+.prog-close {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; gap: 0.4rem;
+  padding: clamp(1.8rem, 3vw, 2.6rem);
+  grid-column: 1 / -1;
+}
+@media (min-width: 640px) {
+  .prog-close { grid-column: 2 / -1; }
+}
+@media (max-width: 900px) {
+  /* La tile sobrevive al colapso mobile: es el cierre del grid, no un programa */
+  .prog-grid.prog-collapsed .prog-card.prog-close { display: flex; }
+}
+
+/* Strip de coaches (/on y landings): cards oficiales 500x741 con nombre y
+   especialidad quemados; scroll-snap horizontal, sin scrollbar visible */
+.coach-strip {
+  display: flex; gap: var(--gap-grid-tight); margin-top: var(--space-block);
+  overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 0.6rem;
+  scrollbar-width: none;
+}
+.coach-strip::-webkit-scrollbar { display: none; }
+.coach-card {
+  flex: 0 0 clamp(180px, 16vw, 230px); scroll-snap-align: start;
+  border: 1px solid var(--hairline); border-radius: var(--r-card); overflow: hidden;
+}
+.coach-card img { width: 100%; aspect-ratio: 500 / 741; object-fit: cover; display: block; }
+
+/* Grid de resultados THEN/NOW (composites oficiales 556x641). SIN filtros de
+   saturacion: pieles reales. En mobile pasa a strip scroll-snap. */
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: var(--gap-grid);
+  margin-top: var(--space-block);
+}
+.results-grid img {
+  width: 100%; aspect-ratio: 556 / 641; object-fit: cover; display: block;
+  border-radius: var(--r-media, 2px); border: 1px solid var(--hairline);
+}
+@media (max-width: 900px) {
+  .results-grid { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+  .results-grid::-webkit-scrollbar { display: none; }
+  .results-grid figure, .results-grid > * { flex: 0 0 72vw; scroll-snap-align: start; }
+}
+
+/* Membresia de /on en mobile: el trio de precios precede al pitch (la
+   decision queda a un scroll del titulo, no a 1.100px) */
+@media (max-width: 900px) {
+  .memb-split .plans-trio { order: -1; }
+}
+
+/* Watch render: media compacta solo desktop. El display base vive ACA
+   (no inline en el img): un display inline pisaria el none del media query. */
+.watch-desktop { display: block; }
+@media (max-width: 900px) {
+  .watch-desktop { display: none; }
 }
 
 /* Trio de planes (compartido /pricing y /on): tres tiers lado a lado,
@@ -514,11 +579,19 @@ body {
   font-size: 0.85rem;
   border-radius: var(--r-control);
 }
+/* Drawer full-screen: el CTA usa el target tactil mobile, no el de nav.
+   Vive DESPUES de .btn.btn-nav para ganarle (misma cascada, mas
+   especificidad). */
+.nav-drawer .btn.btn-nav { min-height: var(--btn-h-mobile); }
 .nav-links .btn-nav { margin-left: clamp(0.3rem, 1.2vw, 1.2rem); }
 /* Mobile: UNA sola altura de CTA de contenido (FIXES_V5 §2.6; hoy 50/55/57px) */
 @media (max-width: 640px) {
   .btn-primary, .btn-ghost, .btn-on { padding-inline: 1.7rem; font-size: 0.9rem; min-height: var(--btn-h-mobile); }
 }
+
+/* Microcopy de riesgo PEGADO al boton (MEMBERSHIP_SALES §3.4). Vivia en el
+   <style> de /pricing y /on la usaba sin estilos: ahora es global. */
+.btn-riskline { display: block; font-size: 0.72rem; color: var(--c-faint); text-align: center; margin-top: 0.55rem; letter-spacing: 0.02em; }
 
 /* ---------- Hero ---------- */
 .hero {

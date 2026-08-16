@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * Sticky CTA mobile compartida (FIXES_V5 §4 / MOBILE_COMMERCE F5).
@@ -10,9 +10,11 @@ import { useEffect, useState } from "react";
  * onClick (opcional): convierte la barra en un botón que cobra en 1 tap
  * en vez de un ancla que solo scrollea. Sin onClick sigue siendo el <a>
  * de siempre: on.tsx y pricing.tsx la usan así y no se tocan.
- * hideWhenVisible (opcional): selector del bloque de compra final. Cuando
- * ese bloque entra en viewport la barra se retira, para no dejar dos
- * botones amarillos primarios en la misma vista (QUIET v6).
+ * hideWhenVisible (opcional): selector (o lista separada por comas) de los
+ * bloques de compra. Cuando CUALQUIERA entra en viewport la barra se retira,
+ * para no dejar dos botones amarillos primarios en la misma vista (QUIET v6).
+ * error (opcional): mensaje de fallo del checkout renderizado DENTRO de la
+ * barra, sobre el botón: el fallo del tap sticky ya no es silencioso.
  */
 export function StickyCta({
   href,
@@ -20,12 +22,14 @@ export function StickyCta({
   onClick,
   busy,
   hideWhenVisible,
+  error,
 }: {
   href: string;
   label: string;
   onClick?: () => void;
   busy?: boolean;
   hideWhenVisible?: string;
+  error?: string | null;
 }) {
   const [visible, setVisible] = useState(false);
   const [covered, setCovered] = useState(false);
@@ -44,15 +48,30 @@ export function StickyCta({
     };
   }, []);
 
+  /* Estado por elemento observado: covered = ALGUNO intersecta */
+  const coveredMap = useRef(new Map<Element, boolean>());
   useEffect(() => {
     if (!hideWhenVisible) return;
-    const el = document.querySelector(hideWhenVisible);
-    if (!el) return;
-    const io = new IntersectionObserver(([e]) => setCovered(e.isIntersecting), {
-      threshold: 0,
-    });
-    io.observe(el);
-    return () => io.disconnect();
+    const els = hideWhenVisible
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .flatMap((sel) => Array.from(document.querySelectorAll(sel)));
+    if (els.length === 0) return;
+    const map = coveredMap.current;
+    map.clear();
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) map.set(e.target, e.isIntersecting);
+        setCovered(Array.from(map.values()).some(Boolean));
+      },
+      { threshold: 0 }
+    );
+    els.forEach((el) => io.observe(el));
+    return () => {
+      io.disconnect();
+      map.clear();
+    };
   }, [hideWhenVisible]);
 
   /* Con la barra visible, compensa el solape sobre el legal del footer
@@ -83,6 +102,19 @@ export function StickyCta({
         borderTop: "1px solid var(--hairline)",
       }}
     >
+      {error && (
+        <p
+          role="alert"
+          style={{
+            margin: "0 0 0.5rem",
+            fontSize: "0.78rem",
+            color: "var(--c-red)",
+            textAlign: "center",
+          }}
+        >
+          {error}
+        </p>
+      )}
       {onClick ? (
         <button
           type="button"
@@ -94,7 +126,7 @@ export function StickyCta({
             display: "block",
             width: "100%",
             textAlign: "center",
-            minHeight: "48px",
+            minHeight: "var(--btn-h-mobile)",
           }}
         >
           {label}

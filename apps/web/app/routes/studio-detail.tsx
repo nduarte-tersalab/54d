@@ -4,7 +4,7 @@ import type { Route } from "./+types/studio-detail";
 import { Nav, Footer, useReveal } from "../components/site";
 import { STUDIOS, cityLabel } from "../data/studios";
 import { asset } from "../lib/asset";
-import { useLang, type Lang } from "../lib/i18n";
+import { resolveLang, useLang, type Lang } from "../lib/i18n";
 import { DIAL_CODES, FREQUENT_ISO, isoFlag } from "../data/dial-codes";
 import { GOOGLE_REVIEWS } from "../data/testimonials";
 
@@ -32,7 +32,7 @@ type LiveClass = {
   locationId: number;
 };
 
-export async function loader({ params }: Route.LoaderArgs) {
+export async function loader({ params, request }: Route.LoaderArgs) {
   const studio = STUDIOS.find((s) => s.slug === params.slug);
   if (!studio) throw new Response("Not Found", { status: 404 });
   /* Numeros placeholder (555) no viajan ni en el payload de hidratacion:
@@ -61,7 +61,7 @@ export async function loader({ params }: Route.LoaderArgs) {
     /* silencio: los horarios estaticos cubren */
   }
 
-  return { studio: { ...studio, whatsapp }, liveClasses };
+  return { studio: { ...studio, whatsapp }, liveClasses, lang: resolveLang(request) };
 }
 
 /* Display de ciudad: cityLabel compartido y localizado (data/studios.ts),
@@ -76,33 +76,63 @@ const cityPlain = (city: string) =>
    Excepción (SEPARATION_SPEC decisión 2): Hallandale cierra con
    "Apply for the next Generation." en vez del cierre original con
    verbo de carrito (border rule 5 de BRAND_SEPARATION). */
-const LOCAL_META: Record<string, { title: string; desc: string }> = {
+const LOCAL_META: Record<string, Record<"en" | "es", { title: string; desc: string }>> = {
   "coral-gables": {
-    title: "Private Group Transformation Studio in Coral Gables | 54D",
-    desc: "54 days, small groups, coaches on the floor, nutrition and physiotherapy on Ponce de Leon Blvd. Join the next Generation at 54D Coral Gables.",
+    en: {
+      title: "Private Group Transformation Studio in Coral Gables | 54D",
+      desc: "54 days, small groups, coaches on the floor, nutrition and physiotherapy on Ponce de Leon Blvd. Join the next Generation at 54D Coral Gables.",
+    },
+    es: {
+      title: "Studio de transformación en grupos privados en Coral Gables | 54D",
+      desc: "54 días, grupos reducidos, coaches en el piso, nutrición y fisioterapia en Ponce de Leon Blvd. Únete a la próxima Generación en 54D Coral Gables.",
+    },
   },
   hallandale: {
-    title: "Small Group Transformation Studio in Hallandale Beach | 54D",
-    desc: "The 54D Method between Miami and Fort Lauderdale: 54 days, fixed groups, coaches, nutrition and physio at 601 N Federal Hwy. Apply for the next Generation.",
+    en: {
+      title: "Small Group Transformation Studio in Hallandale Beach | 54D",
+      desc: "The 54D Method between Miami and Fort Lauderdale: 54 days, fixed groups, coaches, nutrition and physio at 601 N Federal Hwy. Apply for the next Generation.",
+    },
+    es: {
+      title: "Studio de transformación en grupos reducidos en Hallandale Beach | 54D",
+      desc: "El Método 54D entre Miami y Fort Lauderdale: 54 días, grupos fijos, coaches, nutrición y fisioterapia en 601 N Federal Hwy. Aplica a la próxima Generación.",
+    },
   },
   "mexico-carso": {
-    title: "54 Day Transformation Program in Polanco | 54D CDMX",
-    desc: "Train the 54D Method steps from Plaza Carso in Nuevo Polanco: small groups, coaches, nutrition and physiotherapy. Next Generation starting soon.",
+    en: {
+      title: "54 Day Transformation Program in Polanco | 54D CDMX",
+      desc: "Train the 54D Method steps from Plaza Carso in Nuevo Polanco: small groups, coaches, nutrition and physiotherapy. Next Generation starting soon.",
+    },
+    es: {
+      title: "Programa de transformación de 54 días en Polanco | 54D CDMX",
+      desc: "Entrena el Método 54D a pasos de Plaza Carso en Nuevo Polanco: grupos reducidos, coaches, nutrición y fisioterapia. Próxima Generación por comenzar.",
+    },
   },
   "mexico-santa-fe": {
-    title: "54 Day Transformation Program in Santa Fe | 54D CDMX",
-    desc: "The 54D Method in the corporate heart of Santa Fe, CDMX: fixed Generations, coaches on the floor, nutrition and physio. Limited spots per start.",
+    en: {
+      title: "54 Day Transformation Program in Santa Fe | 54D CDMX",
+      desc: "The 54D Method in the corporate heart of Santa Fe, CDMX: fixed Generations, coaches on the floor, nutrition and physio. Limited spots per start.",
+    },
+    es: {
+      title: "Programa de transformación de 54 días en Santa Fe | 54D CDMX",
+      desc: "El Método 54D en el corazón corporativo de Santa Fe, CDMX: Generaciones fijas, coaches en el piso, nutrición y fisioterapia. Cupos limitados por inicio.",
+    },
   },
   bogota: {
-    title: "54 Day Transformation Program in Bogota | 54D",
-    desc: "Train the 54D Method on Calle 109 in Bogota: small groups, coaches, nutrition and physiotherapy. Join the next Generation.",
+    en: {
+      title: "54 Day Transformation Program in Bogota | 54D",
+      desc: "Train the 54D Method steps from Parque de la 93 in Chapinero: small groups, coaches, nutrition and physiotherapy. Join the next Generation.",
+    },
+    es: {
+      title: "Programa de transformación de 54 días en Bogotá | 54D",
+      desc: "Entrena el Método 54D a pasos del Parque de la 93 en Chapinero: grupos reducidos, coaches, nutrición y fisioterapia. Únete a la próxima Generación.",
+    },
   },
 };
 
 export function meta({ loaderData }: Route.MetaArgs) {
   if (!loaderData) return [{ title: "54D Studios" }];
   const { studio } = loaderData;
-  const local = LOCAL_META[studio.slug];
+  const local = LOCAL_META[studio.slug]?.[loaderData.lang ?? "en"];
   if (local) {
     return [{ title: local.title }, { name: "description", content: local.desc }];
   }

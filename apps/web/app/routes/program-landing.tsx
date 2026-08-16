@@ -19,6 +19,10 @@ import type { ProgramLanding, ProgramSlug } from "../data/program-landings";
    compra manda su cta_position. La atribución (utm_content={{ad.name}})
    la captura root.tsx y la adjunta el propio startCheckout.
    Copy 100% bilingüe: el idioma sale del loader (SSR) y del contexto.
+   REGLA DE ALCANCE: los antes/después y el claim -5kg viven SOLO en
+   /on, /pricing y /programs/54d-on. NO esparcir a las otras 12
+   landings (claim no publicado por programa + riesgo Meta Personal
+   Health).
    ============================================================ */
 
 export async function loader({ params, request }: Route.LoaderArgs) {
@@ -133,25 +137,25 @@ const T = {
     proofTitle2: "Una garantía real.",
     guaranteeName: "Garantía de devolución de 30 días",
     guaranteeBody:
-      "Sigue el programa y, si no ves resultados, te devolvemos tu dinero. Sin interrogatorios, sin letra pequeña.",
+      "Sigue el programa y, si no ves resultados, te devolvemos tu dinero. Sin interrogatorios, sin letra chica.",
     coachName: "Un coach real, no un algoritmo",
     coachBody:
       "Un coach certificado de 54D revisa tu técnica y te responde en la app. Cada pregunta, cada repetición, todo el camino.",
     captionStudio: "Tomada en un estudio 54D. Este es el estándar.",
-    captionCoach: "Un coach certificado de 54D, en tu esquina.",
+    captionCoach: "Un coach certificado de 54D, de tu lado.",
     faqEyebrow: "Preguntas",
     faqTitle1: "Antes de",
     faqTitle2: "empezar.",
-    opening: "Abriendo el checkout…",
+    opening: "Abriendo el pago…",
     nextGen: "La próxima generación empieza el lunes",
     inDays: "en",
     day: "día",
     days: "días",
-    membershipEyebrow: "También por mes",
+    membershipEyebrow: "También disponible por mes",
     membershipLine:
       "¿Prefieres pagar por mes? La membresía 54D ON incluye los 13 programas, coach ilimitado y 650+ sesiones grabadas por $54/mes, con 7 días gratis.",
     membershipYearly:
-      "¿Vas por el año? $588 al año cubren este programa y todo lo demás.",
+      "¿Prefieres el plan anual? $588 al año cubren este programa y todo lo demás.",
     membershipLink: "Ver planes de membresía · $54/mes, 7 días gratis →",
     noSubscription: "Un pago. Sin suscripción.",
     noteOnePayment: "UN PAGO · GARANTÍA DE 30 DÍAS",
@@ -167,7 +171,9 @@ const T = {
 
 /* ============ Estilos puntuales (solo inline + clases de app.css) ============ */
 
-const solidAccent: CSSProperties = { color: "var(--c-yellow)" };
+/* QUIET v6: acentos de display en blanco (inherit); el amarillo queda en
+   CTAs, eyebrows y micro-marcas */
+const solidAccent: CSSProperties = { color: "inherit" };
 const bodyCopy: CSSProperties = {
   fontSize: "1.05rem",
   lineHeight: 1.6,
@@ -336,6 +342,7 @@ export default function ProgramLandingPage({
   const structure = useReveal();
   const journey = useReveal();
   const proof = useReveal();
+  const results = useReveal();
   const upsell = useReveal();
   const faq = useReveal();
   const cta = useReveal();
@@ -343,8 +350,8 @@ export default function ProgramLandingPage({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  /* El mensaje de error se escribe acá (y no se propaga e.message) para
-     que sea bilingüe sin tocar attribution.ts, que comparten otras rutas */
+  /* El 503 de Stripe pendiente llega TIPADO (payments_not_configured):
+     copy veraz bilingüe. El copy de conexión queda para fallos de red. */
   const buy = async (position: string) => {
     if (busy) return;
     setBusy(true);
@@ -356,11 +363,16 @@ export default function ProgramLandingPage({
         position,
         value: Number(p.price.replace(/[^0-9.]/g, "")),
       });
-    } catch {
+    } catch (e) {
+      const pending = e instanceof Error && e.name === "payments_not_configured";
       setError(
-        es
-          ? "No pudimos abrir el checkout. Revisa tu conexión e intenta de nuevo."
-          : "We couldn't start checkout. Check your connection and try again."
+        pending
+          ? es
+            ? "Estamos conectando los pagos. Podrás completar tu compra muy pronto; no es un problema de tu lado."
+            : e.message
+          : es
+            ? "No pudimos iniciar el pago. Revisa tu conexión e intenta de nuevo."
+            : "We couldn't start checkout. Check your connection and try again."
       );
       setBusy(false);
     }
@@ -399,7 +411,7 @@ export default function ProgramLandingPage({
   const buyLabel =
     p.tier === "flagship"
       ? es
-        ? `Reserva mi lugar · ${p.price}`
+        ? `Reserva tu lugar · ${p.price}`
         : `Reserve my spot · ${p.price}`
       : p.tier === "mid"
         ? es
@@ -763,17 +775,53 @@ export default function ProgramLandingPage({
               {t.proofTitle1} <span style={solidAccent}>{t.proofTitle2}</span>
             </h2>
             <div style={twoCol}>
-              <figure style={{ margin: 0 }}>
-                <img
-                  src={asset(COACH_PHOTO.src)}
-                  alt={COACH_PHOTO.alt[lang]}
-                  loading="lazy"
-                  style={{ ...verticalShot, aspectRatio: "4 / 3" }}
-                />
-                <figcaption className="photo-caption">
-                  {t.captionCoach}
-                </figcaption>
-              </figure>
+              {/* Cards oficiales de coaches (nombre y especialidad quemados)
+                  cuando la landing tiene equipo asignado; si no, la foto de
+                  manos de siempre. Fucho EXCLUIDO del pool (boxeo). */}
+              {p.coaches?.length ? (
+                <div>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns:
+                        "repeat(auto-fit, minmax(min(100%, 150px), 1fr))",
+                      gap: "var(--gap-grid-tight)",
+                    }}
+                  >
+                    {p.coaches.map((path) => {
+                      const file = path.split("/").pop()!.replace(".jpg", "");
+                      const coachName =
+                        file.charAt(0).toUpperCase() + file.slice(1);
+                      return (
+                        <div className="coach-card" key={path}>
+                          <img
+                            src={asset(path)}
+                            alt={
+                              es
+                                ? `${coachName}, coach de 54D`
+                                : `${coachName}, 54D coach`
+                            }
+                            loading="lazy"
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <p className="photo-caption">{t.captionCoach}</p>
+                </div>
+              ) : (
+                <figure style={{ margin: 0 }}>
+                  <img
+                    src={asset(COACH_PHOTO.src)}
+                    alt={COACH_PHOTO.alt[lang]}
+                    loading="lazy"
+                    style={{ ...verticalShot, aspectRatio: "4 / 3" }}
+                  />
+                  <figcaption className="photo-caption">
+                    {t.captionCoach}
+                  </figcaption>
+                </figure>
+              )}
               <div>
                 <div style={{ borderTop: "1px solid var(--hairline)", padding: "1.4rem 0" }}>
                   <h3 style={proofName}>{t.guaranteeName}</h3>
@@ -817,6 +865,52 @@ export default function ProgramLandingPage({
         </div>
       </section>
 
+      {/* ============ 5b. RESULTADOS (SOLO flagship 54d-on) ============
+          REGLA DE ALCANCE: antes/después y claim -5kg SOLO en /on, /pricing
+          y /programs/54d-on. NO esparcir a las otras 12 landings. SIN CTA,
+          SIN urgencia: la banda es evidencia, lejos del hero y del cierre. */}
+      {p.slug === "54d-on" && (
+        <section className="section section-tight">
+          <div className="section-inner" ref={results.ref}>
+            <div className={results.className}>
+              <span className="day-marker">
+                {es ? "Resultados" : "Results"}
+              </span>
+              <p style={{ ...bodyCopy, marginTop: "1.4rem", maxWidth: "38rem" }}>
+                {es
+                  ? "Resultado promedio de nuestros miembros: -5 kg en 54 días · Verificado por coaches 54D"
+                  : "Average member result: -5 kg in 54 days · Verified by 54D coaches"}
+              </p>
+              <div className="results-grid">
+                {(
+                  [
+                    ["elizabeth", "Elizabeth"],
+                    ["sebastian", "Sebastian"],
+                  ] as const
+                ).map(([file, name]) => (
+                  <figure style={{ margin: 0 }} key={file}>
+                    <img
+                      src={asset(`images/results/${file}.jpg`)}
+                      alt={
+                        es
+                          ? `Antes y después de ${name}, miembro de 54D ON`
+                          : `${name}'s before and after as a 54D ON member`
+                      }
+                      loading="lazy"
+                    />
+                  </figure>
+                ))}
+              </div>
+              <p className="photo-caption" style={{ marginTop: "0.9rem" }}>
+                {es
+                  ? "Antes y después reales de miembros de 54D ON"
+                  : "Real member before-and-afters from 54D ON"}
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ============ 6. FAQ (único campo de gradiente: pre-CTA) ============ */}
       <section className="section bloom-ember">
         <div className="section-inner" ref={faq.ref}>
@@ -825,7 +919,15 @@ export default function ProgramLandingPage({
             <h2 className="section-title">
               {t.faqTitle1} <span style={solidAccent}>{t.faqTitle2}</span>
             </h2>
-            <div className="faq-list">
+            {/* 2 columnas en desktop: mismo patrón que /pricing y /on */}
+            <div
+              className="faq-list"
+              style={{
+                maxWidth: "none",
+                gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 24rem), 1fr))",
+                alignItems: "start",
+              }}
+            >
               {/* Tráfico frío en teléfono no abre acordeones: el primero,
                   que es la objeción desbloqueante del tier, va abierto */}
               {p.faq[lang].map((f, i) => (
@@ -911,13 +1013,15 @@ export default function ProgramLandingPage({
         </section>
       )}
 
-      {/* Sticky mobile: cobra en 1 tap y se retira cuando #buy entra en vista */}
+      {/* Sticky mobile: cobra en 1 tap y se retira cuando #buy entra en vista.
+          error: el fallo del tap sticky aparece DENTRO de la barra. */}
       <StickyCta
         href="#buy"
         label={stickyLabel}
         onClick={() => buy("sticky")}
         busy={busy}
         hideWhenVisible="#buy"
+        error={error}
       />
 
       <Footer />

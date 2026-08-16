@@ -154,7 +154,15 @@ export function Nav() {
       <button
         type="button"
         className="nav-burger"
-        aria-label={open ? "Close menu" : "Open menu"}
+        aria-label={
+          lang === "es"
+            ? open
+              ? "Cerrar menú"
+              : "Abrir menú"
+            : open
+              ? "Close menu"
+              : "Open menu"
+        }
         aria-expanded={open}
         aria-controls="nav-drawer"
         onClick={() => setOpen((v) => !v)}
@@ -252,7 +260,9 @@ export function Footer() {
             <Link to="/method">{es ? "Método" : "Method"}</Link>
             {!inStudios && <Link to="/on">54D ON</Link>}
             <Link to="/studios">54D Studios</Link>
-            {!inStudios && <Link to="/pricing">Pricing</Link>}
+            {!inStudios && (
+              <Link to="/pricing">{es ? "Precios" : "Pricing"}</Link>
+            )}
           </div>
           <div>
             <h4>Studios</h4>
@@ -316,10 +326,10 @@ export function Footer() {
           </span>
           <span>
             <Link to="/terms" style={{ display: "inline", marginRight: "1.5rem" }}>
-              Terms
+              {es ? "Términos" : "Terms"}
             </Link>
             <Link to="/privacy" style={{ display: "inline" }}>
-              Privacy
+              {es ? "Privacidad" : "Privacy"}
             </Link>
           </span>
         </div>

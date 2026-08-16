@@ -7,41 +7,67 @@ import { AppStoreBadges } from "../components/badges";
 import { StickyCta } from "../components/sticky-cta";
 import { asset } from "../lib/asset";
 import { startCheckout } from "../lib/attribution";
-import { useLang, type Lang } from "../lib/i18n";
+import { useLang, resolveLang, type Lang } from "../lib/i18n";
 
-export function meta({}: Route.MetaArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
+  return { lang: resolveLang(request) };
+}
+
+export function meta({ loaderData }: Route.MetaArgs) {
+  const es = loaderData?.lang === "es";
   return [
-    { title: "54D ON: The 54-Day Method, Online with a Coach" },
+    {
+      title: es
+        ? "54D ON: el método de 54 días, online y con coach"
+        : "54D ON: The 54-Day Method, Online with a Coach",
+    },
     {
       name: "description",
-      content:
-        "Thirteen real programs in the 54D On app: daily training, nutrition protocols, and a real coach who follows you. Try it free for 7 days.",
+      content: es
+        ? "Trece programas reales en la app 54D On: entrenamiento diario, protocolos de nutrición y un coach real que te sigue. Pruébalo gratis por 7 días."
+        : "Thirteen real programs in the 54D On app: daily training, nutrition protocols, and a real coach who follows you. Try it free for 7 days.",
     },
   ];
 }
 
 /* ============ Contenido ============ */
 
-const INCLUDES = [
+const INCLUDES: {
+  num: string;
+  name: Record<Lang, string>;
+  desc: Record<Lang, string>;
+}[] = [
   {
     num: "01",
-    name: "Daily training",
-    desc: "Progressive video sessions designed by coaches, not by an algorithm. With whatever you have at home.",
+    name: { en: "Daily training", es: "Entrenamiento diario" },
+    desc: {
+      en: "Progressive video sessions designed by coaches, not by an algorithm. With whatever you have at home.",
+      es: "Sesiones en video progresivas, diseñadas por coaches y no por un algoritmo. Con lo que tengas en casa.",
+    },
   },
   {
     num: "02",
-    name: "Nutritional protocol",
-    desc: "Built for your body and your goal from day 1. No generic diets: what you eat is part of the program.",
+    name: { en: "Nutritional protocol", es: "Protocolo de nutrición" },
+    desc: {
+      en: "Built for your body and your goal from day 1. No generic diets: what you eat is part of the program.",
+      es: "Creado para tu cuerpo y tu meta desde el día 1. Sin dietas genéricas: lo que comes es parte del programa.",
+    },
   },
   {
     num: "03",
-    name: "Community chat",
-    desc: "You train alone. You're not alone. A global community chasing the same thing you are.",
+    name: { en: "Community chat", es: "Comunidad" },
+    desc: {
+      en: "You train alone. You're not alone. A global community chasing the same thing you are.",
+      es: "Entrenas donde quieras, pero nunca a solas: una comunidad global persigue lo mismo que tú.",
+    },
   },
   {
     num: "04",
-    name: "Coach follow-up",
-    desc: "Real coaching over chat. On 54D ON and Step 2 it's unlimited and fully personalized.",
+    name: { en: "Coach follow-up", es: "Seguimiento del coach" },
+    desc: {
+      en: "Real coaching over chat. On 54D ON and Step 2 it's unlimited and fully personalized.",
+      es: "Coaching real por chat. En 54D ON y Step 2 es ilimitado y totalmente personalizado.",
+    },
   },
 ];
 
@@ -79,7 +105,7 @@ type MembershipTier = {
   billed: Record<Lang, string>;
   featured?: boolean;
   photo: string;
-  photoAlt: string;
+  photoAlt: Record<Lang, string>;
   /** objectPosition de la franja de 120px: encuadre que no decapite rostros */
   photoPos: string;
   tagline: Record<Lang, string>;
@@ -92,7 +118,10 @@ const MEMBERSHIP_TIERS: MembershipTier[] = [
     regularPerMonth: 99,
     billed: { en: "Billed monthly", es: "Facturación mensual" },
     photo: "images/hd2/spare-man-running.jpg",
-    photoAlt: "Athlete running with visible effort on the 54D floor",
+    photoAlt: {
+      en: "Athlete running with visible effort on the 54D floor",
+      es: "Atleta corriendo con esfuerzo visible en el piso de 54D",
+    },
     photoPos: "center 33%",
     tagline: { en: "Start at your pace", es: "Empieza a tu ritmo" },
   },
@@ -104,7 +133,10 @@ const MEMBERSHIP_TIERS: MembershipTier[] = [
     billed: { en: "$156 every 3 months", es: "$156 cada 3 meses" },
     featured: true,
     photo: "images/hd/cg-effort-yellow-d.jpg",
-    photoAlt: "Athlete grimacing with effort in front of the yellow 54D letter",
+    photoAlt: {
+      en: "Athlete grimacing with effort in front of the yellow 54D letter",
+      es: "Atleta con gesto de esfuerzo frente a la D amarilla de 54D",
+    },
     photoPos: "center 36%",
     tagline: { en: "The full 54 days", es: "Los 54 días completos" },
   },
@@ -113,11 +145,14 @@ const MEMBERSHIP_TIERS: MembershipTier[] = [
     plan: { en: "Yearly", es: "Anual" },
     perMonth: 49,
     regularPerMonth: 79,
-    billed: { en: "$588 a year · lowest per month", es: "$588 al año · el mes más bajo" },
-    photo: "images/hd2/blog-spin-smile.jpg",
-    photoAlt: "Member smiling mid ride on a spin bike at 54D",
-    photoPos: "center 32%",
-    tagline: { en: "Make it your life", es: "Hazlo tu estilo de vida" },
+    billed: { en: "$588 a year · lowest per month", es: "$588 al año · la mensualidad más baja" },
+    photo: "images/brand/on-graduation-hug.jpg",
+    photoAlt: {
+      en: "Two 54D members embracing at their graduation",
+      es: "Dos miembros de 54D abrazándose en su graduación",
+    },
+    photoPos: "center 30%",
+    tagline: { en: "Make it your life", es: "Tu nuevo estilo de vida" },
   },
 ];
 
@@ -154,7 +189,7 @@ const MEMBERSHIP_POINTS: Record<Lang, { strong: string; rest: string }[]> = {
     },
     {
       strong: "Ten un coach real",
-      rest: " en tu esquina: chat ilimitado, correcciones y seguimiento",
+      rest: " de tu lado: chat ilimitado, correcciones y seguimiento",
     },
     {
       strong: "Come con un plan",
@@ -206,7 +241,7 @@ const PROGRAMS: Program[] = [
     num: "03",
     name: "Emergency Kit",
     slug: "emergency-kit",
-    kicker: { en: "Fat loss, fast", es: "Quema de grasa, rápido" },
+    kicker: { en: "Fat loss, fast", es: "Quema grasa, rápido" },
     tag: { en: "Most popular", es: "El más popular" },
     line: { en: "Two weeks. Up to 4 pounds down. Our most popular program.", es: "Dos semanas. Hasta 2 kilos menos. Nuestro programa más popular." },
     equipment: "Resistance bands needed",
@@ -314,7 +349,7 @@ const PROGRAMS: Program[] = [
     kicker: { en: "Run your first 5K", es: "Corre tus primeros 5K" },
     line: { en: "Your first 5K, or a faster one.", es: "Tus primeros 5K, o unos más rápidos." },
     equipment: "Your running shoes",
-    intensity: { en: "Beginner, intermediate, or advanced tracks", es: "Rutas principiante, intermedia o avanzada" },
+    intensity: { en: "Beginner, intermediate, and advanced plans", es: "Planes principiante, intermedio y avanzado" },
     audience: "First-time and short-distance runners",
     duration: { en: "Self-paced", es: "A tu ritmo" },
   },
@@ -325,7 +360,7 @@ const PROGRAMS: Program[] = [
     kicker: { en: "Step up to 10K", es: "Sube a 10K" },
     line: { en: "The next distance. Take it seriously.", es: "La siguiente distancia. Tómatela en serio." },
     equipment: "Your running shoes",
-    intensity: { en: "Intermediate and advanced tracks", es: "Rutas intermedia y avanzada" },
+    intensity: { en: "Intermediate and advanced plans", es: "Planes intermedio y avanzado" },
     audience: "Runners moving up to medium distance",
     duration: { en: "Self-paced", es: "A tu ritmo" },
   },
@@ -333,78 +368,138 @@ const PROGRAMS: Program[] = [
     num: "13",
     name: "Runner 21K",
     slug: "runners-21k",
-    kicker: { en: "Half marathon ready", es: "Listo para la media maratón" },
+    kicker: { en: "Half marathon ready", es: "Rumbo a la media maratón" },
     line: { en: "The half marathon. Prepare like you mean it.", es: "La media maratón. Prepárate en serio." },
     equipment: "Your running shoes",
-    intensity: { en: "Single advanced track", es: "Una sola ruta avanzada" },
+    intensity: { en: "A single advanced plan", es: "Un solo plan avanzado" },
     audience: "Long-distance runners pushing their limit",
     duration: { en: "Self-paced", es: "A tu ritmo" },
   },
 ];
 
 /* Features verificadas de la app (APP_INFO.md / COPY_V3.md seccion 4) */
-const APP_FEATURES = [
+const APP_FEATURES: { name: Record<Lang, string>; desc: Record<Lang, string> }[] = [
   {
-    name: "A real coach, every day",
-    desc: "Guidance, corrections, and daily personalized follow-up from a human.",
+    name: { en: "A real coach, every day", es: "Un coach real, todos los días" },
+    desc: {
+      en: "Guidance, corrections, and daily personalized follow-up from a human.",
+      es: "Guía, correcciones y seguimiento personalizado de una persona real, cada día.",
+    },
   },
   {
-    name: "A 360° plan built for you",
-    desc: "Your level, your goals, your life.",
+    name: { en: "A 360° plan built for you", es: "Un plan 360 hecho para ti" },
+    desc: {
+      en: "Your level, your goals, your life.",
+      es: "Tu nivel, tus metas, tu vida.",
+    },
   },
   {
-    name: "On-demand and live workouts",
-    desc: "Dozens of programs: strength, cardio, mobility, Pilates, yoga, wellness.",
+    name: { en: "On-demand and live workouts", es: "Entrenamientos grabados y en vivo" },
+    desc: {
+      en: "Dozens of programs: strength, cardio, mobility, Pilates, yoga, wellness.",
+      es: "Decenas de programas: fuerza, cardio, movilidad, pilates, yoga, bienestar.",
+    },
   },
   {
-    name: "Nutrition built in",
-    desc: "Plans and tools built for energy, focus, and consistency.",
+    name: { en: "Nutrition built in", es: "Nutrición integrada" },
+    desc: {
+      en: "Plans and tools built for energy, focus, and consistency.",
+      es: "Planes y herramientas pensados para tu energía, tu enfoque y tu constancia.",
+    },
   },
   {
-    name: "Apple Health and Apple Watch",
-    desc: "Activity, energy, and heart rate, shared with your coach. iOS only.",
-  },
-];
-
-const STEPS = [
-  {
-    day: "Step 01",
-    title: "Activate your 7-day free trial",
-    desc: "No cost, no commitment. Full access from minute one: training, nutrition, and your coach.",
-  },
-  {
-    day: "Step 02",
-    title: "Open the app and start Day 1",
-    desc: "Everything runs in the 54D On app: your training, your nutrition protocol, and the chat where your coach introduces themselves. Your plan adjusts to your body, your goal, and what you have at home.",
-  },
-  {
-    day: "Step 03",
-    title: "On day 8, you decide",
-    desc: "If you stay, your transformation is already moving. If it's not for you, cancel in one click and pay nothing.",
-  },
-  {
-    day: "Week by week",
-    title: "The program tightens with you",
-    desc: "Intensity rises every week and your protocol adjusts to your results. Your coach reviews your week, corrects you, and demands more. 54 days later you don't finish a challenge. You finish someone new.",
+    name: { en: "Apple Health and Apple Watch", es: "Apple Health y Apple Watch" },
+    desc: {
+      en: "Activity, energy, and heart rate, shared with your coach. iOS only.",
+      es: "Actividad, energía y frecuencia cardiaca, compartidas con tu coach. Solo en iOS.",
+    },
   },
 ];
 
-const VS_APPS: [string, string, string][] = [
-  ["Training", "Library workouts, the same for everyone", "Progressive sessions designed by coaches"],
-  ["Nutrition", "A generic calorie counter", "A protocol built for your body and your goal"],
-  ["Coaching", "Automated notifications", "A real coach who writes to you every day"],
-  ["Structure", "An endless membership, no finish line", "Programs with a start. And an end."],
-  ["If you miss a day", "Nothing happens. No one notices", "Your coach notices. And writes to you."],
+const STEPS: {
+  day: Record<Lang, string>;
+  title: Record<Lang, string>;
+  desc: Record<Lang, string>;
+}[] = [
+  {
+    day: { en: "Step 01", es: "Paso 01" },
+    title: {
+      en: "Activate your 7-day free trial",
+      es: "Activa tu prueba gratis de 7 días",
+    },
+    desc: {
+      en: "No cost, no commitment. Full access from minute one: training, nutrition, and your coach.",
+      es: "Sin costo y sin compromiso. Acceso completo desde el primer minuto: entrenamiento, nutrición y tu coach.",
+    },
+  },
+  {
+    day: { en: "Step 02", es: "Paso 02" },
+    title: {
+      en: "Open the app and start Day 1",
+      es: "Abre la app y arranca tu Día 1",
+    },
+    desc: {
+      en: "Everything runs in the 54D On app: your training, your nutrition protocol, and the chat where your coach introduces themselves. Your plan adjusts to your body, your goal, and what you have at home.",
+      es: "Todo pasa en la app 54D On: tu entrenamiento, tu protocolo de nutrición y el chat donde tu coach se presenta. Tu plan se ajusta a tu cuerpo, tu meta y lo que tienes en casa.",
+    },
+  },
+  {
+    day: { en: "Step 03", es: "Paso 03" },
+    title: { en: "On day 8, you decide", es: "El día 8, tú decides" },
+    desc: {
+      en: "If you stay, your transformation is already moving. If it's not for you, cancel in one click and pay nothing.",
+      es: "Si te quedas, tu transformación ya está en marcha. Si no es para ti, cancela en un clic y no pagas nada.",
+    },
+  },
+  {
+    day: { en: "Week by week", es: "Semana a semana" },
+    title: {
+      en: "The program tightens with you",
+      es: "La exigencia sube contigo",
+    },
+    desc: {
+      en: "Intensity rises every week and your protocol adjusts to your results. Your coach reviews your week, corrects you, and demands more. 54 days later you don't finish a challenge. You finish someone new.",
+      es: "La intensidad sube cada semana y tu protocolo se ajusta a tus resultados. Tu coach revisa tu semana, te corrige y te exige más. 54 días después no terminas un reto. Terminas siendo otra persona.",
+    },
+  },
 ];
 
-const VS_STUDIOS: [string, string, string][] = [
-  ["What it is", "The 54-day digital program, coached through the 54D On app", "The flagship experience: the method in person, end to end"],
-  ["Your team", "A real coach over daily chat", "A dedicated team on the floor: coaches, nutritionist, physiotherapist"],
-  ["How you join", "Start today with 7 days free", "By application: a consultation, then your Generation's start date"],
-  ["Your group", "A global online community", "Your Generation: limited places, one start date, 54 days together"],
-  ["Where", "Wherever you are, with what you have", "Five studios: Miami, Mexico City, Bogotá"],
-  ["The commitment", "A subscription you control, from $54 a month", "A private-client level program, discussed in your consultation"],
-];
+const VS_APPS: Record<Lang, [string, string, string][]> = {
+  en: [
+    ["Training", "Library workouts, the same for everyone", "Progressive sessions designed by coaches"],
+    ["Nutrition", "A generic calorie counter", "A protocol built for your body and your goal"],
+    ["Coaching", "Automated notifications", "A real coach who writes to you every day"],
+    ["Structure", "An endless membership, no finish line", "Programs with a start. And an end."],
+    ["If you miss a day", "Nothing happens. No one notices", "Your coach notices. And writes to you."],
+  ],
+  es: [
+    ["Entrenamiento", "Rutinas de catálogo, iguales para todos", "Sesiones progresivas diseñadas por coaches"],
+    ["Nutrición", "Un contador de calorías genérico", "Un protocolo creado para tu cuerpo y tu meta"],
+    ["Coaching", "Notificaciones automáticas", "Un coach real que te escribe todos los días"],
+    ["Estructura", "Una membresía infinita, sin meta", "Programas con un inicio. Y un final."],
+    ["Si te saltas un día", "No pasa nada. Nadie se da cuenta", "Tu coach se da cuenta. Y te escribe."],
+  ],
+};
+
+const VS_STUDIOS: Record<Lang, [string, string, string][]> = {
+  en: [
+    ["What it is", "The 54-day digital program, coached through the 54D On app", "The flagship experience: the method in person, end to end"],
+    ["Your team", "A real coach over daily chat", "A dedicated team on the floor: coaches, nutritionist, physiotherapist"],
+    ["How you join", "Start today with 7 days free", "By application: a consultation, then your Generation's start date"],
+    ["Your group", "A global online community", "Your Generation: limited places, one start date, 54 days together"],
+    ["Where", "Wherever you are, with what you have", "Five studios: Miami, Mexico City, Bogotá"],
+    ["The commitment", "A subscription you control, from $54 a month", "A private-client level program, discussed in your consultation"],
+  ],
+  es: [
+    ["Qué es", "El programa digital de 54 días, con coach en la app 54D On", "La experiencia insignia: el método presencial, de principio a fin"],
+    ["Tu equipo", "Un coach real por chat, todos los días", "Un equipo dedicado en el piso: coaches, nutricionista, fisioterapeuta"],
+    ["Cómo entras", "Empieza hoy con 7 días gratis", "Por solicitud: una consulta y la fecha de inicio de tu Generación"],
+    ["Tu grupo", "Una comunidad global en línea", "Tu Generación: cupos limitados, una fecha de inicio, 54 días juntos"],
+    /* "Cinco studios" es CORRECTO: hay 5 sedes (data/studios.ts) */
+    ["Dónde", "Donde estés, con lo que tengas", "Cinco studios: Miami, Ciudad de México, Bogotá"],
+    ["El compromiso", "Una suscripción que tú controlas, desde $54 al mes", "Un programa de nivel cliente privado, se conversa en tu consulta"],
+  ],
+};
 
 const FAQ: Record<Lang, { q: string; a: string }[]> = {
   en: [
@@ -678,15 +773,6 @@ const membRisk: CSSProperties = {
   fontSize: "0.8rem",
   color: "var(--c-faint)",
 };
-/* btn-riskline (§3.4): microcopy de riesgo PEGADO al botón */
-const riskline: CSSProperties = {
-  display: "block",
-  marginTop: "0.55rem",
-  fontSize: "0.72rem",
-  letterSpacing: "0.02em",
-  textAlign: "center",
-  color: "var(--c-faint)",
-};
 /* Card compacta: plan+precio a la izquierda, CTA a la derecha; wrap en mobile */
 /* Nombre de programa → landing /programs/{slug}: dos caminos por fila */
 const progNameLink: CSSProperties = { color: "inherit", textDecoration: "none" };
@@ -759,63 +845,6 @@ function CompareTable({
   );
 }
 
-/** Telefono con captura REAL de la app 54D ON (screenshots del cliente,
-    06/08/2026): la sesion del dia con coach. El marco sigue siendo CSS. */
-function AppPhone() {
-  return (
-    <div
-      style={{
-        width: "min(290px, 74vw)",
-        aspectRatio: "9 / 19.2",
-        margin: "0 auto",
-        borderRadius: "42px",
-        border: "1px solid var(--hairline)",
-        background: "#101010",
-        padding: "10px",
-        boxShadow: "0 40px 90px rgba(0, 0, 0, 0.6)",
-        position: "relative",
-      }}
-    >
-      <div
-        aria-hidden="true"
-        style={{
-          position: "absolute",
-          top: "20px",
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "84px",
-          height: "24px",
-          borderRadius: "999px",
-          background: "#070707",
-          zIndex: 2,
-        }}
-      />
-      <div
-        style={{
-          width: "100%",
-          height: "100%",
-          borderRadius: "32px",
-          overflow: "hidden",
-          background: "#0b0b0b",
-        }}
-      >
-        <img
-          src={asset("images/app/on-workout-coach.jpg")}
-          alt="54D ON app: today's strength session with your coach, ready to start"
-          loading="lazy"
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            objectPosition: "top",
-            display: "block",
-          }}
-        />
-      </div>
-    </div>
-  );
-}
-
 /* ============ Página ============ */
 
 export default function On() {
@@ -838,12 +867,14 @@ export default function On() {
     try {
       await startCheckout(priceId);
     } catch (e) {
-      /* Solo pasan los mensajes intencionales de startCheckout (503 de
-         Stripe sin configurar); un fallo de red crudo ("Failed to fetch")
-         cae al copy amable bilingue, igual que en /pricing */
+      /* El 503 de Stripe sin configurar llega TIPADO (payments_not_configured):
+         copy veraz bilingue. Un fallo de red real cae al copy de conexión. */
+      const pending = e instanceof Error && e.name === "payments_not_configured";
       setCheckoutErr(
-        e instanceof Error && e.message.startsWith("Payments are being connected")
-          ? e.message
+        pending
+          ? es
+            ? "Estamos conectando los pagos. Podrás completar tu compra muy pronto; no es un problema de tu lado."
+            : e.message
           : es
             ? "No pudimos iniciar el pago. Revisa tu conexión e intenta de nuevo en unos segundos."
             : "We couldn't start checkout. Check your connection and try again in a few seconds."
@@ -853,6 +884,8 @@ export default function On() {
     }
   };
   const app = useReveal();
+  const coaches = useReveal();
+  const resultados = useReveal();
   const pasos = useReveal();
   const difApps = useReveal();
   const vsStudios = useReveal();
@@ -868,7 +901,11 @@ export default function On() {
         <div className="hero-media">
           <img
             src={asset("images/hd2/blog-barbell-press.jpg")}
-            alt="Athlete pressing a loaded barbell during a 54D strength session"
+            alt={
+              es
+                ? "Atleta empujando una barra cargada en una sesión de fuerza de 54D"
+                : "Athlete pressing a loaded barbell during a 54D strength session"
+            }
           />
         </div>
         <div className="hero-veil" />
@@ -887,7 +924,7 @@ export default function On() {
           </h1>
           <p className="hero-sub">
             {es
-              ? "El programa 54D completo en la app 54D On: tu entrenamiento, tu protocolo de nutrición y un coach real en tu esquina. Sin gimnasio, sin excusas de agenda."
+              ? "El programa 54D completo en la app 54D On: tu entrenamiento, tu protocolo de nutrición y un coach real de tu lado. Sin gimnasio, sin excusas de agenda."
               : "The full 54D program in the 54D On app: your training, your nutrition protocol, and a real coach in your corner. No gym, no scheduling excuses."}
           </p>
           {/* Un solo destino para la misma acción en toda la página:
@@ -907,16 +944,20 @@ export default function On() {
       <section className="section">
         <div className="section-inner" ref={incluye.ref}>
           <div className={incluye.className}>
-            <span className="day-marker">What's included</span>
+            <span className="day-marker">
+              {es ? "Qué incluye" : "What's included"}
+            </span>
             <div className="method-intro">
               <h2 className="section-title">
-                The whole method. <span style={solidAccent}>No filler.</span>
+                {es ? "El método completo. " : "The whole method. "}
+                <span style={solidAccent}>{es ? "Sin relleno." : "No filler."}</span>
               </h2>
               <p>
-                54D ON is not a stripped-down version. It's the full program:
-                training, nutrition, and a real coach who follows you.{" "}
+                {es
+                  ? "54D ON no es una versión recortada. Es el programa completo: entrenamiento, nutrición y un coach real que te sigue de cerca."
+                  : "54D ON is not a stripped-down version. It's the full program: training, nutrition, and a real coach who follows you."}{" "}
                 <Link to="/method" style={{ color: "var(--c-yellow)", textDecoration: "none" }}>
-                  See the full method →
+                  {es ? "Conoce el método completo →" : "See the full method →"}
                 </Link>
               </p>
             </div>
@@ -924,8 +965,8 @@ export default function On() {
               {INCLUDES.map((item) => (
                 <div className="method-card" key={item.num}>
                   <div className="method-num">{item.num}</div>
-                  <div className="method-name">{item.name}</div>
-                  <p className="method-desc">{item.desc}</p>
+                  <div className="method-name">{item.name[lang]}</div>
+                  <p className="method-desc">{item.desc[lang]}</p>
                 </div>
               ))}
             </div>
@@ -943,7 +984,7 @@ export default function On() {
       >
         <div className="section-inner" ref={membresia.ref}>
           <div className={membresia.className}>
-            <div style={membSplit}>
+            <div style={membSplit} className="memb-split">
               <div style={membPitch}>
                 <img
                   src={asset("images/studios/hallandale/class-under-letters.jpg")}
@@ -990,7 +1031,7 @@ export default function On() {
                     <div className="plan-photo">
                       <img
                         src={asset(t.photo)}
-                        alt={t.photoAlt}
+                        alt={t.photoAlt[lang]}
                         loading="lazy"
                         style={{ objectPosition: t.photoPos }}
                       />
@@ -1208,12 +1249,41 @@ export default function On() {
                         )}
                       </>
                     )}
-                    {p.startNote && (
-                      <span className="prog-card-note">{p.startNote[lang]}</span>
-                    )}
+                    {/* Nota SIEMPRE renderizada (nbsp si no hay): los botones
+                        de la fila alinean su linea base entre cards */}
+                    <span className="prog-card-note">
+                      {p.startNote ? p.startNote[lang] : " "}
+                    </span>
                   </div>
                 </article>
               ))}
+              {/* Closing tile (queja cliente 13/08): pieza 14 del grid que
+                  llena las celdas vacias junto a Runner 21K y le da contexto
+                  al CTA. Es el UNICO primario de la vista de programas. */}
+              <article className="prog-card prog-close">
+                <p
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    fontWeight: 700,
+                    fontSize: "clamp(1.3rem, 2vw, 1.7rem)",
+                    lineHeight: 1.2,
+                    color: "var(--c-white)",
+                    maxWidth: "34rem",
+                  }}
+                >
+                  {es
+                    ? "¿No sabes cuál? La semana gratis los incluye todos."
+                    : "Not sure which one? The free week includes them all."}
+                </p>
+                <a href="#membership" className="btn btn-primary">
+                  {es ? "Empieza gratis. 7 días." : "Start free. 7 days."}
+                </a>
+                <span className="btn-riskline">
+                  {es
+                    ? "7 días gratis · cancela cuando quieras"
+                    : "7 days free · cancel anytime"}
+                </span>
+              </article>
             </div>
             {!showAllPrograms && (
               <button
@@ -1224,24 +1294,6 @@ export default function On() {
                 {es ? "Ver los 13 programas" : "Show all 13 programs"}
               </button>
             )}
-            <div
-              style={{
-                marginTop: "2.4rem",
-                display: "flex",
-                alignItems: "center",
-                gap: "1.4rem",
-                flexWrap: "wrap",
-              }}
-            >
-              <a href="#membership" className="btn btn-primary">
-                {es ? "Empieza gratis. 7 días." : "Start free. 7 days."}
-              </a>
-              <span style={{ fontSize: "0.85rem", color: "var(--c-faint)" }}>
-                {es
-                  ? "¿No sabes cuál? La semana gratis los incluye todos."
-                  : "Not sure which one? The free week includes them all."}
-              </span>
-            </div>
           </div>
         </div>
       </section>
@@ -1250,9 +1302,12 @@ export default function On() {
       <section className="section">
         <div className="section-inner" ref={app.ref}>
           <div className={app.className}>
-            <span className="day-marker">The app</span>
+            <span className="day-marker">{es ? "La app" : "The app"}</span>
             <h2 className="section-title">
-              Your whole program. <span style={solidAccent}>In your pocket.</span>
+              {es ? "Todo tu programa. " : "Your whole program. "}
+              <span style={solidAccent}>
+                {es ? "En tu bolsillo." : "In your pocket."}
+              </span>
             </h2>
             <div
               style={{
@@ -1263,7 +1318,50 @@ export default function On() {
                 marginTop: "var(--space-block)",
               }}
             >
-              <AppPhone />
+              {/* Renders OFICIALES de la app (harvest del cliente, 13/08):
+                  PNG con alfa real, componen directo sobre la lona #070707.
+                  Sin marco CSS, sin sombra. */}
+              <div>
+                <picture>
+                  <source
+                    media="(max-width: 640px)"
+                    srcSet={asset("images/app/Phone-hero-mobile.png")}
+                  />
+                  <img
+                    src={asset("images/app/Phone-d-hero.png")}
+                    alt={
+                      es
+                        ? "La app 54D On: la sesión del día en video y el chat real con tu coach"
+                        : "The 54D On app: today's session on video and the real chat with your coach"
+                    }
+                    loading="lazy"
+                    style={{
+                      width: "100%",
+                      maxWidth: "500px",
+                      height: "auto",
+                      display: "block",
+                      margin: "0 auto",
+                    }}
+                  />
+                </picture>
+                <img
+                  className="watch-desktop"
+                  src={asset("images/app/watch.png")}
+                  alt={
+                    es
+                      ? "La app 54D On en el Apple Watch: los entrenamientos del día"
+                      : "The 54D On app on Apple Watch: the day's workouts"
+                  }
+                  loading="lazy"
+                  style={{
+                    width: "100%",
+                    maxWidth: "320px",
+                    margin: "2rem auto 0",
+                    /* display vive en .watch-desktop (app.css): el inline
+                       pisaba el display:none del media query <=900px */
+                  }}
+                />
+              </div>
               <div>
                 {/* Sentence case (QUIET v6): las caps quedan solo en
                     eyebrows/metadata */}
@@ -1276,7 +1374,9 @@ export default function On() {
                     color: "var(--c-white)",
                   }}
                 >
-                  The method lives in the app.
+                  {es
+                    ? "El método vive en la app."
+                    : "The method lives in the app."}
                 </h3>
                 <p
                   style={{
@@ -1287,13 +1387,14 @@ export default function On() {
                     color: "var(--c-mist)",
                   }}
                 >
-                  Training, nutrition, and a real coach in one place. Rated 4.9
-                  on the App Store.
+                  {es
+                    ? "Entrenamiento, nutrición y un coach real en un solo lugar. Calificación de 4.9 en el App Store."
+                    : "Training, nutrition, and a real coach in one place. Rated 4.9 on the App Store."}
                 </p>
                 <ol style={{ margin: "1.8rem 0 2rem", padding: 0 }}>
                   {APP_FEATURES.map((f, i) => (
                     <li
-                      key={f.name}
+                      key={f.name.en}
                       style={{
                         listStyle: "none",
                         display: "grid",
@@ -1329,7 +1430,7 @@ export default function On() {
                             color: "var(--c-white)",
                           }}
                         >
-                          {f.name}
+                          {f.name[lang]}
                         </strong>
                         <span
                           style={{
@@ -1338,7 +1439,7 @@ export default function On() {
                             color: "var(--c-mist)",
                           }}
                         >
-                          {f.desc}
+                          {f.desc[lang]}
                         </span>
                       </span>
                     </li>
@@ -1387,10 +1488,66 @@ export default function On() {
                   </span>
                 </div>
                 <p style={{ marginTop: "1.2rem", fontSize: "0.85rem", color: "var(--c-faint)" }}>
-                  The 54D On app is free to download. Your subscription unlocks
-                  everything.
+                  {es
+                    ? "Descargar la app 54D On es gratis. Tu suscripción desbloquea todo."
+                    : "The 54D On app is free to download. Your subscription unlocks everything."}
                 </p>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============ LOS COACHES (cards oficiales del cliente, 13/08) ============
+          La promesa "coach real" por fin muestra humanos con nombre y
+          especialidad. 10 de las 17 cards oficiales; Fucho EXCLUIDO (boxeo). */}
+      <section className="section section-tight">
+        <div className="section-inner" ref={coaches.ref}>
+          <div className={coaches.className}>
+            <span className="day-marker">{es ? "Los coaches" : "The coaches"}</span>
+            <h2 className="section-title">
+              {es
+                ? "Coaches reales. Con nombre y especialidad."
+                : "Real coaches. With a name and a specialty."}
+            </h2>
+            <p
+              style={{
+                marginTop: "1.4rem",
+                maxWidth: "38rem",
+                fontSize: "1.05rem",
+                lineHeight: 1.6,
+                color: "var(--c-mist)",
+              }}
+            >
+              {es
+                ? "Un equipo de 17 coaches reales detrás del método."
+                : "A team of 17 real coaches behind the method."}
+            </p>
+            <div className="coach-strip">
+              {[
+                "alexis",
+                "alicia",
+                "sol",
+                "jennifer",
+                "kevin",
+                "cristina",
+                "april",
+                "luis",
+                "andrea",
+                "katia",
+              ].map((name) => (
+                <div className="coach-card" key={name}>
+                  <img
+                    src={asset(`images/coaches/${name}.jpg`)}
+                    alt={
+                      es
+                        ? `${name.charAt(0).toUpperCase()}${name.slice(1)}, coach de 54D`
+                        : `${name.charAt(0).toUpperCase()}${name.slice(1)}, 54D coach`
+                    }
+                    loading="lazy"
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -1400,9 +1557,12 @@ export default function On() {
       <section className="section section-tight">
         <div className="section-inner" ref={pasos.ref}>
           <div className={pasos.className}>
-            <span className="day-marker">How it works</span>
+            <span className="day-marker">
+              {es ? "Cómo funciona" : "How it works"}
+            </span>
             <h2 className="section-title">
-              Three steps and you're <span style={solidAccent}>in.</span>
+              {es ? "Tres pasos y estás " : "Three steps and you're "}
+              <span style={solidAccent}>{es ? "dentro." : "in."}</span>
             </h2>
             {/* Split foto/pasos: el celular con el coach en pantalla ES el
                 producto (hd2, vertical 9:16) — protagonista junto a los pasos.
@@ -1422,7 +1582,11 @@ export default function On() {
               <figure style={{ margin: 0 }}>
                 <img
                   src={asset("images/hd2/on-phone-coach.jpg")}
-                  alt="A member holding up a phone playing a 54D coach's video against the studio's yellow wall"
+                  alt={
+                    es
+                      ? "Una miembro sosteniendo un teléfono con el video de un coach de 54D frente a la pared amarilla del estudio"
+                      : "A member holding up a phone playing a 54D coach's video against the studio's yellow wall"
+                  }
                   loading="lazy"
                   style={{
                     width: "100%",
@@ -1436,15 +1600,17 @@ export default function On() {
                 />
                 <figcaption style={photoCaption}>
                   <span style={captionTick} aria-hidden="true" />
-                  A real coach on your screen. That's the product.
+                  {es
+                    ? "Un coach real en tu pantalla. Ese es el producto."
+                    : "A real coach on your screen. That's the product."}
                 </figcaption>
               </figure>
               <div className="timeline" style={{ marginTop: 0 }}>
                 {STEPS.map((s) => (
-                  <div className="timeline-item" key={s.day}>
-                    <span className="timeline-day">{s.day}</span>
-                    <h3>{s.title}</h3>
-                    <p>{s.desc}</p>
+                  <div className="timeline-item" key={s.day.en}>
+                    <span className="timeline-day">{s.day[lang]}</span>
+                    <h3>{s.title[lang]}</h3>
+                    <p>{s.desc[lang]}</p>
                   </div>
                 ))}
               </div>
@@ -1453,22 +1619,84 @@ export default function On() {
         </div>
       </section>
 
+      {/* ============ RESULTADOS REALES (THEN/NOW oficiales) ============
+          REGLA DE ALCANCE: los antes/después y el claim -5kg SOLO viven en
+          /on, /pricing y /programs/54d-on. NO esparcir a las otras 12
+          landings (claim no publicado por programa + riesgo Meta Personal
+          Health). SIN CTA: la banda es evidencia, no venta. */}
+      <section className="section">
+        <div className="section-inner" ref={resultados.ref}>
+          <div className={resultados.className}>
+            <span className="day-marker">
+              {es ? "Resultados reales" : "Real results"}
+            </span>
+            <h2 className="section-title">
+              {es ? "Así se ve el día 54." : "This is what day 54 looks like."}
+            </h2>
+            <p
+              style={{
+                marginTop: "1.4rem",
+                maxWidth: "38rem",
+                fontSize: "1.05rem",
+                lineHeight: 1.6,
+                color: "var(--c-mist)",
+              }}
+            >
+              {es
+                ? "Resultado promedio de nuestros miembros: -5 kg en 54 días · Verificado por coaches 54D"
+                : "Average member result: -5 kg in 54 days · Verified by 54D coaches"}
+            </p>
+            <div className="results-grid">
+              {(
+                [
+                  ["elizabeth", "Elizabeth"],
+                  ["rafael", "Rafael"],
+                  ["silvana", "Silvana"],
+                ] as const
+              ).map(([file, name]) => (
+                <figure style={{ margin: 0 }} key={file}>
+                  <img
+                    src={asset(`images/results/${file}.jpg`)}
+                    alt={
+                      es
+                        ? `Antes y después de ${name}, miembro de 54D ON`
+                        : `${name}'s before and after as a 54D ON member`
+                    }
+                    loading="lazy"
+                  />
+                </figure>
+              ))}
+            </div>
+            <p className="photo-caption" style={{ marginTop: "0.9rem" }}>
+              {es
+                ? "Antes y después reales de miembros de 54D ON"
+                : "Real member before-and-afters from 54D ON"}
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* ============ DIFERENCIALES VS APPS GENÉRICAS ============ */}
       <section className="section">
         <div className="section-inner" ref={difApps.ref}>
           <div className={difApps.className}>
-            <span className="day-marker">The difference</span>
+            <span className="day-marker">
+              {es ? "La diferencia" : "The difference"}
+            </span>
             <h2 className="section-title">
-              This is not <span style={solidAccent}>another app.</span>
+              {es ? "Esto no es " : "This is not "}
+              <span style={solidAccent}>
+                {es ? "una app más." : "another app."}
+              </span>
             </h2>
             <p style={{ marginTop: "1.4rem", maxWidth: "38rem", fontSize: "1.05rem", lineHeight: 1.6, color: "var(--c-mist)" }}>
-              Workout apps sell you access to content. 54D ON puts you inside a
-              program with structure, a standard, and an end. The app is just
-              the vehicle.
+              {es
+                ? "Las apps de ejercicio te venden acceso a contenido. 54D ON te mete en un programa con estructura, un estándar y un final. La app es solo el vehículo."
+                : "Workout apps sell you access to content. 54D ON puts you inside a program with structure, a standard, and an end. The app is just the vehicle."}
             </p>
             <CompareTable
-              columns={["", "A generic app", "54D ON"]}
-              rows={VS_APPS}
+              columns={es ? ["", "Una app genérica", "54D ON"] : ["", "A generic app", "54D ON"]}
+              rows={VS_APPS[lang]}
               accentCol={2}
             />
           </div>
@@ -1479,9 +1707,12 @@ export default function On() {
       <section className="section section-tight">
         <div className="section-inner" ref={vsStudios.ref}>
           <div className={vsStudios.className}>
-            <span className="day-marker">Which 54D</span>
+            <span className="day-marker">
+              {es ? "Elige tu 54D" : "Which 54D"}
+            </span>
             <h2 className="section-title">
-              Which 54D is <span style={solidAccent}>for you?</span>
+              {es ? "¿Cuál 54D es " : "Which 54D is "}
+              <span style={solidAccent}>{es ? "para ti?" : "for you?"}</span>
             </h2>
             {/* Texto y foto lado a lado: llena la mitad derecha vacía (on-desktop-2.png) */}
             <div
@@ -1494,40 +1725,48 @@ export default function On() {
               }}
             >
               <p style={{ maxWidth: "38rem", fontSize: "1.05rem", lineHeight: 1.6, color: "var(--c-mist)" }}>
-                One method, two very different programs. 54D ON is your
-                transformation, wherever you are, on your schedule. 54D Studios
-                is the flagship: in person, by application, with a dedicated
-                team. Neither is a lighter version of the other. They are built
-                for different lives.
+                {es
+                  ? "Un método, dos programas muy distintos. 54D ON es tu transformación, donde estés y a tu horario. 54D Studios es la experiencia insignia: presencial, por solicitud, con un equipo dedicado. Ninguno es la versión ligera del otro. Están hechos para vidas distintas."
+                  : "One method, two very different programs. 54D ON is your transformation, wherever you are, on your schedule. 54D Studios is the flagship: in person, by application, with a dedicated team. Neither is a lighter version of the other. They are built for different lives."}
               </p>
               <figure style={{ margin: 0 }}>
                 <img
-                  src={asset("images/hd/cg-gym-wide.jpg")}
-                  alt="Wide view of the 54D training floor, equipment set and ready"
+                  src={asset("images/brand/generation-line-54d-mural-wide.jpg")}
+                  alt={
+                    es
+                      ? "Una Generación de 54D abrazada bajo el mural 54D"
+                      : "A 54D generation lined up arm in arm under the 54D mural"
+                  }
                   loading="lazy"
                   style={{
                     width: "100%",
                     display: "block",
                     aspectRatio: "21 / 9",
                     objectFit: "cover",
-                    objectPosition: "center 22%",
+                    objectPosition: "center 45%",
                     borderRadius: "var(--r-media, 2px)",
                     filter: "saturate(0.82) contrast(1.05)",
                   }}
                 />
                 <figcaption style={photoCaption}>
                   <span style={captionTick} aria-hidden="true" />
-                  One method. Two very different ways to live it.
+                  {es
+                    ? "Un método. Dos maneras muy distintas de vivirlo."
+                    : "One method. Two very different ways to live it."}
                 </figcaption>
               </figure>
             </div>
             <CompareTable
               columns={["", "54D ON", "54D Studios"]}
-              rows={VS_STUDIOS}
+              rows={VS_STUDIOS[lang]}
               accentCol={1}
             />
-            {/* CTAs desiguales a proposito: ON a #membership, Studios a consulta */}
-            <div className="hero-ctas" style={{ marginTop: "2rem" }}>
+            {/* CTAs desiguales a proposito: ON a #membership, Studios a consulta.
+                Centrados: cierran una tabla full-width, no una columna. */}
+            <div
+              className="hero-ctas"
+              style={{ marginTop: "2rem", justifyContent: "center" }}
+            >
               <a href="#membership" className="btn btn-primary">
                 {es ? "Empieza gratis. 7 días." : "Start free. 7 days."}
               </a>
@@ -1607,10 +1846,13 @@ export default function On() {
         </div>
       </section>
 
-      {/* Página de 15.458px sin CTA persistente → sticky compartida (FIXES_V5 §4) */}
+      {/* Página de 15.458px sin CTA persistente → sticky compartida (FIXES_V5 §4).
+          Se retira sobre la membresía y sobre el cierre: nunca dos primarios
+          amarillos en la misma vista (QUIET v6). */}
       <StickyCta
         href="#membership"
         label={es ? "Empieza tu prueba gratis" : "Start free trial"}
+        hideWhenVisible="#membership, .final-wrap, .prog-close"
       />
 
       <Footer />

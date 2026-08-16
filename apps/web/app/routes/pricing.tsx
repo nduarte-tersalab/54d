@@ -5,15 +5,25 @@ import { Nav, Footer, useReveal } from "../components/site";
 import { StickyCta } from "../components/sticky-cta";
 import { startCheckout } from "../lib/attribution";
 import { asset } from "../lib/asset";
-import { useLang, type Lang } from "../lib/i18n";
+import { useLang, resolveLang, type Lang } from "../lib/i18n";
 
-export function meta({}: Route.MetaArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
+  return { lang: resolveLang(request) };
+}
+
+export function meta({ loaderData }: Route.MetaArgs) {
+  const es = loaderData?.lang === "es";
   return [
-    { title: "54D ON Pricing: Start With 7 Days Free" },
+    {
+      title: es
+        ? "Precios de 54D ON: empieza con 7 días gratis"
+        : "54D ON Pricing: Start With 7 Days Free",
+    },
     {
       name: "description",
-      content:
-        "Pick your 54D ON plan: monthly, quarterly, or annual. 7-day free trial, no commitment, 30-day guarantee. Cancel anytime, straight from your account.",
+      content: es
+        ? "Elige tu plan de 54D ON: mensual, trimestral o anual. Prueba gratis de 7 días, sin ataduras, garantía de 30 días. Cancela cuando quieras desde tu cuenta."
+        : "Pick your 54D ON plan: monthly, quarterly, or annual. 7-day free trial, no commitment, 30-day guarantee. Cancel anytime, straight from your account.",
     },
   ];
 }
@@ -36,8 +46,7 @@ const PLANS_CSS = `
 .check-list li::before { content: '\\2713'; position: absolute; left: 0; top: 0; color: var(--c-yellow); font-weight: 700; }
 .check-list li strong { color: var(--c-white); font-weight: 600; }
 
-/* §3.4 Microcopy de riesgo pegado al boton */
-.btn-riskline { display: block; font-size: 0.72rem; color: var(--c-faint); text-align: center; margin-top: 0.55rem; letter-spacing: 0.02em; }
+/* §3.4 .btn-riskline ahora vive en app.css (la comparte /on) */
 
 /* §1.3.3 Lista de valor completa a 1.05rem en Everything included */
 .photo-grid .check-list { margin-top: 1.6rem; max-width: 36rem; display: grid; gap: 0.9rem; }
@@ -63,7 +72,7 @@ type Plan = {
   /* Trio audiovisual (cliente 07/08): foto de identidad + chip de
      beneficio por tier, mismas fotos que los tiers de /on */
   photo: string;
-  photoAlt: string;
+  photoAlt: Record<Lang, string>;
   photoPos: string;
   chip: Record<Lang, string>;
 };
@@ -79,7 +88,10 @@ const PLANS: Plan[] = [
     regular: "$99",
     period: { en: "/ month · billed monthly", es: "/ mes · facturación mensual" },
     photo: "images/hd2/spare-man-running.jpg",
-    photoAlt: "Athlete running with visible effort on the 54D floor",
+    photoAlt: {
+      en: "Athlete running with visible effort on the 54D floor",
+      es: "Atleta corriendo con esfuerzo visible en el piso de 54D",
+    },
     photoPos: "center 33%",
     chip: { en: "Most flexible", es: "El más flexible" },
     features: [
@@ -94,7 +106,7 @@ const PLANS: Plan[] = [
         lead: { en: "Commit", es: "Paga" },
         rest: {
           en: " to nothing: billed month to month",
-          es: " mes a mes, sin compromiso de permanencia",
+          es: " mes a mes, sin ataduras",
         },
       },
       {
@@ -115,7 +127,10 @@ const PLANS: Plan[] = [
     period: { en: "/ month · $156 every 3 months", es: "/ mes · $156 cada 3 meses" },
     badge: { en: "Most chosen", es: "El más elegido" },
     photo: "images/hd/cg-effort-yellow-d.jpg",
-    photoAlt: "Athlete grimacing with effort in front of the yellow 54D letter",
+    photoAlt: {
+      en: "Athlete grimacing with effort in front of the yellow 54D letter",
+      es: "Atleta con gesto de esfuerzo frente a la D amarilla de 54D",
+    },
     photoPos: "center 36%",
     chip: { en: "Most chosen", es: "El más elegido" },
     features: [
@@ -149,9 +164,12 @@ const PLANS: Plan[] = [
     price: "$49",
     regular: "$79",
     period: { en: "/ month · $588 a year", es: "/ mes · $588 al año" },
-    photo: "images/hd2/blog-spin-smile.jpg",
-    photoAlt: "Member smiling mid ride on the 54D bike floor",
-    photoPos: "center 32%",
+    photo: "images/brand/on-graduation-hug.jpg",
+    photoAlt: {
+      en: "Two 54D members embracing at their graduation",
+      es: "Dos miembros de 54D abrazándose en su graduación",
+    },
+    photoPos: "center 30%",
     chip: { en: "Best value", es: "Mejor precio" },
     features: [
       {
@@ -216,7 +234,7 @@ const MEMBERSHIP_VALUE: Record<Lang, { lead: string; rest: string }[]> = {
     },
     {
       lead: "Ten un coach real",
-      rest: " en tu esquina: chat ilimitado, correcciones y seguimiento",
+      rest: " de tu lado: chat ilimitado, correcciones y seguimiento",
     },
     {
       lead: "Come con un plan",
@@ -231,8 +249,8 @@ const MEMBERSHIP_VALUE: Record<Lang, { lead: string; rest: string }[]> = {
       rest: ": desde tu cuenta, sin llamadas ni trucos de retención",
     },
     {
-      lead: "Mantén tus resultados cubiertos",
-      rest: ": garantía de devolución de 30 días si haces el trabajo",
+      lead: "Protege tu inversión",
+      rest: ": garantía de devolución de 30 días si sigues el programa",
     },
   ],
 };
@@ -265,7 +283,7 @@ const NO_RISK: Record<Lang, { q: string; name: string; desc: string }[]> = {
     {
       q: "¿Y si empiezo y no funciona?",
       name: "Garantía de 30 días",
-      desc: "Sigue el programa y, si no ves resultados, te devolvemos tu dinero. Sin interrogatorios, sin letra pequeña.",
+      desc: "Sigue el programa y, si no ves resultados, te devolvemos tu dinero. Sin interrogatorios, sin letra chica.",
     },
     {
       q: "¿Me van a cobrar sin avisar?",
@@ -275,13 +293,16 @@ const NO_RISK: Record<Lang, { q: string; name: string; desc: string }[]> = {
   ],
 };
 
-/* SOCIAL_PROOF_PLACEHOLDER: la sección Results queda APAGADA (array
-   vacío) hasta tener testimonios REALES confirmados por el cliente
-   (nombre, edad, ciudad, generación y foto). Regla dura: NO INVENTAR
-   DATOS. Al cargar testimonios verificados acá, la sección se
-   enciende sola. */
-type Testimonial = { quote: string; name: string; tag: string };
-const TESTIMONIALS: Testimonial[] = [];
+/* RESULTADOS REALES: composites THEN/NOW oficiales del cliente (harvest
+   13/08, publicados hoy en su landing de produccion). REGLA DE ALCANCE:
+   los antes/después y el claim -5kg SOLO viven en /on, /pricing y
+   /programs/54d-on. NO esparcir a las otras 12 landings. */
+const RESULTS_PHOTOS = [
+  ["elizabeth", "Elizabeth"],
+  ["rafael", "Rafael"],
+  ["silvana", "Silvana"],
+  ["sebastian", "Sebastian"],
+] as const;
 
 /* FAQ de objeciones: también alimenta el schema FAQPage (SIEMPRE en EN,
    idioma indexado) */
@@ -334,7 +355,7 @@ const FAQS: Record<Lang, Faq[]> = {
     },
     {
       q: "¿Necesito la app?",
-      a: "Sí. 54D ON se entrega a través de la app 54D On para iOS y Android: ahí viven tu entrenamiento diario, tu protocolo de nutrición y el chat con tu coach. La app es gratis de descargar y tiene 4.9 en el App Store. Tu suscripción desbloquea todo.",
+      a: "Sí. 54D ON se entrega a través de la app 54D On para iOS y Android: ahí viven tu entrenamiento diario, tu protocolo de nutrición y el chat con tu coach. La app se descarga gratis y tiene 4.9 en el App Store. Tu suscripción desbloquea todo.",
       link: { href: "/on", label: "Mira cómo funciona 54D ON →" },
     },
     {
@@ -411,11 +432,17 @@ export default function Pricing() {
     try {
       // startCheckout adjunta la atribución (utm/fbclid) y redirige a Stripe
       await startCheckout(priceId);
-    } catch {
+    } catch (e) {
+      /* 503 tipado (Stripe pendiente): copy veraz; red real: copy de conexión */
+      const pending = e instanceof Error && e.name === "payments_not_configured";
       setError(
-        es
-          ? "No pudimos iniciar el pago. Revisa tu conexión e intenta de nuevo en unos segundos."
-          : "We couldn't start checkout. Check your connection and try again in a few seconds."
+        pending
+          ? es
+            ? "Estamos conectando los pagos. Podrás completar tu compra muy pronto; no es un problema de tu lado."
+            : e.message
+          : es
+            ? "No pudimos iniciar el pago. Revisa tu conexión e intenta de nuevo en unos segundos."
+            : "We couldn't start checkout. Check your connection and try again in a few seconds."
       );
       setErrorPlan(priceId);
       setLoadingPlan(null);
@@ -454,7 +481,7 @@ export default function Pricing() {
             <br />
             <span className="accent">
               {es
-                ? "Los primeros 7 días van por nuestra cuenta."
+                ? "Los primeros 7 días corren por nuestra cuenta."
                 : "The first 7 days are on us."}
             </span>
           </h1>
@@ -515,7 +542,7 @@ export default function Pricing() {
                   <div className="plan-photo">
                     <img
                       src={asset(p.photo)}
-                      alt={p.photoAlt}
+                      alt={p.photoAlt[lang]}
                       loading="lazy"
                       style={{ objectPosition: p.photoPos }}
                     />
@@ -627,8 +654,12 @@ export default function Pricing() {
       {/* ============ AIDA · I: PHOTO-BAND SEPARADOR (emoción, descanso visual §1.3.2) ============ */}
       <section className="photo-band band-tight">
         <img
-          src={asset("images/hd/cg-highfive-euphoria.jpg")}
-          alt="Two 54D members leaping into a high five, celebrating the end of a session"
+          src={asset("images/hd/cg-ramp-runners-wide.jpg")}
+          alt={
+            es
+              ? "Miembros de 54D subiendo la rampa amarilla en plena sesión"
+              : "54D members running up the yellow ramp during a session"
+          }
           loading="lazy"
         />
         <div className="photo-band-content" ref={band.ref}>
@@ -683,21 +714,29 @@ export default function Pricing() {
                   </li>
                 ))}
               </ul>
+              {/* Render OFICIAL del dashboard (harvest 13/08): la app real,
+                  exenta sobre la lona. Sin photo-card, sin filtros. */}
               <figure style={{ margin: 0 }}>
-                <div className="photo-card" style={{ aspectRatio: "3 / 2" }}>
-                  {/* Vertical recortada a 3/2: el encuadre sube al rostro del
-                      coach (el centro de la foto es torso negro sobre negro) */}
-                  <img
-                    src={asset("images/studios/coral-gables/coach-with-headset-01.jpg")}
-                    alt="A 54D coach wearing a headset guiding the class from the training floor"
-                    loading="lazy"
-                    style={{ objectPosition: "center 26%" }}
-                  />
-                </div>
-                <figcaption className="photo-caption">
+                <img
+                  src={asset("images/app/app-dashboard-trio.png")}
+                  alt={
+                    es
+                      ? "Tres pantallas de la app 54D On con el plan del día y tu progreso"
+                      : "Three 54D On app screens with the day's plan and your progress"
+                  }
+                  loading="lazy"
+                  style={{
+                    width: "100%",
+                    maxWidth: "30rem",
+                    height: "auto",
+                    display: "block",
+                    margin: "0 auto",
+                  }}
+                />
+                <figcaption className="photo-caption" style={{ textAlign: "center" }}>
                   {es
-                    ? "Tu coach · Cada uno de los 54 días"
-                    : "Your coach · Every one of the 54 days"}
+                    ? "La app 54D On. Todo tu programa en el bolsillo."
+                    : "The 54D On app. Your whole program in your pocket."}
                 </figcaption>
               </figure>
             </div>
@@ -753,52 +792,60 @@ export default function Pricing() {
         </div>
       </section>
 
-      {/* ============ AIDA · D: PRUEBA SOCIAL (APAGADA hasta tener datos
-          reales) ============ */}
-      {/* Gateada al array: con TESTIMONIALS vacío no se renderiza nada.
-          NO INVENTAR DATOS: solo testimonios confirmados por el cliente
-          (nombre, edad, ciudad, generación y foto). */}
-      {TESTIMONIALS.length > 0 && (
-        <section className="section">
-          <div className="section-inner" ref={proof.ref}>
-            <div className={proof.className}>
-              <span className="day-marker">{es ? "Resultados" : "Results"}</span>
-              <h2 className="section-title">
-                {es ? (
-                  <>
-                    Sigues <span className="accent">tú.</span>
-                  </>
-                ) : (
-                  <>
-                    You're <span className="accent">next.</span>
-                  </>
-                )}
-              </h2>
-              <div className="pricing-grid">
-                {TESTIMONIALS.map((t) => (
-                  <div className="method-card" key={t.name}>
-                    <p className="method-desc" style={{ marginTop: 0, fontSize: "1.02rem" }}>
-                      "{t.quote}"
-                    </p>
-                    <div className="method-name" style={{ fontSize: "1rem" }}>{t.name}</div>
-                    <p
-                      style={{
-                        marginTop: "0.3rem",
-                        fontSize: "0.78rem",
-                        textTransform: "uppercase",
-                        letterSpacing: "var(--track-label, 0.14em)",
-                        color: "var(--c-faint)",
-                      }}
-                    >
-                      {t.tag}
-                    </p>
-                  </div>
-                ))}
-              </div>
+      {/* ============ AIDA · D: RESULTADOS REALES (THEN/NOW oficiales) ============
+          REGLA DE ALCANCE: antes/después y claim -5kg SOLO en /on, /pricing
+          y /programs/54d-on. SIN CTA: la banda es evidencia, no venta. */}
+      <section className="section">
+        <div className="section-inner" ref={proof.ref}>
+          <div className={proof.className}>
+            <span className="day-marker">{es ? "Resultados" : "Results"}</span>
+            <h2 className="section-title">
+              {es ? (
+                <>
+                  Sigues <span className="accent">tú.</span>
+                </>
+              ) : (
+                <>
+                  You're <span className="accent">next.</span>
+                </>
+              )}
+            </h2>
+            <p
+              style={{
+                marginTop: "1.4rem",
+                maxWidth: "38rem",
+                fontSize: "1.05rem",
+                lineHeight: 1.6,
+                color: "var(--c-mist)",
+              }}
+            >
+              {es
+                ? "Resultado promedio de nuestros miembros: -5 kg en 54 días · Verificado por coaches 54D"
+                : "Average member result: -5 kg in 54 days · Verified by 54D coaches"}
+            </p>
+            <div className="results-grid">
+              {RESULTS_PHOTOS.map(([file, name]) => (
+                <figure style={{ margin: 0 }} key={file}>
+                  <img
+                    src={asset(`images/results/${file}.jpg`)}
+                    alt={
+                      es
+                        ? `Antes y después de ${name}, miembro de 54D ON`
+                        : `${name}'s before and after as a 54D ON member`
+                    }
+                    loading="lazy"
+                  />
+                </figure>
+              ))}
             </div>
+            <p className="photo-caption" style={{ marginTop: "0.9rem" }}>
+              {es
+                ? "Antes y después reales de miembros de 54D ON"
+                : "Real member before-and-afters from 54D ON"}
+            </p>
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
       {/* ============ AIDA · A: FAQ (objeciones tardías) ============ */}
       <section className="section">
@@ -870,10 +917,9 @@ export default function Pricing() {
               <a href="#plans" className="btn btn-primary">
                 {es ? "Empieza gratis. 7 días." : "Start free. 7 days."}
               </a>
+              {/* Label corto: vuelve a 1 línea y 54px en mobile (auditoría 12/08) */}
               <Link to="/studios" className="btn btn-ghost">
-                {es
-                  ? "¿Prefieres entrenar en persona? Conoce los studios"
-                  : "Rather train in person? See the studios"}
+                {es ? "Conoce los studios" : "See the studios"}
               </Link>
             </div>
             <p style={{ marginTop: "1.4rem", fontSize: "0.82rem", color: "var(--c-faint)" }}>
@@ -888,6 +934,7 @@ export default function Pricing() {
       <StickyCta
         href="#plans"
         label={es ? "Empieza gratis. 7 días." : "Start free. 7 days."}
+        hideWhenVisible="#plans, .final-wrap"
       />
 
       <Footer />

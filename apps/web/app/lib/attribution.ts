@@ -135,10 +135,14 @@ export async function startCheckout(
     body: JSON.stringify({ priceId, attribution }),
   });
   if (res.status === 503) {
-    // Stripe aún sin configurar (keys pendientes)
-    throw new Error(
+    // Stripe aún sin configurar (keys pendientes). El error va TIPADO por
+    // name para que cada ruta lo mapee a copy bilingüe veraz, en vez de
+    // culpar a la conexión del usuario.
+    const err = new Error(
       "Payments are being connected. Checkout opens very soon; nothing is wrong on your end."
     );
+    err.name = "payments_not_configured";
+    throw err;
   }
   if (!res.ok) throw new Error("We couldn't start checkout");
   const { url } = (await res.json()) as { url: string };

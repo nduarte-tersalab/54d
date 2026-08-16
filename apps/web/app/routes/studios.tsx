@@ -3,7 +3,7 @@ import type { Route } from "./+types/studios";
 import { Nav, Footer, useReveal } from "../components/site";
 import { STUDIOS, cityLabel } from "../data/studios";
 import { asset } from "../lib/asset";
-import { useLang, type Lang } from "../lib/i18n";
+import { resolveLang, useLang, type Lang } from "../lib/i18n";
 
 /* ============================================================
    /studios: index de sedes (54D Studios)
@@ -16,13 +16,23 @@ import { useLang, type Lang } from "../lib/i18n";
    Fotos reales según ART_DIRECTION_V3.md + IMAGES_BRAND.md.
    ============================================================ */
 
-export function meta({}: Route.MetaArgs) {
+export async function loader({ request }: Route.LoaderArgs) {
+  return { lang: resolveLang(request) };
+}
+
+export function meta({ loaderData }: Route.MetaArgs) {
+  const es = loaderData?.lang === "es";
   return [
-    { title: "54D Studios: The Flagship Experience in 3 Countries" },
+    {
+      title: es
+        ? "54D Studios: la experiencia insignia en 3 países"
+        : "54D Studios: The Flagship Experience in 3 Countries",
+    },
     {
       name: "description",
-      content:
-        "The 54D Method in person: a dedicated team of coaches, nutritionist, and physiotherapy. Admission by Generation, by application. Miami, Mexico City, Bogotá.",
+      content: es
+        ? "El Método 54D presencial: un equipo dedicado de coaches, nutricionista y fisioterapia. Admisión por Generación, por solicitud. Miami, Ciudad de México, Bogotá."
+        : "The 54D Method in person: a dedicated team of coaches, nutritionist, and physiotherapy. Admission by Generation, by application. Miami, Mexico City, Bogotá.",
     },
   ];
 }
