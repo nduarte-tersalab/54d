@@ -375,6 +375,7 @@ export default function ProgramLandingPage({
   const filter = useReveal();
   const structure = useReveal();
   const journey = useReveal();
+  const appStrip = useReveal();
   const proof = useReveal();
   const results = useReveal();
   const upsell = useReveal();
@@ -594,13 +595,15 @@ export default function ProgramLandingPage({
             <span className="accent">{p.hook[lang].accent}</span>
           </h1>
           <p className="hero-sub">{p.subhead[lang]}</p>
-          {/* Precio y boton lado a lado EN EL HERO (aclaracion cliente
-              14/08: era aca arriba, no en el cierre) */}
-          <div className="hero-buy-row">
-            <PriceLine landing={p} note={p.priceNote[lang]} lang={lang} />
-            {heroButton}
-          </div>
-          <p style={microStyle}>{p.microcopy[lang]}</p>
+          <PriceLine landing={p} note={p.priceNote[lang]} lang={lang} />
+          <div className="hero-ctas">{heroButton}</div>
+          {/* Mentalidad del comprador (cliente 16/08): "voy a bajar una app".
+              El micro suma la senal de app + rating desde el hero. */}
+          <p style={microStyle}>
+            {p.microcopy[lang]}
+            {" · "}
+            {es ? "EN LA APP 54D ON ★ 4.9" : "IN THE 54D ON APP ★ 4.9"}
+          </p>
           {/* Los quick wins van DEBAJO del botón a propósito: no empujan
               el primario fuera del pliegue en 375x667 */}
           <QuickWins items={p.quickWins[lang]} />
@@ -891,6 +894,65 @@ export default function ProgramLandingPage({
           </div>
         </section>
       )}
+
+      {/* ============ 4c. LA APP (mentalidad comprador de app, 16/08):
+           el telefono real + 3 hechos + tiendas. Patron probado de /on. ============ */}
+      <section className="section section-tight">
+        <div className="section-inner" ref={appStrip.ref}>
+          <div className={appStrip.className}>
+            <div className="app-strip">
+              <picture>
+                <source
+                  media="(max-width: 640px)"
+                  srcSet={asset("images/app/Phone-hero-mobile.png")}
+                />
+                <img
+                  src={asset("images/app/Phone-d-hero.png")}
+                  alt={
+                    es
+                      ? "La app 54D On: la sesión del día en video y el chat real con tu coach"
+                      : "The 54D On app: today's session on video and the real chat with your coach"
+                  }
+                  loading="lazy"
+                  className="app-strip-phone"
+                />
+              </picture>
+              <div>
+                <h2 className="section-title" style={{ fontSize: "clamp(1.5rem, 2.4vw, 2rem)" }}>
+                  {es
+                    ? "Tu programa vive en la app 54D On."
+                    : "Your program lives in the 54D On app."}
+                </h2>
+                <ul className="app-strip-list">
+                  <li>
+                    {es
+                      ? "Cada sesión en video, con tu coach real en el chat"
+                      : "Every session on video, with your real coach in the chat"}
+                  </li>
+                  <li>{es ? "iOS y Android" : "iOS and Android"}</li>
+                  <li>
+                    {es
+                      ? "La app se descarga gratis"
+                      : "The app is free to download"}
+                  </li>
+                </ul>
+                <AppStoreBadges
+                  appStoreUrl={APP_STORE_URL}
+                  googlePlayUrl={GOOGLE_PLAY_URL}
+                />
+                <div className="app-rating">
+                  <span>
+                    <b>4.9</b> App Store
+                  </span>
+                  <span>
+                    <b>4.9</b> Google Play
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ============ 5. PROOF (garantía + coach real + 4.9) ============ */}
       <section className="section">

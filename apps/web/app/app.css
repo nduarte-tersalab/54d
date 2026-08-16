@@ -1664,17 +1664,19 @@ p.lead, .lead {
   --space-block: clamp(2.4rem, 4.5vw, 3.25rem);
 }
 
-/* Hero de landing: precio y boton lado a lado (cliente 14/08, "arriba").
-   El boton queda a la altura visual del precio; en mobile apila. */
-.hero-buy-row {
-  display: flex; align-items: center;
-  gap: 1.2rem 2.2rem; flex-wrap: wrap;
-  margin-top: 1.5rem;
+/* Franja de app en landings (16/08): telefono real + hechos + tiendas.
+   Split 2/3 desktop, apila en mobile con el telefono arriba. */
+.app-strip {
+  display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  gap: var(--gap-grid) clamp(2rem, 5vw, 4rem); align-items: center;
 }
-.hero-buy-row .pricing-price { line-height: 1; }
-@media (max-width: 640px) {
-  .hero-buy-row { flex-direction: column; align-items: stretch; gap: 1.1rem; }
-  .hero-buy-row .btn { text-align: center; justify-content: center; }
+.app-strip-phone { width: 100%; max-width: 340px; height: auto; display: block; margin: 0 auto; }
+.app-strip-list { list-style: none; padding: 0; margin: 1.4rem 0 1.8rem; display: grid; gap: 0.6rem; }
+.app-strip-list li { position: relative; padding-left: 1.5rem; font-size: 0.98rem; line-height: 1.55; color: var(--c-mist); }
+.app-strip-list li::before { content: '\2713'; position: absolute; left: 0; color: var(--c-yellow); font-weight: 700; }
+@media (max-width: 700px) {
+  .app-strip { grid-template-columns: 1fr; }
+  .app-strip-phone { max-width: 240px; }
 }
 .inline-cta-note {
   font-family: var(--font-label); font-weight: 700; font-size: 0.7rem;
