@@ -1638,26 +1638,52 @@ p.lead, .lead {
 /* CTA inline: camino de compra a un tap en cada punto del scroll.
    SIEMPRE ghost: el amarillo queda para hero, sticky y cierre. */
 .inline-cta {
-  margin-top: var(--space-block);
-  padding-top: 1.6rem;
+  /* FILA de compra (cliente 14/08: los CTA inline parecian botones
+     colgados en el vacio): label izquierda, nota+boton derecha, hairlines
+     arriba y abajo — mismo lenguaje que las filas del sistema. */
+  margin-top: 2.6rem;
+  padding-block: 1.05rem;
   border-top: 1px solid var(--hairline);
-  display: grid; justify-items: start; gap: 0.7rem; max-width: 38rem;
+  border-bottom: 1px solid var(--hairline);
+  display: flex; align-items: center; gap: 1.4rem;
+  max-width: none;
 }
 .inline-cta-eyebrow {
   font-family: var(--font-label); font-weight: 700; font-size: 0.72rem;
   text-transform: uppercase; letter-spacing: var(--track-eyebrow, 0.22em);
   color: var(--c-faint);
+  margin-right: auto; /* empuja nota+boton a la derecha */
 }
 .inline-cta-btn { min-height: var(--btn-h-sm); }
+
+/* Ritmo de landing de pauta: frontera seccion-seccion 176px (vs 256 del
+   sitio) y titulo-grid mas corto. Scoped: NO toca el resto del sitio. */
+.landing-page {
+  --space-section: clamp(3.25rem, 6.5vw, 5.5rem);
+  --space-section-tight: clamp(1.75rem, 3.5vw, 3rem);
+  --space-block: clamp(2.4rem, 4.5vw, 3.25rem);
+}
+
+/* Cierre #buy: precio y boton en una linea (cliente 14/08) */
+.final-buy-row {
+  display: flex; align-items: center; justify-content: center;
+  gap: 1rem 2rem; flex-wrap: wrap;
+  margin-top: 1.6rem;
+}
+.final-buy-row .pricing-price { line-height: 1; }
+@media (max-width: 640px) {
+  .final-buy-row { flex-direction: column; gap: 1.1rem; }
+}
 .inline-cta-note {
   font-family: var(--font-label); font-weight: 700; font-size: 0.7rem;
   text-transform: uppercase; letter-spacing: var(--track-label, 0.14em);
   color: var(--c-faint);
 }
 @media (max-width: 640px) {
-  .inline-cta { justify-items: stretch; }
-  .inline-cta-btn { display: block; width: 100%; text-align: center; }
-  .inline-cta-note { text-align: center; }
+  .inline-cta { flex-wrap: wrap; gap: 0.7rem 1rem; }
+  .inline-cta-eyebrow { margin-right: 0; flex: 1 1 auto; }
+  .inline-cta-note { flex: 0 0 auto; }
+  .inline-cta-btn { flex: 1 1 100%; text-align: center; justify-content: center; }
 }
 
 /* Stats de /programs en telefono: los valores de palabra (Intermediate,

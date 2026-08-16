@@ -538,6 +538,7 @@ export default function ProgramLandingPage({
   }) => (
     <div className="inline-cta">
       <span className="inline-cta-eyebrow">{eyebrow}</span>
+      <span className="inline-cta-note">{inlineNote}</span>
       <button
         type="button"
         className="btn btn-ghost inline-cta-btn"
@@ -547,12 +548,14 @@ export default function ProgramLandingPage({
       >
         {busy ? t.opening : buyLabel}
       </button>
-      <span className="inline-cta-note">{inlineNote}</span>
     </div>
   );
 
   return (
-    <div>
+    /* .landing-page: ritmo de landing de pauta — frontera de seccion mas
+       corta que el sitio institucional (256px se leia como vacio; cliente
+       14/08 "muchos espacios vacios") */
+    <div className="landing-page">
       <Nav />
 
       {/* ============ 1. HERO (100vh, un solo CTA) ============ */}
@@ -691,13 +694,8 @@ export default function ProgramLandingPage({
             </div>
             <p className="photo-caption" style={{ marginTop: "0.9rem" }}>
               {es
-                ? "Antes y después reales de miembros de 54D ON"
-                : "Real member before-and-afters from 54D ON"}
-            </p>
-            <p className="photo-caption" style={{ marginTop: "0.3rem" }}>
-              {es
-                ? "Los resultados varían según la persona."
-                : "Results vary by person."}
+                ? "Antes y después reales de miembros de 54D ON · Los resultados varían según la persona."
+                : "Real member before-and-afters from 54D ON · Results vary by person."}
             </p>
           </div>
         </div>
@@ -1065,9 +1063,13 @@ export default function ProgramLandingPage({
         <div className="section-inner" ref={cta.ref}>
           <div className={`final-wrap ${cta.className}`}>
             <h2 className="final-title">{finalTitle}</h2>
-            <PriceLine landing={p} note={p.priceNote[lang]} center lang={lang} />
+            {/* Precio y boton en la misma linea (pedido cliente 14/08):
+                una sola decision visual, sin boton colgado debajo */}
+            <div className="final-buy-row">
+              <PriceLine landing={p} note={p.priceNote[lang]} center lang={lang} />
+              {finalButton}
+            </div>
             <QuickWins items={p.quickWins[lang]} />
-            <div className="hero-ctas">{finalButton}</div>
             <p style={{ ...microStyle, marginTop: "1.2rem" }}>
               {p.microcopy[lang]}
             </p>
