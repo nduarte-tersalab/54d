@@ -1664,15 +1664,17 @@ p.lead, .lead {
   --space-block: clamp(2.4rem, 4.5vw, 3.25rem);
 }
 
-/* Cierre #buy: precio y boton en una linea (cliente 14/08) */
-.final-buy-row {
-  display: flex; align-items: center; justify-content: center;
-  gap: 1rem 2rem; flex-wrap: wrap;
-  margin-top: 1.6rem;
+/* Hero de landing: precio y boton lado a lado (cliente 14/08, "arriba").
+   El boton queda a la altura visual del precio; en mobile apila. */
+.hero-buy-row {
+  display: flex; align-items: center;
+  gap: 1.2rem 2.2rem; flex-wrap: wrap;
+  margin-top: 1.5rem;
 }
-.final-buy-row .pricing-price { line-height: 1; }
+.hero-buy-row .pricing-price { line-height: 1; }
 @media (max-width: 640px) {
-  .final-buy-row { flex-direction: column; gap: 1.1rem; }
+  .hero-buy-row { flex-direction: column; align-items: stretch; gap: 1.1rem; }
+  .hero-buy-row .btn { text-align: center; justify-content: center; }
 }
 .inline-cta-note {
   font-family: var(--font-label); font-weight: 700; font-size: 0.7rem;

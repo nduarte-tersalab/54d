@@ -594,8 +594,12 @@ export default function ProgramLandingPage({
             <span className="accent">{p.hook[lang].accent}</span>
           </h1>
           <p className="hero-sub">{p.subhead[lang]}</p>
-          <PriceLine landing={p} note={p.priceNote[lang]} lang={lang} />
-          <div className="hero-ctas">{heroButton}</div>
+          {/* Precio y boton lado a lado EN EL HERO (aclaracion cliente
+              14/08: era aca arriba, no en el cierre) */}
+          <div className="hero-buy-row">
+            <PriceLine landing={p} note={p.priceNote[lang]} lang={lang} />
+            {heroButton}
+          </div>
           <p style={microStyle}>{p.microcopy[lang]}</p>
           {/* Los quick wins van DEBAJO del botón a propósito: no empujan
               el primario fuera del pliegue en 375x667 */}
@@ -1063,13 +1067,9 @@ export default function ProgramLandingPage({
         <div className="section-inner" ref={cta.ref}>
           <div className={`final-wrap ${cta.className}`}>
             <h2 className="final-title">{finalTitle}</h2>
-            {/* Precio y boton en la misma linea (pedido cliente 14/08):
-                una sola decision visual, sin boton colgado debajo */}
-            <div className="final-buy-row">
-              <PriceLine landing={p} note={p.priceNote[lang]} center lang={lang} />
-              {finalButton}
-            </div>
+            <PriceLine landing={p} note={p.priceNote[lang]} center lang={lang} />
             <QuickWins items={p.quickWins[lang]} />
+            <div className="hero-ctas">{finalButton}</div>
             <p style={{ ...microStyle, marginTop: "1.2rem" }}>
               {p.microcopy[lang]}
             </p>

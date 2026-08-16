@@ -317,10 +317,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: cg("graduation-celebration-01"),
+      src: "images/programs/content/graduation-hug.jpg",
       alt: {
-        en: "A 54D generation celebrating graduation together on the training floor",
-        es: "Una generación de 54D celebrando su graduación en el piso de entrenamiento",
+        en: "Two members embracing at their 54D graduation",
+        es: "Dos miembros abrazándose en su graduación de 54D",
       },
     },
     stats: [
@@ -1270,10 +1270,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: hd2("spare-class-jump"),
+      src: "images/programs/content/full-body-drill.jpg",
       alt: {
-        en: "Whole class dropping into squats in front of the giant 54D wall, coach calling the round",
-        es: "La clase entera bajando a la sentadilla frente al muro gigante de 54D, el coach marcando la ronda",
+        en: "An athlete mid drill in front of the 54 mural, full body firing",
+        es: "Una atleta en pleno drill frente al mural 54, todo el cuerpo trabajando",
       },
     },
     stats: [
@@ -1433,10 +1433,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: cg("ramp-climb-vertical"),
+      src: "images/programs/content/lower-body-squat.jpg",
       alt: {
-        en: "Athlete climbing the studio ramp, shot from below",
-        es: "Atleta subiendo la rampa del estudio, tomada desde abajo",
+        en: "A 54D class deep in a loaded squat, the coach's cue landing in real time",
+        es: "Una clase de 54D en sentadilla profunda, con la corrección del coach en tiempo real",
       },
     },
     stats: [
