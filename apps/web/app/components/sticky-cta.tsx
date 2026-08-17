@@ -118,7 +118,7 @@ export function StickyCta({
       {onClick ? (
         <button
           type="button"
-          className="btn btn-primary"
+          className="btn btn-primary btn-attn"
           onClick={onClick}
           disabled={busy}
           aria-busy={busy}
@@ -134,7 +134,7 @@ export function StickyCta({
       ) : (
         <a
           href={href}
-          className="btn btn-primary"
+          className="btn btn-primary btn-attn"
           style={{ display: "block", width: "100%", textAlign: "center" }}
         >
           {label}

@@ -87,12 +87,12 @@ const PLANS: Plan[] = [
     price: "$54",
     regular: "$99",
     period: { en: "/ month · billed monthly", es: "/ mes · facturación mensual" },
-    photo: "images/hd2/spare-man-running.jpg",
+    photo: "images/programs/runners-21k.jpg",
     photoAlt: {
-      en: "Athlete running with visible effort on the 54D floor",
-      es: "Atleta corriendo con esfuerzo visible en el piso de 54D",
+      en: "Runner training outdoors along the beachfront",
+      es: "Corredor entrenando al aire libre frente a la playa",
     },
-    photoPos: "center 33%",
+    photoPos: "center 35%",
     chip: { en: "Most flexible", es: "El más flexible" },
     features: [
       {
@@ -126,12 +126,12 @@ const PLANS: Plan[] = [
     regular: "$89",
     period: { en: "/ month · $156 every 3 months", es: "/ mes · $156 cada 3 meses" },
     badge: { en: "Most chosen", es: "El más elegido" },
-    photo: "images/hd/cg-effort-yellow-d.jpg",
+    photo: "images/programs/emergency-kit-wide.jpg",
     photoAlt: {
-      en: "Athlete grimacing with effort in front of the yellow 54D letter",
-      es: "Atleta con gesto de esfuerzo frente a la D amarilla de 54D",
+      en: "Athlete mid cardio drill on the official 54D ON set",
+      es: "Atleta en pleno cardio en el set oficial de 54D ON",
     },
-    photoPos: "center 36%",
+    photoPos: "center 25%",
     chip: { en: "Most chosen", es: "El más elegido" },
     features: [
       {
@@ -164,10 +164,10 @@ const PLANS: Plan[] = [
     price: "$49",
     regular: "$79",
     period: { en: "/ month · $588 a year", es: "/ mes · $588 al año" },
-    photo: "images/brand/on-graduation-hug.jpg",
+    photo: "images/programs/first-move-wide.jpg",
     photoAlt: {
-      en: "Two 54D members embracing at their graduation",
-      es: "Dos miembros de 54D abrazándose en su graduación",
+      en: "Two members stretching together on the 54D ON set",
+      es: "Dos miembros estirando juntos en el set de 54D ON",
     },
     photoPos: "center 30%",
     chip: { en: "Best value", es: "Mejor precio" },
@@ -462,8 +462,8 @@ export default function Pricing() {
       <header className="hero hero-inner">
         <div className="hero-media">
           <img
-            src={asset("images/brand/studio-class-54d-mural-stairs.jpg")}
-            alt="A full 54D class training on mats under the 54D mural"
+            src={asset("images/programs/max-burn-wide.jpg")}
+            alt="Athlete facing her reflection on the official 54D ON set"
           />
         </div>
         <div className="hero-veil" />
@@ -491,7 +491,7 @@ export default function Pricing() {
               : "Full access to the method. Cancel before day 8 and pay nothing."}
           </p>
           <div className="hero-ctas">
-            <a href="#plans" className="btn btn-primary">
+            <a href="#plans" className="btn btn-primary btn-attn">
               {es ? "Empieza gratis. 7 días." : "Start free. 7 days."}
             </a>
           </div>
@@ -577,7 +577,7 @@ export default function Pricing() {
                     <footer>
                       <button
                         type="button"
-                        className={`btn ${p.featured ? "btn-primary" : "btn-ghost"}`}
+                        className={`btn ${p.featured ? "btn-primary btn-attn" : "btn-ghost"}`}
                         onClick={() => handleCheckout(p.priceId)}
                         disabled={loadingPlan !== null}
                         aria-busy={loadingPlan === p.priceId}
@@ -654,11 +654,11 @@ export default function Pricing() {
       {/* ============ AIDA · I: PHOTO-BAND SEPARADOR (emoción, descanso visual §1.3.2) ============ */}
       <section className="photo-band band-tight">
         <img
-          src={asset("images/hd/cg-ramp-runners-wide.jpg")}
+          src={asset("images/programs/runners-10k.jpg")}
           alt={
             es
-              ? "Miembros de 54D subiendo la rampa amarilla en plena sesión"
-              : "54D members running up the yellow ramp during a session"
+              ? "Corredor avanzando en una sesión al aire libre"
+              : "Runner charging forward during an outdoor session"
           }
           loading="lazy"
         />
@@ -914,7 +914,7 @@ export default function Pricing() {
               )}
             </h2>
             <div className="hero-ctas">
-              <a href="#plans" className="btn btn-primary">
+              <a href="#plans" className="btn btn-primary btn-attn">
                 {es ? "Empieza gratis. 7 días." : "Start free. 7 days."}
               </a>
               {/* Label corto: vuelve a 1 línea y 54px en mobile (auditoría 12/08) */}

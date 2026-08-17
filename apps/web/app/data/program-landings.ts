@@ -123,11 +123,6 @@ export type ProgramLanding = {
   faq: Record<Lang, { q: string; a: string }[]>;
 };
 
-const hd = (f: string) => `images/hd/${f}.jpg`;
-const hd2 = (f: string) => `images/hd2/${f}.jpg`;
-const cg = (f: string) => `images/studios/coral-gables/${f}.jpg`;
-const hl = (f: string) => `images/studios/hallandale/${f}.jpg`;
-
 const ONE_PAYMENT: Dict = {
   en: "One payment · Coach included · 30-day money-back guarantee",
   es: "Un pago · Coach incluido · Garantía de 30 días",
@@ -317,10 +312,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: "images/programs/content/graduation-hug.jpg",
+      src: "images/programs/54d-on.jpg",
       alt: {
-        en: "Two members embracing at their 54D graduation",
-        es: "Dos miembros abrazándose en su graduación de 54D",
+        en: "Official 54D ON cover: the program's coaches on the 54D ON set",
+        es: "Cover oficial de 54D ON: los coaches del programa en el set de 54D ON",
       },
     },
     stats: [
@@ -485,10 +480,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: cg("barbell-press-gaze-vertical"),
+      src: "images/programs/step-2.jpg",
       alt: {
-        en: "Athlete under a loaded barbell in an advanced studio session",
-        es: "Atleta bajo una barra cargada en una sesión avanzada del estudio",
+        en: "Official Step 2 cover: athlete training under warm light on the 54D ON set",
+        es: "Cover oficial de Step 2: atleta entrenando bajo luz cálida en el set de 54D ON",
       },
     },
     stats: [
@@ -660,10 +655,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: cg("cardio-jump-mural-vertical"),
+      src: "images/programs/emergency-kit.jpg",
       alt: {
-        en: "Athlete mid jump in front of the 54D mural at the studio",
-        es: "Atleta en pleno salto frente al mural 54D del estudio",
+        en: "Official Emergency Kit cover: athlete mid cardio move on the 54D ON set",
+        es: "Cover oficial de Emergency Kit: atleta en pleno cardio en el set de 54D ON",
       },
     },
     faq: faqs([
@@ -783,10 +778,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: hd2("v-spin-rider"),
+      src: "images/programs/max-burn.jpg",
       alt: {
-        en: "Rider out of the saddle on a spin bike, smiling through the effort",
-        es: "Ciclista de pie sobre la bici de spinning, sonriendo en pleno esfuerzo",
+        en: "Official Max Burn cover: athlete facing her reflection on the 54D ON set",
+        es: "Cover oficial de Max Burn: atleta frente a su reflejo en el set de 54D ON",
       },
     },
     faq: faqs([
@@ -902,13 +897,11 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         rating: 5,
       },
     },
-    /* PROOF de reset-7 ahora muestra coach cards: coach-hands queda
-       libre para el split de 'Lo que vas a hacer' (verificada limpia) */
     secondary: {
-      src: hl("coach-hands"),
+      src: "images/programs/reset-7.jpg",
       alt: {
-        en: "A 54D coach adjusting a member's triceps extension, hands on",
-        es: "Un coach de 54D corrigiendo de cerca la técnica de una miembro",
+        en: "Official Reset 7 cover: the 54D coaches together on the program set",
+        es: "Cover oficial de Reset 7: los coaches de 54D juntos en el set del programa",
       },
     },
     faq: faqs([
@@ -1034,10 +1027,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: hd2("spare-cyclist-sign"),
+      src: "images/programs/first-move.jpg",
       alt: {
-        en: "Member setting up her spin bike under the yellow wall that reads We train something more powerful than your body",
-        es: "Una miembro ajustando su bici de spinning bajo la pared amarilla que dice We train something more powerful than your body",
+        en: "Official First Move cover: two members stretching together on the 54D ON set",
+        es: "Cover oficial de First Move: dos miembros estirando juntos en el set de 54D ON",
       },
     },
     faq: faqs([
@@ -1157,10 +1150,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: hd2("v-squat-band"),
+      src: "images/programs/booty-on-fire.jpg",
       alt: {
-        en: "Athlete in a deep squat with a blue resistance band above her knees, class squatting behind her",
-        es: "Atleta en sentadilla profunda con una banda de resistencia azul sobre las rodillas, la clase en sentadilla detrás",
+        en: "Official Booty on Fire cover: athlete mid move on the 54D ON set",
+        es: "Cover oficial de Booty on Fire: atleta en movimiento en el set de 54D ON",
       },
     },
     faq: faqs([
@@ -1270,10 +1263,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: "images/programs/content/full-body-drill.jpg",
+      src: "images/programs/full-body.jpg",
       alt: {
-        en: "An athlete mid drill in front of the 54 mural, full body firing",
-        es: "Una atleta en pleno drill frente al mural 54, todo el cuerpo trabajando",
+        en: "Official Full Body cover: athlete raising two dumbbells on the 54D ON set",
+        es: "Cover oficial de Full Body: atleta elevando dos mancuernas en el set de 54D ON",
       },
     },
     stats: [
@@ -1433,10 +1426,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: "images/programs/content/lower-body-squat.jpg",
+      src: "images/programs/lower-body.jpg",
       alt: {
-        en: "A 54D class deep in a loaded squat, the coach's cue landing in real time",
-        es: "Una clase de 54D en sentadilla profunda, con la corrección del coach en tiempo real",
+        en: "Official Lower Body cover: athlete mid squat on the 54D ON set",
+        es: "Cover oficial de Lower Body: atleta en plena sentadilla en el set de 54D ON",
       },
     },
     stats: [
@@ -1594,10 +1587,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: hd2("v-biceps-plate"),
+      src: "images/programs/upper-body.jpg",
       alt: {
-        en: "Athlete in profile mid biceps curl with a weight plate, studio stairs behind her",
-        es: "Atleta de perfil en pleno curl de bíceps con un disco, las escaleras del estudio detrás",
+        en: "Official Upper Body cover: athlete holding a plank on the 54D ON set",
+        es: "Cover oficial de Upper Body: atleta sosteniendo una plancha en el set de 54D ON",
       },
     },
     stats: [
@@ -1741,13 +1734,13 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       ],
     },
     hero: {
-      src: hd("cg-ramp-runners-wide"),
+      src: "images/programs/runners-5k.jpg",
       alt: {
-        en: "54D members running up the yellow ramp together during a session",
-        es: "Miembros de 54D subiendo juntos la rampa amarilla en plena sesión",
+        en: "Runner facing the ocean at the start of an outdoor session",
+        es: "Corredora frente al mar al inicio de una sesión al aire libre",
       },
     },
-    heroFocus: { desktop: "30% 40%", mobile: "30% 40%" },
+    heroFocus: { desktop: "50% 40%", mobile: "50% 40%" },
     results: ["rafael", "laura", "silvana"],
     testimonial: {
       en: Q_MLTERAN,
@@ -1760,10 +1753,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: hd2("v-spin-rider"),
+      src: "images/programs/runners-21k.jpg",
       alt: {
-        en: "Rider out of the saddle on a spin bike, smiling through the effort",
-        es: "Ciclista de pie sobre la bici de spinning, sonriendo en pleno esfuerzo",
+        en: "Runner training outdoors along the beachfront",
+        es: "Corredor entrenando al aire libre frente a la playa",
       },
     },
     stats: [
@@ -1879,13 +1872,13 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       ],
     },
     hero: {
-      src: hd("cg-ramp-runners-wide"),
+      src: "images/programs/runners-10k.jpg",
       alt: {
-        en: "54D members running up the yellow ramp during a session",
-        es: "Miembros de 54D subiendo la rampa amarilla en plena sesión",
+        en: "Runner mid stride during an outdoor training session",
+        es: "Corredor a media zancada en una sesión al aire libre",
       },
     },
-    heroFocus: { desktop: "50% 40%", mobile: "50% 40%" },
+    heroFocus: { desktop: "50% 35%", mobile: "50% 35%" },
     results: ["rafael", "laura", "silvana"],
     testimonial: {
       en: Q_MLTERAN,
@@ -1898,10 +1891,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: cg("graduation-celebration-01"),
+      src: "images/programs/runners-5k.jpg",
       alt: {
-        en: "A 54D generation celebrating graduation together on the training floor",
-        es: "Una generación de 54D celebrando su graduación en el piso de entrenamiento",
+        en: "Runner facing the ocean before an outdoor session",
+        es: "Corredora frente al mar antes de una sesión al aire libre",
       },
     },
     stats: [
@@ -2023,13 +2016,13 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       ],
     },
     hero: {
-      src: hd("cg-ramp-runners-wide"),
+      src: "images/programs/runners-21k.jpg",
       alt: {
-        en: "Runners charging up the ramp together at the 54D Coral Gables studio",
-        es: "Corredores subiendo juntos la rampa del estudio 54D de Coral Gables",
+        en: "Runner on the beachfront pushing toward the finish",
+        es: "Corredor frente a la playa empujando hacia la meta",
       },
     },
-    heroFocus: { desktop: "85% 35%", mobile: "85% 35%" },
+    heroFocus: { desktop: "50% 40%", mobile: "50% 40%" },
     results: ["rafael", "laura", "silvana"],
     testimonial: {
       en: Q_MLTERAN,
@@ -2042,10 +2035,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: hl("coach-hands"),
+      src: "images/programs/runners-10k.jpg",
       alt: {
-        en: "A 54D coach adjusting a member's form, hands on",
-        es: "Un coach de 54D corrigiendo de cerca la técnica de una miembro",
+        en: "Runner mid stride during an outdoor training session",
+        es: "Corredor a media zancada en una sesión al aire libre",
       },
     },
     stats: [

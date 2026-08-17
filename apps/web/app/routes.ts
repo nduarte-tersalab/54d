@@ -4,6 +4,7 @@ export default [
   route("method", "routes/method.tsx"),
   route("on", "routes/on.tsx"),
   route("pricing", "routes/pricing.tsx"),
+  route("assessment", "routes/assessment.tsx"),
   route("studios", "routes/studios.tsx"),
   route("studios/:slug", "routes/studio-detail.tsx"),
   route("programs/:slug", "routes/program-landing.tsx"),

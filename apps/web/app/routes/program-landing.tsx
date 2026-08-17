@@ -96,7 +96,7 @@ const T = {
     coachName: "A real coach, not an algorithm",
     coachBody:
       "A certified 54D coach reviews your form and answers in the app. Every question, every rep, the whole way through.",
-    captionStudio: "Shot at a 54D studio. This is the standard.",
+    captionStudio: "The official program art. This is the standard.",
     captionCoach: "A certified 54D coach, in your corner.",
     faqEyebrow: "FAQ",
     faqTitle1: "Before you",
@@ -150,7 +150,7 @@ const T = {
     coachName: "Un coach real, no un algoritmo",
     coachBody:
       "Un coach certificado de 54D revisa tu técnica y te responde en la app. Cada pregunta, cada repetición, todo el camino.",
-    captionStudio: "Tomada en un estudio 54D. Este es el estándar.",
+    captionStudio: "El arte oficial del programa. Este es el estándar.",
     captionCoach: "Un coach certificado de 54D, de tu lado.",
     faqEyebrow: "Preguntas",
     faqTitle1: "Antes de",
@@ -508,7 +508,7 @@ export default function ProgramLandingPage({
   const heroButton = (
     <button
       type="button"
-      className="btn btn-primary"
+      className="btn btn-primary btn-attn"
       onClick={() => buy("hero")}
       disabled={busy}
       aria-busy={busy}
@@ -519,7 +519,7 @@ export default function ProgramLandingPage({
   const finalButton = (
     <button
       type="button"
-      className="btn btn-primary"
+      className="btn btn-primary btn-attn"
       onClick={() => buy("final")}
       disabled={busy}
       aria-busy={busy}
@@ -1145,6 +1145,26 @@ export default function ProgramLandingPage({
                 {error}
               </p>
             )}
+            {/* Lead magnet: salida ghost para el indeciso; no compite
+                con el primario del cierre */}
+            <p style={{ marginTop: "1.6rem" }}>
+              <Link
+                to="/assessment"
+                style={{
+                  display: "inline-block",
+                  minHeight: "44px",
+                  lineHeight: "44px",
+                  fontSize: "0.9rem",
+                  color: "var(--c-faint)",
+                  textDecoration: "underline",
+                  textUnderlineOffset: "3px",
+                }}
+              >
+                {es
+                  ? "¿No estás seguro? Haz el assessment de 2 minutos"
+                  : "Not sure? Take the 2-minute assessment"}
+              </Link>
+            </p>
           </div>
         </div>
       </section>

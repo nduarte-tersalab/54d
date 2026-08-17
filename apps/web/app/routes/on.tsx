@@ -117,12 +117,12 @@ const MEMBERSHIP_TIERS: MembershipTier[] = [
     perMonth: 54,
     regularPerMonth: 99,
     billed: { en: "Billed monthly", es: "Facturación mensual" },
-    photo: "images/hd2/spare-man-running.jpg",
+    photo: "images/programs/runners-21k.jpg",
     photoAlt: {
-      en: "Athlete running with visible effort on the 54D floor",
-      es: "Atleta corriendo con esfuerzo visible en el piso de 54D",
+      en: "Runner training outdoors along the beachfront",
+      es: "Corredor entrenando al aire libre frente a la playa",
     },
-    photoPos: "center 33%",
+    photoPos: "center 35%",
     tagline: { en: "Start at your pace", es: "Empieza a tu ritmo" },
   },
   {
@@ -132,12 +132,12 @@ const MEMBERSHIP_TIERS: MembershipTier[] = [
     regularPerMonth: 89,
     billed: { en: "$156 every 3 months", es: "$156 cada 3 meses" },
     featured: true,
-    photo: "images/hd/cg-effort-yellow-d.jpg",
+    photo: "images/programs/emergency-kit-wide.jpg",
     photoAlt: {
-      en: "Athlete grimacing with effort in front of the yellow 54D letter",
-      es: "Atleta con gesto de esfuerzo frente a la D amarilla de 54D",
+      en: "Athlete mid cardio drill on the official 54D ON set",
+      es: "Atleta en pleno cardio en el set oficial de 54D ON",
     },
-    photoPos: "center 36%",
+    photoPos: "center 25%",
     tagline: { en: "The full 54 days", es: "Los 54 días completos" },
   },
   {
@@ -146,10 +146,10 @@ const MEMBERSHIP_TIERS: MembershipTier[] = [
     perMonth: 49,
     regularPerMonth: 79,
     billed: { en: "$588 a year · lowest per month", es: "$588 al año · la mensualidad más baja" },
-    photo: "images/brand/on-graduation-hug.jpg",
+    photo: "images/programs/first-move-wide.jpg",
     photoAlt: {
-      en: "Two 54D members embracing at their graduation",
-      es: "Dos miembros de 54D abrazándose en su graduación",
+      en: "Two members stretching together on the 54D ON set",
+      es: "Dos miembros estirando juntos en el set de 54D ON",
     },
     photoPos: "center 30%",
     tagline: { en: "Make it your life", es: "Tu nuevo estilo de vida" },
@@ -900,11 +900,11 @@ export default function On() {
       <header className="hero hero-inner">
         <div className="hero-media">
           <img
-            src={asset("images/hd2/blog-barbell-press.jpg")}
+            src={asset("images/programs/full-body-wide.jpg")}
             alt={
               es
-                ? "Atleta empujando una barra cargada en una sesión de fuerza de 54D"
-                : "Athlete pressing a loaded barbell during a 54D strength session"
+                ? "Atleta entrenando con mancuernas sobre el fondo negro de 54D ON"
+                : "Athlete training with dumbbells against the black 54D ON backdrop"
             }
           />
         </div>
@@ -930,7 +930,7 @@ export default function On() {
           {/* Un solo destino para la misma acción en toda la página:
               #membership (los precios viven acá mismo) */}
           <div className="hero-ctas">
-            <a href="#membership" className="btn btn-primary">
+            <a href="#membership" className="btn btn-primary btn-attn">
               {es ? "Empieza gratis. 7 días." : "Start free. 7 days."}
             </a>
             <Link to="/studios" className="btn btn-ghost">
@@ -987,8 +987,8 @@ export default function On() {
             <div style={membSplit} className="memb-split">
               <div style={membPitch}>
                 <img
-                  src={asset("images/studios/hallandale/class-under-letters.jpg")}
-                  alt="Members training mid-class under the 54D letters at the Hallandale studio"
+                  src={asset("images/programs/step-2-wide.jpg")}
+                  alt="Athlete training under warm light on the official 54D ON set"
                   loading="lazy"
                   style={membPitchImg}
                 />
@@ -1069,7 +1069,7 @@ export default function On() {
                         <button
                           type="button"
                           className={
-                            t.featured ? "btn btn-primary" : "btn btn-ghost"
+                            t.featured ? "btn btn-primary btn-attn" : "btn btn-ghost"
                           }
                           style={{ width: "100%", textAlign: "center", marginTop: "1.4rem" }}
                           disabled={busy === t.priceId}
@@ -1130,6 +1130,12 @@ export default function On() {
                     ? "Cada programa de abajo también se vende por separado."
                     : "Every program below is also sold on its own."}
                 </a>
+              </span>
+              <span style={{ fontSize: "0.85rem", color: "var(--c-faint)" }}>
+                {es ? "¿No sabes por dónde empezar?" : "Not sure where to start?"}{" "}
+                <Link to="/assessment" style={{ color: "var(--c-yellow)", textDecoration: "none" }}>
+                  {es ? "Haz el assessment de 2 minutos →" : "Take the 2-minute assessment →"}
+                </Link>
               </span>
             </div>
           </div>
@@ -1564,9 +1570,9 @@ export default function On() {
               {es ? "Tres pasos y estás " : "Three steps and you're "}
               <span style={solidAccent}>{es ? "dentro." : "in."}</span>
             </h2>
-            {/* Split foto/pasos: el celular con el coach en pantalla ES el
-                producto (hd2, vertical 9:16) — protagonista junto a los pasos.
-                El mockup CSS de la sección app queda intacto. */}
+            {/* Split captura/pasos: la pantalla real del workout con coach ES el
+                producto (captura de la app, vertical) — protagonista junto a los
+                pasos. El mockup CSS de la sección app queda intacto. */}
             <div
               style={{
                 display: "grid",
@@ -1579,23 +1585,19 @@ export default function On() {
                 marginTop: "var(--space-block)",
               }}
             >
-              <figure style={{ margin: 0 }}>
+              <figure style={{ margin: "0 auto", maxWidth: "320px" }}>
                 <img
-                  src={asset("images/hd2/on-phone-coach.jpg")}
+                  src={asset("images/app/on-workout-coach.jpg")}
                   alt={
                     es
-                      ? "Una miembro sosteniendo un teléfono con el video de un coach de 54D frente a la pared amarilla del estudio"
-                      : "A member holding up a phone playing a 54D coach's video against the studio's yellow wall"
+                      ? "Pantalla de la app 54D On con un entrenamiento de fuerza guiado por un coach real"
+                      : "54D On app screen with a strength workout led by a real coach"
                   }
                   loading="lazy"
                   style={{
                     width: "100%",
                     display: "block",
-                    aspectRatio: "3 / 4",
-                    objectFit: "cover",
-                    objectPosition: "center 55%",
                     borderRadius: "var(--r-media, 2px)",
-                    filter: "saturate(0.85) contrast(1.05)",
                   }}
                 />
                 <figcaption style={photoCaption}>
@@ -1731,11 +1733,11 @@ export default function On() {
               </p>
               <figure style={{ margin: 0 }}>
                 <img
-                  src={asset("images/brand/generation-line-54d-mural-wide.jpg")}
+                  src={asset("images/programs/54d-on-wide.jpg")}
                   alt={
                     es
-                      ? "Una Generación de 54D abrazada bajo el mural 54D"
-                      : "A 54D generation lined up arm in arm under the 54D mural"
+                      ? "Los coaches de 54D ON en el cover oficial del programa"
+                      : "The 54D ON coaches on the official program cover"
                   }
                   loading="lazy"
                   style={{
@@ -1743,7 +1745,7 @@ export default function On() {
                     display: "block",
                     aspectRatio: "21 / 9",
                     objectFit: "cover",
-                    objectPosition: "center 45%",
+                    objectPosition: "center 40%",
                     borderRadius: "var(--r-media, 2px)",
                     filter: "saturate(0.82) contrast(1.05)",
                   }}
@@ -1767,7 +1769,7 @@ export default function On() {
               className="hero-ctas"
               style={{ marginTop: "2rem", justifyContent: "center" }}
             >
-              <a href="#membership" className="btn btn-primary">
+              <a href="#membership" className="btn btn-primary btn-attn">
                 {es ? "Empieza gratis. 7 días." : "Start free. 7 days."}
               </a>
               <Link to="/studios" className="btn btn-ghost">
@@ -1833,7 +1835,7 @@ export default function On() {
               )}
             </h2>
             <div className="hero-ctas">
-              <a href="#membership" className="btn btn-primary">
+              <a href="#membership" className="btn btn-primary btn-attn">
                 {es ? "Empieza gratis. 7 días." : "Start free. 7 days."}
               </a>
             </div>

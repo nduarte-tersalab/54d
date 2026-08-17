@@ -1,3 +1,8 @@
+import {
+  useRef,
+  type MouseEvent as ReactMouseEvent,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
 import { Link } from "react-router";
 import type { Route } from "./+types/studios";
 import { Nav, Footer, useReveal } from "../components/site";
@@ -223,6 +228,48 @@ export default function Studios() {
   const { lang } = useLang();
   const es = lang === "es";
 
+  /* Drag con mouse del carrusel de sedes (cliente 17/08). Touch NO se
+     interviene: el scroll nativo con snap ya funciona. La captura del
+     puntero se toma recién al superar el umbral de 8px, así el click
+     simple sigue navegando a la sede; el click que cierra un drag se
+     suprime en fase capture para no navegar al soltar. */
+  const trackRef = useRef<HTMLDivElement>(null);
+  const drag = useRef({ down: false, startX: 0, startLeft: 0, moved: false });
+
+  const onCarouselPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (e.pointerType !== "mouse") return;
+    const el = trackRef.current;
+    if (!el) return;
+    drag.current = {
+      down: true,
+      startX: e.clientX,
+      startLeft: el.scrollLeft,
+      moved: false,
+    };
+  };
+  const onCarouselPointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
+    const el = trackRef.current;
+    if (!el || !drag.current.down) return;
+    const dx = e.clientX - drag.current.startX;
+    if (!drag.current.moved) {
+      if (Math.abs(dx) <= 8) return;
+      drag.current.moved = true;
+      el.classList.add("dragging");
+      el.setPointerCapture(e.pointerId);
+    }
+    el.scrollLeft = drag.current.startLeft - dx;
+  };
+  const endCarouselDrag = () => {
+    drag.current.down = false;
+    trackRef.current?.classList.remove("dragging");
+  };
+  const onCarouselClickCapture = (e: ReactMouseEvent<HTMLDivElement>) => {
+    if (!drag.current.moved) return;
+    e.preventDefault();
+    e.stopPropagation();
+    drag.current.moved = false;
+  };
+
   return (
     <div>
       <Nav />
@@ -289,8 +336,22 @@ export default function Studios() {
             </p>
             {/* Tiles clickeables: ciudad protagonista, dirección como
                 metadata, hover solo de borde (deja de leerse como un
-                resultado de Maps). */}
-            <div className="sede-grid">
+                resultado de Maps). Cliente 17/08: carrusel scroll-snap
+                con foto grande, peek de la siguiente y drag con mouse.
+                Quiet: sin autoplay ni dots. */}
+            <div
+              ref={trackRef}
+              className="sede-carousel"
+              role="group"
+              aria-label={es ? "Carrusel de studios" : "Studio carousel"}
+              onPointerDown={onCarouselPointerDown}
+              onPointerMove={onCarouselPointerMove}
+              onPointerUp={endCarouselDrag}
+              onPointerCancel={endCarouselDrag}
+              onPointerLeave={endCarouselDrag}
+              onClickCapture={onCarouselClickCapture}
+              onDragStart={(e) => e.preventDefault()}
+            >
               {STUDIOS.map((s) => {
                 const thumb = SEDE_THUMBS[s.slug];
                 return (

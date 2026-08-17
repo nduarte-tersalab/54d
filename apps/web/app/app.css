@@ -286,6 +286,34 @@ body {
 .btn-primary:hover {
   background: #EFC500;
 }
+/* ---------- Atención en primarios de COMPRA (cliente 17/08): shine
+   sweep periódico. Solo se aplica junto a .btn-primary en CTAs de
+   compra (hero/final/sticky de landings, tiers ON/pricing). JAMÁS
+   en .btn-ghost ni en CTAs de consulta (/studios). ---------- */
+.btn-attn {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.btn-attn::after {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0; left: 0;
+  width: 45%;
+  background: linear-gradient(105deg, transparent 0%, rgba(255, 255, 255, 0.5) 50%, transparent 100%);
+  transform: translateX(-130%) skewX(-18deg);
+  animation: btn-shine 5.2s ease-in-out 1.2s infinite;
+  pointer-events: none;
+}
+.btn-attn:disabled::after { animation-play-state: paused; }
+@keyframes btn-shine {
+  0% { transform: translateX(-130%) skewX(-18deg); }
+  22% { transform: translateX(320%) skewX(-18deg); }
+  100% { transform: translateX(320%) skewX(-18deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-attn::after { animation: none; opacity: 0; }
+}
 /* .btn-nav se define DESPUES de primary/ghost (ver abajo): el modificador
    de tamano debe ganarles el empate de especificidad */
 /* Secundario más ligero que el primario (UX §1) */
@@ -1333,16 +1361,37 @@ body {
 .final-links .studio-cta { text-decoration: none; }
 .final-links .studio-cta:hover { color: var(--c-white); border-color: rgba(255, 255, 255, 0.3); }
 
-/* ---------- Studios index: chooser de sedes (tiles clickeables) ----------
+/* ---------- Studios index: chooser de sedes (carrusel de tiles) ----------
    La ciudad es la protagonista; la dirección es metadata. Hover SOLO de
-   borde (QUIET v6: sin lift, sin glow). Thumbnail solo en sedes con
-   galería curada propia (CG y Hallandale). */
-.sede-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-  gap: var(--gap-grid-tight);
-  margin-top: 3rem;
+   borde (QUIET v6: sin lift, sin glow). Cliente 17/08: carrusel
+   scroll-snap horizontal con foto grande y peek de la siguiente card.
+   Quiet: sin autoplay, sin dots; drag con mouse en studios.tsx. */
+.sede-carousel {
+  display: flex;
+  gap: var(--gap-grid);
+  margin-top: var(--space-block);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 0.5rem;
+  cursor: grab;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
 }
+.sede-carousel::-webkit-scrollbar { display: none; }
+.sede-carousel.dragging { cursor: grabbing; scroll-snap-type: none; }
+.sede-carousel .sede-tile {
+  flex: 0 0 clamp(300px, 42vw, 480px); /* desktop: ~2.5 visibles = peek */
+  scroll-snap-align: start;
+  /* Cards-link: sin selección de texto para que el drag no deje
+     artefactos de selección a mitad de arrastre */
+  -webkit-user-select: none;
+  user-select: none;
+}
+.sede-carousel .sede-thumb { aspect-ratio: 4 / 3; } /* foto grande: mata el vacío */
+@media (max-width: 700px) {
+  .sede-carousel .sede-tile { flex-basis: 82%; } /* peek mobile */
+}
+.sede-carousel .sede-tile img { -webkit-user-drag: none; user-select: none; }
 .sede-tile {
   display: flex; flex-direction: column;
   text-decoration: none; color: inherit;
