@@ -9,6 +9,7 @@ import { Nav, Footer, useReveal } from "../components/site";
 import { STUDIOS, cityLabel } from "../data/studios";
 import { asset } from "../lib/asset";
 import { resolveLang, useLang, type Lang } from "../lib/i18n";
+import { useAutoScroll } from "../lib/auto-scroll";
 
 /* ============================================================
    /studios: index de sedes (54D Studios)
@@ -240,6 +241,10 @@ export default function Studios() {
      simple sigue navegando a la sede; el click que cierra un drag se
      suprime en fase capture para no navegar al soltar. */
   const trackRef = useRef<HTMLDivElement>(null);
+  /* Autoplay por pasos cada 3.8s (cliente 17/08); comparte nodo con
+     trackRef. OJO: el parametro es INTERVALO EN MS (el hook v1 recibia
+     px/seg: pasar 22 aqui creo un paso cada 22ms que rebobinaba eterno) */
+  const autoRef = useAutoScroll<HTMLDivElement>(3800);
   const drag = useRef({ down: false, startX: 0, startLeft: 0, moved: false });
 
   const onCarouselPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
@@ -283,8 +288,9 @@ export default function Studios() {
       {/* ============ HERO INTERIOR (foto real de marca) ============ */}
       <header className="hero hero-inner">
         <div className="hero-media">
-          {/* Video ambiente (Higgsfield desde la foto real, QC frame a frame
-              17/08); la foto queda de poster y de fallback sin JS */}
+          {/* Push-in cinematografico al mural (Higgsfield Cinema Studio v2,
+              QC frame a frame 17/08 v2: disciplinado, cero celebracion).
+              Poster = el still fuente: el video arranca exactamente ahi. */}
           <video
             ref={(el) => {
               if (!el) return;
@@ -308,10 +314,10 @@ export default function Studios() {
             loop
             playsInline
             preload="metadata"
-            poster={asset("images/brand/generation-line-54d-mural-wide.jpg")}
-            aria-label="A 54D Generation arm in arm with their coach under the 54D mural"
+            poster={asset("images/studios/coral-gables/mural-54d-editorial-wide.jpg")}
+            aria-label="Slow cinematic push toward an athlete drilling under the giant 54D mural"
           >
-            <source src={asset("videos/studios-hero-v1.mp4")} type="video/mp4" />
+            <source src={asset("videos/studios-hero-v2.mp4")} type="video/mp4" />
           </video>
         </div>
         <div className="hero-veil" />
@@ -372,8 +378,11 @@ export default function Studios() {
                 con foto grande, peek de la siguiente y drag con mouse.
                 Quiet: sin autoplay ni dots. */}
             <div
-              ref={trackRef}
               className="sede-carousel"
+              ref={(el) => {
+                trackRef.current = el;
+                autoRef.current = el;
+              }}
               role="group"
               aria-label={es ? "Carrusel de studios" : "Studio carousel"}
               onPointerDown={onCarouselPointerDown}

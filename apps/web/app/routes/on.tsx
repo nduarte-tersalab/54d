@@ -8,6 +8,7 @@ import { StickyCta } from "../components/sticky-cta";
 import { asset } from "../lib/asset";
 import { startCheckout } from "../lib/attribution";
 import { useLang, resolveLang, type Lang } from "../lib/i18n";
+import { useAutoScroll } from "../lib/auto-scroll";
 
 export async function loader({ request }: Route.LoaderArgs) {
   return { lang: resolveLang(request) };
@@ -885,6 +886,8 @@ export default function On() {
   };
   const app = useReveal();
   const coaches = useReveal();
+  /* Autoplay de la franja de coaches (cliente 17/08) */
+  const coachAutoRef = useAutoScroll<HTMLDivElement>(3200);
   const resultados = useReveal();
   const pasos = useReveal();
   const difApps = useReveal();
@@ -900,11 +903,11 @@ export default function On() {
       <header className="hero hero-inner">
         <div className="hero-media">
           <img
-            src={asset("images/programs/full-body-wide.jpg")}
+            src={asset("images/on/hero-app-home.jpg")}
             alt={
               es
-                ? "Atleta entrenando con mancuernas sobre el fondo negro de 54D ON"
-                : "Athlete training with dumbbells against the black 54D ON backdrop"
+                ? "Miembro de 54D ON entrenando en su casa siguiendo la sesión en su teléfono"
+                : "A 54D ON member training at home following the session on her phone"
             }
           />
         </div>
@@ -1529,7 +1532,7 @@ export default function On() {
                 ? "Un equipo de 17 coaches reales detrás del método."
                 : "A team of 17 real coaches behind the method."}
             </p>
-            <div className="coach-strip">
+            <div className="coach-strip" ref={coachAutoRef}>
               {[
                 "alexis",
                 "alicia",
