@@ -734,7 +734,18 @@ export default function ProgramLandingPage({
                   </li>
                 ))}
               </ul>
-              {p.secondary && (
+              {p.doImages ? (
+                <div className="do-grid">
+                  {p.doImages.map((im, i) => (
+                    <figure
+                      key={im.src}
+                      className={i === 1 ? "do-tile do-tile-offset" : "do-tile"}
+                    >
+                      <img src={asset(im.src)} alt={im.alt[lang]} loading="lazy" />
+                    </figure>
+                  ))}
+                </div>
+              ) : p.secondary ? (
                 <figure style={{ margin: 0, maxWidth: "26rem" }}>
                   <img
                     src={asset(p.secondary.src)}
@@ -750,7 +761,7 @@ export default function ProgramLandingPage({
                     {t.captionStudio}
                   </figcaption>
                 </figure>
-              )}
+              ) : null}
             </div>
             <InlineCta eyebrow={t.ctaDo} position="inline_do" />
           </div>

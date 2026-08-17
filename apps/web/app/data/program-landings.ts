@@ -105,6 +105,8 @@ export type ProgramLanding = {
       queda bajo el copy (booty-on-fire, step-2) */
   heroCopyNarrow?: boolean;
   secondary?: LandingImage;
+  /** Grilla visual de "What you'll do": 2 verticales generadas estilo ON */
+  doImages?: [LandingImage, LandingImage];
   /** Composites ANTES/DESPUES oficiales (filenames de images/results/,
       sin extension). SIEMPRE 3, orden por afinidad de audiencia: el
       primero es el primero visible en el strip mobile. */
@@ -313,6 +315,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         rating: 5,
       },
     },
+    doImages: [
+      { src: "images/on/ex-press.jpg", alt: { en: "Athlete pressing dumbbells overhead on the 54D ON set", es: "Atleta haciendo press de mancuernas en el set de 54D ON" } },
+      { src: "images/on/ex-burpee.jpg", alt: { en: "Athlete frozen mid burpee jump on the 54D ON set", es: "Atleta congelada en pleno salto de burpee en el set de 54D ON" } },
+    ],
     secondary: {
       src: "images/app/app-dashboard-trio.png",
       fit: "contain",
@@ -482,6 +488,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         rating: 5,
       },
     },
+    doImages: [
+      { src: "images/on/ex-lunge.jpg", alt: { en: "Athlete mid walking lunge with dumbbells on the 54D ON set", es: "Atleta en zancada con mancuernas en el set de 54D ON" } },
+      { src: "images/on/ex-climber.jpg", alt: { en: "Athlete mid mountain climber on the 54D ON set", es: "Atleta en escaladores en el set de 54D ON" } },
+    ],
     secondary: {
       src: "images/app/app-dashboard-trio.png",
       fit: "contain",
@@ -658,6 +668,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         rating: 5,
       },
     },
+    doImages: [
+      { src: "images/on/ex-climber.jpg", alt: { en: "Athlete mid mountain climber on the 54D ON set", es: "Atleta en escaladores en el set de 54D ON" } },
+      { src: "images/on/ex-plank.jpg", alt: { en: "Athlete holding a forearm plank on the 54D ON set", es: "Atleta sosteniendo una plancha en el set de 54D ON" } },
+    ],
     secondary: {
       src: "images/app/Phone-d-hero.png",
       fit: "contain",
@@ -782,6 +796,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         rating: 5,
       },
     },
+    doImages: [
+      { src: "images/on/ex-burpee.jpg", alt: { en: "Athlete frozen mid burpee jump on the 54D ON set", es: "Atleta congelada en pleno salto de burpee en el set de 54D ON" } },
+      { src: "images/on/ex-jumprope.jpg", alt: { en: "Athlete jumping rope on the 54D ON set", es: "Atleta saltando la cuerda en el set de 54D ON" } },
+    ],
     secondary: {
       src: "images/app/Phone-d-hero.png",
       fit: "contain",
@@ -903,6 +921,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         rating: 5,
       },
     },
+    doImages: [
+      { src: "images/on/ex-stretch.jpg", alt: { en: "Athlete in a deep hamstring stretch on the 54D ON set", es: "Atleta en estiramiento profundo en el set de 54D ON" } },
+      { src: "images/on/ex-recovery.jpg", alt: { en: "Athlete recovering with water after a session on the 54D ON set", es: "Atleta recuperándose con agua tras la sesión en el set de 54D ON" } },
+    ],
     secondary: {
       src: "images/app/Phone-d-hero.png",
       fit: "contain",
@@ -1033,6 +1055,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         rating: 5,
       },
     },
+    doImages: [
+      { src: "images/on/ex-stretch.jpg", alt: { en: "Athlete in a deep hamstring stretch on the 54D ON set", es: "Atleta en estiramiento profundo en el set de 54D ON" } },
+      { src: "images/on/ex-stride.jpg", alt: { en: "Athlete running in place with high knees on the 54D ON set", es: "Atleta corriendo con rodillas altas en el set de 54D ON" } },
+    ],
     secondary: {
       src: "images/app/Phone-d-hero.png",
       fit: "contain",
@@ -1157,6 +1183,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         rating: 5,
       },
     },
+    doImages: [
+      { src: "images/on/ex-bridge.jpg", alt: { en: "Athlete performing a glute bridge on the 54D ON set", es: "Atleta haciendo puente de glúteos en el set de 54D ON" } },
+      { src: "images/on/ex-squat.jpg", alt: { en: "Athlete holding a deep goblet squat on the 54D ON set", es: "Atleta en sentadilla goblet profunda en el set de 54D ON" } },
+    ],
     secondary: {
       src: "images/app/Phone-d-hero.png",
       fit: "contain",
@@ -1271,6 +1301,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         rating: 5,
       },
     },
+    doImages: [
+      { src: "images/on/ex-squat.jpg", alt: { en: "Athlete holding a deep goblet squat on the 54D ON set", es: "Atleta en sentadilla goblet profunda en el set de 54D ON" } },
+      { src: "images/on/ex-pushup.jpg", alt: { en: "Athlete holding a low push-up on the 54D ON set", es: "Atleta en push-up profundo en el set de 54D ON" } },
+    ],
     secondary: {
       src: "images/app/on-workout-coach.jpg",
       fit: "contain",
@@ -1435,6 +1469,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         rating: 5,
       },
     },
+    doImages: [
+      { src: "images/on/ex-squat.jpg", alt: { en: "Athlete holding a deep goblet squat on the 54D ON set", es: "Atleta en sentadilla goblet profunda en el set de 54D ON" } },
+      { src: "images/on/ex-lunge.jpg", alt: { en: "Athlete mid walking lunge with dumbbells on the 54D ON set", es: "Atleta en zancada con mancuernas en el set de 54D ON" } },
+    ],
     secondary: {
       src: "images/app/on-workout-coach.jpg",
       fit: "contain",
@@ -1597,6 +1635,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         rating: 5,
       },
     },
+    doImages: [
+      { src: "images/on/ex-press.jpg", alt: { en: "Athlete pressing dumbbells overhead on the 54D ON set", es: "Atleta haciendo press de mancuernas en el set de 54D ON" } },
+      { src: "images/on/ex-pushup.jpg", alt: { en: "Athlete holding a low push-up on the 54D ON set", es: "Atleta en push-up profundo en el set de 54D ON" } },
+    ],
     secondary: {
       src: "images/app/on-workout-coach.jpg",
       fit: "contain",
@@ -1764,6 +1806,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         rating: 5,
       },
     },
+    doImages: [
+      { src: "images/on/ex-stride.jpg", alt: { en: "Athlete running in place with high knees on the 54D ON set", es: "Atleta corriendo con rodillas altas en el set de 54D ON" } },
+      { src: "images/on/ex-jumprope.jpg", alt: { en: "Athlete jumping rope on the 54D ON set", es: "Atleta saltando la cuerda en el set de 54D ON" } },
+    ],
     secondary: {
       src: "images/app/watch.png",
       fit: "contain",
@@ -1903,6 +1949,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         rating: 5,
       },
     },
+    doImages: [
+      { src: "images/on/ex-stride.jpg", alt: { en: "Athlete running in place with high knees on the 54D ON set", es: "Atleta corriendo con rodillas altas en el set de 54D ON" } },
+      { src: "images/on/ex-recovery.jpg", alt: { en: "Athlete recovering with water after a session on the 54D ON set", es: "Atleta recuperándose con agua tras la sesión en el set de 54D ON" } },
+    ],
     secondary: {
       src: "images/app/watch.png",
       fit: "contain",
@@ -2048,6 +2098,10 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
         rating: 5,
       },
     },
+    doImages: [
+      { src: "images/on/ex-stride.jpg", alt: { en: "Athlete running in place with high knees on the 54D ON set", es: "Atleta corriendo con rodillas altas en el set de 54D ON" } },
+      { src: "images/on/ex-stretch.jpg", alt: { en: "Athlete in a deep hamstring stretch on the 54D ON set", es: "Atleta en estiramiento profundo en el set de 54D ON" } },
+    ],
     secondary: {
       src: "images/app/watch.png",
       fit: "contain",

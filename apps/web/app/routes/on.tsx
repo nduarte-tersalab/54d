@@ -122,7 +122,7 @@ const MEMBERSHIP_TIERS: MembershipTier[] = [
       en: "Runner training outdoors along the beachfront",
       es: "Corredor entrenando al aire libre frente a la playa",
     },
-    photoPos: "center 35%",
+    photoPos: "center 20%",
     tagline: { en: "Start at your pace", es: "Empieza a tu ritmo" },
   },
   {
@@ -137,7 +137,7 @@ const MEMBERSHIP_TIERS: MembershipTier[] = [
       en: "Athlete mid cardio drill on the official 54D ON set",
       es: "Atleta en pleno cardio en el set oficial de 54D ON",
     },
-    photoPos: "center 25%",
+    photoPos: "center 12%",
     tagline: { en: "The full 54 days", es: "Los 54 días completos" },
   },
   {
@@ -151,7 +151,7 @@ const MEMBERSHIP_TIERS: MembershipTier[] = [
       en: "Two members stretching together on the 54D ON set",
       es: "Dos miembros estirando juntos en el set de 54D ON",
     },
-    photoPos: "center 30%",
+    photoPos: "center 16%",
     tagline: { en: "Make it your life", es: "Tu nuevo estilo de vida" },
   },
 ];
@@ -729,7 +729,7 @@ const membPitchImg: CSSProperties = {
   width: "100%",
   height: "100%",
   objectFit: "cover",
-  objectPosition: "center",
+  objectPosition: "center 22%",
   filter: "saturate(0.82) contrast(1.05)",
 };
 /* Veil negro 78%: la foto es contexto, los punteos mandan (§2) */

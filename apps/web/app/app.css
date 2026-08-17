@@ -1713,6 +1713,14 @@ p.lead, .lead {
   --space-block: clamp(2.4rem, 4.5vw, 3.25rem);
 }
 
+/* Grilla "What you'll do" (cliente 17/08): 2 verticales generadas estilo
+   ON, escalonadas para el flujo de arriba a abajo. */
+.do-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap-grid-tight); align-items: start; }
+.do-tile { margin: 0; }
+.do-tile img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; display: block;
+  border-radius: var(--r-media, 2px); border: 1px solid var(--hairline); }
+.do-tile-offset { margin-top: 2.2rem; }
+
 /* Franja de app en landings (16/08): telefono real + hechos + tiendas.
    Split 2/3 desktop, apila en mobile con el telefono arriba. */
 .app-strip {

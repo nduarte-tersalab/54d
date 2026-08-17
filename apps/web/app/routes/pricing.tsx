@@ -92,7 +92,7 @@ const PLANS: Plan[] = [
       en: "Runner training outdoors along the beachfront",
       es: "Corredor entrenando al aire libre frente a la playa",
     },
-    photoPos: "center 35%",
+    photoPos: "center 20%",
     chip: { en: "Most flexible", es: "El más flexible" },
     features: [
       {
@@ -131,7 +131,7 @@ const PLANS: Plan[] = [
       en: "Athlete mid cardio drill on the official 54D ON set",
       es: "Atleta en pleno cardio en el set oficial de 54D ON",
     },
-    photoPos: "center 25%",
+    photoPos: "center 12%",
     chip: { en: "Most chosen", es: "El más elegido" },
     features: [
       {
@@ -169,7 +169,7 @@ const PLANS: Plan[] = [
       en: "Two members stretching together on the 54D ON set",
       es: "Dos miembros estirando juntos en el set de 54D ON",
     },
-    photoPos: "center 30%",
+    photoPos: "center 16%",
     chip: { en: "Best value", es: "Mejor precio" },
     features: [
       {
