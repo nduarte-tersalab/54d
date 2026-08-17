@@ -46,6 +46,8 @@ export type ProgramTier = "starter" | "mid" | "flagship" | "runners";
 export type LandingImage = {
   /** Ruta relativa a /public: se resuelve con asset() en la ruta */
   src: string;
+  /** "contain" para capturas PNG de la app (no recortar el telefono) */
+  fit?: "contain";
   alt: Dict;
 };
 
@@ -312,10 +314,11 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: "images/programs/54d-on.jpg",
+      src: "images/app/app-dashboard-trio.png",
+      fit: "contain",
       alt: {
-        en: "Official 54D ON cover: the program's coaches on the 54D ON set",
-        es: "Cover oficial de 54D ON: los coaches del programa en el set de 54D ON",
+        en: "The 54D On app: dashboard, session and coach chat",
+        es: "La app 54D On: panel, sesión y chat con tu coach",
       },
     },
     stats: [
@@ -480,10 +483,11 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: "images/programs/step-2.jpg",
+      src: "images/app/app-dashboard-trio.png",
+      fit: "contain",
       alt: {
-        en: "Official Step 2 cover: athlete training under warm light on the 54D ON set",
-        es: "Cover oficial de Step 2: atleta entrenando bajo luz cálida en el set de 54D ON",
+        en: "The 54D On app: dashboard, session and coach chat",
+        es: "La app 54D On: panel, sesión y chat con tu coach",
       },
     },
     stats: [
@@ -655,10 +659,11 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: "images/programs/emergency-kit.jpg",
+      src: "images/app/Phone-d-hero.png",
+      fit: "contain",
       alt: {
-        en: "Official Emergency Kit cover: athlete mid cardio move on the 54D ON set",
-        es: "Cover oficial de Emergency Kit: atleta en pleno cardio en el set de 54D ON",
+        en: "The 54D On app on an iPhone: today's session and the real coach chat",
+        es: "La app 54D On en un iPhone: la sesión de hoy y el chat real con tu coach",
       },
     },
     faq: faqs([
@@ -778,10 +783,11 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: "images/programs/max-burn.jpg",
+      src: "images/app/Phone-d-hero.png",
+      fit: "contain",
       alt: {
-        en: "Official Max Burn cover: athlete facing her reflection on the 54D ON set",
-        es: "Cover oficial de Max Burn: atleta frente a su reflejo en el set de 54D ON",
+        en: "The 54D On app on an iPhone: today's session and the real coach chat",
+        es: "La app 54D On en un iPhone: la sesión de hoy y el chat real con tu coach",
       },
     },
     faq: faqs([
@@ -898,10 +904,11 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: "images/programs/reset-7.jpg",
+      src: "images/app/Phone-d-hero.png",
+      fit: "contain",
       alt: {
-        en: "Official Reset 7 cover: the 54D coaches together on the program set",
-        es: "Cover oficial de Reset 7: los coaches de 54D juntos en el set del programa",
+        en: "The 54D On app on an iPhone: today's session and the real coach chat",
+        es: "La app 54D On en un iPhone: la sesión de hoy y el chat real con tu coach",
       },
     },
     faq: faqs([
@@ -1027,10 +1034,11 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: "images/programs/first-move.jpg",
+      src: "images/app/Phone-d-hero.png",
+      fit: "contain",
       alt: {
-        en: "Official First Move cover: two members stretching together on the 54D ON set",
-        es: "Cover oficial de First Move: dos miembros estirando juntos en el set de 54D ON",
+        en: "The 54D On app on an iPhone: today's session and the real coach chat",
+        es: "La app 54D On en un iPhone: la sesión de hoy y el chat real con tu coach",
       },
     },
     faq: faqs([
@@ -1150,10 +1158,11 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: "images/programs/booty-on-fire.jpg",
+      src: "images/app/Phone-d-hero.png",
+      fit: "contain",
       alt: {
-        en: "Official Booty on Fire cover: athlete mid move on the 54D ON set",
-        es: "Cover oficial de Booty on Fire: atleta en movimiento en el set de 54D ON",
+        en: "The 54D On app on an iPhone: today's session and the real coach chat",
+        es: "La app 54D On en un iPhone: la sesión de hoy y el chat real con tu coach",
       },
     },
     faq: faqs([
@@ -1263,10 +1272,11 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: "images/programs/full-body.jpg",
+      src: "images/app/on-workout-coach.jpg",
+      fit: "contain",
       alt: {
-        en: "Official Full Body cover: athlete raising two dumbbells on the 54D ON set",
-        es: "Cover oficial de Full Body: atleta elevando dos mancuernas en el set de 54D ON",
+        en: "A 54D On session playing in the app with the coach chat open",
+        es: "Una sesión de 54D On en la app con el chat del coach abierto",
       },
     },
     stats: [
@@ -1426,10 +1436,11 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: "images/programs/lower-body.jpg",
+      src: "images/app/on-workout-coach.jpg",
+      fit: "contain",
       alt: {
-        en: "Official Lower Body cover: athlete mid squat on the 54D ON set",
-        es: "Cover oficial de Lower Body: atleta en plena sentadilla en el set de 54D ON",
+        en: "A 54D On session playing in the app with the coach chat open",
+        es: "Una sesión de 54D On en la app con el chat del coach abierto",
       },
     },
     stats: [
@@ -1587,10 +1598,11 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: "images/programs/upper-body.jpg",
+      src: "images/app/on-workout-coach.jpg",
+      fit: "contain",
       alt: {
-        en: "Official Upper Body cover: athlete holding a plank on the 54D ON set",
-        es: "Cover oficial de Upper Body: atleta sosteniendo una plancha en el set de 54D ON",
+        en: "A 54D On session playing in the app with the coach chat open",
+        es: "Una sesión de 54D On en la app con el chat del coach abierto",
       },
     },
     stats: [
@@ -1734,7 +1746,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       ],
     },
     hero: {
-      src: "images/programs/runners-5k.jpg",
+      src: "images/programs/runners-5k-wide.jpg",
       alt: {
         en: "Runner facing the ocean at the start of an outdoor session",
         es: "Corredora frente al mar al inicio de una sesión al aire libre",
@@ -1753,10 +1765,11 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: "images/programs/runners-21k.jpg",
+      src: "images/app/watch.png",
+      fit: "contain",
       alt: {
-        en: "Runner training outdoors along the beachfront",
-        es: "Corredor entrenando al aire libre frente a la playa",
+        en: "The 54D On app on Apple Watch tracking a run",
+        es: "La app 54D On en el Apple Watch registrando una carrera",
       },
     },
     stats: [
@@ -1872,7 +1885,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       ],
     },
     hero: {
-      src: "images/programs/runners-10k.jpg",
+      src: "images/programs/runners-10k-wide.jpg",
       alt: {
         en: "Runner mid stride during an outdoor training session",
         es: "Corredor a media zancada en una sesión al aire libre",
@@ -1891,10 +1904,11 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: "images/programs/runners-5k.jpg",
+      src: "images/app/watch.png",
+      fit: "contain",
       alt: {
-        en: "Runner facing the ocean before an outdoor session",
-        es: "Corredora frente al mar antes de una sesión al aire libre",
+        en: "The 54D On app on Apple Watch tracking a run",
+        es: "La app 54D On en el Apple Watch registrando una carrera",
       },
     },
     stats: [
@@ -2016,7 +2030,7 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       ],
     },
     hero: {
-      src: "images/programs/runners-21k.jpg",
+      src: "images/programs/runners-21k-wide.jpg",
       alt: {
         en: "Runner on the beachfront pushing toward the finish",
         es: "Corredor frente a la playa empujando hacia la meta",
@@ -2035,10 +2049,11 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
       },
     },
     secondary: {
-      src: "images/programs/runners-10k.jpg",
+      src: "images/app/watch.png",
+      fit: "contain",
       alt: {
-        en: "Runner mid stride during an outdoor training session",
-        es: "Corredor a media zancada en una sesión al aire libre",
+        en: "The 54D On app on Apple Watch tracking a run",
+        es: "La app 54D On en el Apple Watch registrando una carrera",
       },
     },
     stats: [

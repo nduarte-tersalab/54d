@@ -453,27 +453,29 @@ export default function Method() {
         <div className="section-inner" ref={timeline.ref}>
           <div className={timeline.className}>
             <span className="day-marker">D01 → D54</span>
-            <div className="method-intro">
-              <h2 className="section-title">
-                {es ? "54 días, " : "54 days, "}
-                <span className="accent">
-                  {es ? "día a día." : "day by day."}
-                </span>
-              </h2>
-              <p>
-                {es
-                  ? "El programa no es “entrena duro y come bien”. Es una secuencia diseñada: cada bloque prepara el siguiente y tu coach ajusta las variables sobre la marcha."
-                  : "The program isn't “train hard and eat well”. It's a designed sequence: each block sets up the next, and your coach adjusts the variables as you go."}
-              </p>
-            </div>
-            <div className="timeline">
-              {TIMELINE.map((t) => (
-                <div className="timeline-item" key={t.day.en}>
-                  <span className="timeline-day">{t.day[lang]}</span>
-                  <h3>{t.title[lang]}</h3>
-                  <p>{t.desc[lang]}</p>
-                </div>
-              ))}
+            <div className="gen-split">
+              <div>
+                <h2 className="section-title">
+                  {es ? "54 días, " : "54 days, "}
+                  <span className="accent">
+                    {es ? "día a día." : "day by day."}
+                  </span>
+                </h2>
+                <p style={{ marginTop: "1.4rem", maxWidth: "34rem" }}>
+                  {es
+                    ? "El programa no es “entrena duro y come bien”. Es una secuencia diseñada: cada bloque prepara el siguiente y tu coach ajusta las variables sobre la marcha."
+                    : "The program isn't “train hard and eat well”. It's a designed sequence: each block sets up the next, and your coach adjusts the variables as you go."}
+                </p>
+              </div>
+              <div className="timeline">
+                {TIMELINE.map((t) => (
+                  <div className="timeline-item" key={t.day.en}>
+                    <span className="timeline-day">{t.day[lang]}</span>
+                    <h3>{t.title[lang]}</h3>
+                    <p>{t.desc[lang]}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>

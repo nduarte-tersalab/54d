@@ -740,7 +740,11 @@ export default function ProgramLandingPage({
                     src={asset(p.secondary.src)}
                     alt={p.secondary.alt[lang]}
                     loading="lazy"
-                    style={verticalShot}
+                    style={
+                      p.secondary.fit === "contain"
+                        ? { width: "100%", height: "auto", display: "block" }
+                        : verticalShot
+                    }
                   />
                   <figcaption className="photo-caption">
                     {t.captionStudio}

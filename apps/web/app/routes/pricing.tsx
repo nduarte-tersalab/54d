@@ -87,7 +87,7 @@ const PLANS: Plan[] = [
     price: "$54",
     regular: "$99",
     period: { en: "/ month · billed monthly", es: "/ mes · facturación mensual" },
-    photo: "images/programs/runners-21k.jpg",
+    photo: "images/on/tier-monthly.jpg",
     photoAlt: {
       en: "Runner training outdoors along the beachfront",
       es: "Corredor entrenando al aire libre frente a la playa",
@@ -126,7 +126,7 @@ const PLANS: Plan[] = [
     regular: "$89",
     period: { en: "/ month · $156 every 3 months", es: "/ mes · $156 cada 3 meses" },
     badge: { en: "Most chosen", es: "El más elegido" },
-    photo: "images/programs/emergency-kit-wide.jpg",
+    photo: "images/on/tier-quarterly.jpg",
     photoAlt: {
       en: "Athlete mid cardio drill on the official 54D ON set",
       es: "Atleta en pleno cardio en el set oficial de 54D ON",
@@ -164,7 +164,7 @@ const PLANS: Plan[] = [
     price: "$49",
     regular: "$79",
     period: { en: "/ month · $588 a year", es: "/ mes · $588 al año" },
-    photo: "images/programs/first-move-wide.jpg",
+    photo: "images/on/tier-yearly.jpg",
     photoAlt: {
       en: "Two members stretching together on the 54D ON set",
       es: "Dos miembros estirando juntos en el set de 54D ON",

@@ -117,7 +117,7 @@ const MEMBERSHIP_TIERS: MembershipTier[] = [
     perMonth: 54,
     regularPerMonth: 99,
     billed: { en: "Billed monthly", es: "Facturación mensual" },
-    photo: "images/programs/runners-21k.jpg",
+    photo: "images/on/tier-monthly.jpg",
     photoAlt: {
       en: "Runner training outdoors along the beachfront",
       es: "Corredor entrenando al aire libre frente a la playa",
@@ -132,7 +132,7 @@ const MEMBERSHIP_TIERS: MembershipTier[] = [
     regularPerMonth: 89,
     billed: { en: "$156 every 3 months", es: "$156 cada 3 meses" },
     featured: true,
-    photo: "images/programs/emergency-kit-wide.jpg",
+    photo: "images/on/tier-quarterly.jpg",
     photoAlt: {
       en: "Athlete mid cardio drill on the official 54D ON set",
       es: "Atleta en pleno cardio en el set oficial de 54D ON",
@@ -146,7 +146,7 @@ const MEMBERSHIP_TIERS: MembershipTier[] = [
     perMonth: 49,
     regularPerMonth: 79,
     billed: { en: "$588 a year · lowest per month", es: "$588 al año · la mensualidad más baja" },
-    photo: "images/programs/first-move-wide.jpg",
+    photo: "images/on/tier-yearly.jpg",
     photoAlt: {
       en: "Two members stretching together on the 54D ON set",
       es: "Dos miembros estirando juntos en el set de 54D ON",
@@ -987,7 +987,7 @@ export default function On() {
             <div style={membSplit} className="memb-split">
               <div style={membPitch}>
                 <img
-                  src={asset("images/programs/step-2-wide.jpg")}
+                  src={asset("images/on/membership-everything.jpg")}
                   alt="Athlete training under warm light on the official 54D ON set"
                   loading="lazy"
                   style={membPitchImg}
