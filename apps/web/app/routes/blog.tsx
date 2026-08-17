@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import type { Route } from "./+types/blog";
 import { Nav, Footer, useReveal } from "../components/site";
 import { asset } from "../lib/asset";
+import { useLang } from "../lib/i18n";
 
 /* ============================================================
    /blog: Index del blog (awareness · SEO/AEO top-funnel).
@@ -265,6 +266,8 @@ function PostCard({ post }: { post: Post }) {
 
 export default function Blog() {
   const [filter, setFilter] = useState<Filter>("All");
+  const { lang } = useLang();
+  const es = lang === "es";
   const featured = POSTS[0];
   const visible =
     filter === "All" ? POSTS : POSTS.filter((p) => p.category === filter);
@@ -336,8 +339,12 @@ export default function Blog() {
                 }}
               />
               <img
-                src={asset(featured.cover)}
-                alt={featured.coverAlt}
+                src={asset("images/studios/coral-gables/dumbbell-strength-light.jpg")}
+                alt={
+                  es
+                    ? "Miembro entrenando fuerza con mancuernas bajo la luz cálida del studio 54D"
+                    : "Member training strength with dumbbells under the warm light of the 54D studio"
+                }
                 style={{
                   position: "relative",
                   width: "100%",

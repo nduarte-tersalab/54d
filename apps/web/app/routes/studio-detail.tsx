@@ -426,11 +426,15 @@ const INCLUDES: Record<Lang, Array<{ num: string; name: string; desc: string }>>
    imgStyle: reencuadre puntual (objectPosition/filter) por foto. */
 type GalleryPhoto = {
   src: string;
-  alt: string;
+  alt: string | Record<Lang, string>;
   ratio: string;
   caption: Record<Lang, string>;
   imgStyle?: React.CSSProperties;
 };
+
+/* alt legacy EN (string) o bilingüe (Record<Lang>) — resuelve al idioma activo */
+const altText = (alt: string | Record<Lang, string>, lang: Lang): string =>
+  typeof alt === "string" ? alt : alt[lang];
 type GalleryRow = { flip?: boolean; photos: [GalleryPhoto, GalleryPhoto] };
 
 const cg = (file: string) => `images/studios/coral-gables/${file}`;
@@ -438,7 +442,18 @@ const hl = (file: string) => `images/studios/hallandale/${file}`;
 
 /* Foto real de hero solo donde existe galería propia de la sede
    (HD de las galerías pic-time del cliente, 25/07/2026) */
-const HERO_PHOTO: Record<string, { src: string; alt: string }> = {
+const HERO_PHOTO: Record<
+  string,
+  { src: string; alt: string | Record<Lang, string> }
+> = {
+  /* Carso: recepción real del studio (outpaint de fondo aprobado, QC 17/08) */
+  "mexico-carso": {
+    src: "images/studios/mexico-carso/reception-54d-wide.jpg",
+    alt: {
+      es: "Recepción del studio 54D en Plaza Carso",
+      en: "Reception at the 54D studio in Plaza Carso",
+    },
+  },
   "coral-gables": {
     src: cg("mural-54d-editorial-wide.jpg"),
     alt: "An athlete mid drill in front of the giant 54D mural at the Coral Gables studio",
@@ -580,6 +595,83 @@ const GALLERY_ROWS: Record<string, GalleryRow[]> = {
           alt: "A member laughing on the bike floor at 54D Hallandale",
           ratio: "1 / 1",
           caption: { en: "The bike floor", es: "El piso de bicis" },
+        },
+      ],
+    },
+  ],
+  /* LATAM: primera foto real por sede (perfiles de Google del cliente
+     06/08 + outpaint Carso QC 17/08) emparejada con material de marca */
+  bogota: [
+    {
+      photos: [
+        {
+          src: "images/studios/bogota/container-facade.jpg",
+          alt: {
+            es: "La fachada de contenedores negra y amarilla del studio 54D Bogotá",
+            en: "The black and yellow container facade of the 54D Bogota studio",
+          },
+          ratio: "4 / 3",
+          caption: { en: "The Bogotá studio", es: "El studio de Bogotá" },
+        },
+        {
+          src: cg("generation-hug.jpg"),
+          alt: {
+            es: "Dos miembros de 54D abrazándose después de una sesión, sonriendo",
+            en: "Two 54D members embracing after a session, both smiling",
+          },
+          ratio: "1 / 1",
+          caption: { en: "The Generation, together", es: "La Generación, unida" },
+        },
+      ],
+    },
+  ],
+  "mexico-santa-fe": [
+    {
+      photos: [
+        {
+          src: "images/studios/mexico-santa-fe/facade-generation.jpg",
+          alt: {
+            es: "Una Generación completa de 54D posando frente a la fachada de vidrio del studio Santa Fe",
+            en: "A full 54D Generation posing outside the glass facade of the Santa Fe studio",
+          },
+          ratio: "4 / 3",
+          caption: { en: "The Santa Fe studio", es: "El studio de Santa Fe" },
+        },
+        {
+          src: "images/brand/class-plank-54d-mural.jpg",
+          alt: {
+            es: "Una clase completa entrenando sobre mats bajo el mural 54D en una pared negra",
+            en: "Full class training on mats under the 54D mural on a black wall",
+          },
+          ratio: "1 / 1",
+          caption: {
+            en: "The 54D method on the floor",
+            es: "El método 54D en el piso",
+          },
+        },
+      ],
+    },
+  ],
+  "mexico-carso": [
+    {
+      photos: [
+        {
+          src: "images/studios/mexico-carso/reception-54d-wide.jpg",
+          alt: {
+            es: "Recepción del studio 54D en Plaza Carso",
+            en: "Reception at the 54D studio in Plaza Carso",
+          },
+          ratio: "4 / 3",
+          caption: { en: "The Plaza Carso studio", es: "El studio de Plaza Carso" },
+        },
+        {
+          src: cg("generation-hug.jpg"),
+          alt: {
+            es: "Dos miembros de 54D abrazándose después de una sesión, sonriendo",
+            en: "Two 54D members embracing after a session, both smiling",
+          },
+          ratio: "1 / 1",
+          caption: { en: "The Generation, together", es: "La Generación, unida" },
         },
       ],
     },
@@ -1032,7 +1124,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
       <header className="hero hero-inner">
         <div className="hero-media">
           {heroPhoto ? (
-            <img src={asset(heroPhoto.src)} alt={heroPhoto.alt} />
+            <img src={asset(heroPhoto.src)} alt={altText(heroPhoto.alt, lang)} />
           ) : (
             /* Foto propia de la sede pendiente del cliente: poster de luz mientras tanto */
             <div className="hero-poster" />
@@ -1261,7 +1353,7 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
                       >
                         <img
                           src={asset(p.src)}
-                          alt={p.alt}
+                          alt={altText(p.alt, lang)}
                           loading="lazy"
                           style={p.imgStyle}
                         />
@@ -1281,7 +1373,34 @@ export default function StudioDetail({ loaderData }: Route.ComponentProps) {
       {/* ============ PHOTO BAND: GRADUACIÓN (solo sedes con foto real) ============ */}
       {bandPhoto && (
         <section className="photo-band">
-          <img src={asset(bandPhoto.src)} alt={bandPhoto.alt} loading="lazy" />
+          {studio.slug === "coral-gables" ? (
+            /* Video ambiente de la graduacion real (Higgsfield, QC 17/08);
+               el poster es la foto que estaba antes */
+            <video
+              ref={(el) => {
+                if (!el) return;
+                el.muted = true;
+                let tries = 0;
+                const kick = () => {
+                  if (!el.paused || tries++ > 8) return;
+                  el.play().catch(() => setTimeout(kick, 350));
+                };
+                kick();
+              }}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              poster={asset(bandPhoto.src)}
+              aria-label={bandPhoto.alt}
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+            >
+              <source src={asset("videos/cg-graduation-v1.mp4")} type="video/mp4" />
+            </video>
+          ) : (
+            <img src={asset(bandPhoto.src)} alt={bandPhoto.alt} loading="lazy" />
+          )}
           <div className="photo-band-content">
             <span className="day-marker">{es ? "Día 54" : "Day 54"}</span>
             <h2 className="section-title">

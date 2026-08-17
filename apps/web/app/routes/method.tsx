@@ -466,6 +466,39 @@ export default function Method() {
                     ? "El programa no es “entrena duro y come bien”. Es una secuencia diseñada: cada bloque prepara el siguiente y tu coach ajusta las variables sobre la marcha."
                     : "The program isn't “train hard and eat well”. It's a designed sequence: each block sets up the next, and your coach adjusts the variables as you go."}
                 </p>
+                <figure
+                  style={{
+                    position: "sticky",
+                    top: "6rem",
+                    margin: "2.4rem 0 0",
+                    maxWidth: "26rem",
+                  }}
+                >
+                  <img
+                    src={asset("images/studios/coral-gables/coach-correction.jpg")}
+                    alt={
+                      es
+                        ? "Miembros de 54D ejecutando press de hombro con mancuernas durante una sesión"
+                        : "54D members performing dumbbell shoulder presses during a session"
+                    }
+                    loading="lazy"
+                    style={{
+                      width: "100%",
+                      aspectRatio: "3 / 4",
+                      objectFit: "cover",
+                      borderRadius: "var(--r-media, 2px)",
+                      filter: "saturate(0.85) contrast(1.05)",
+                    }}
+                  />
+                  <figcaption
+                    className="photo-caption"
+                    style={{ marginTop: "0.9rem" }}
+                  >
+                    {es
+                      ? "Cada rep se corrige en el momento"
+                      : "Every rep gets corrected in the moment"}
+                  </figcaption>
+                </figure>
               </div>
               <div className="timeline">
                 {TIMELINE.map((t) => (
@@ -663,6 +696,24 @@ export default function Method() {
           amarillo de la zona baja es el del cierre final. */}
       <section className="split">
         <div className="split-panel split-on">
+          <img
+            src={asset("images/programs/54d-on-wide.jpg")}
+            alt={
+              es
+                ? "Coaches de 54D ON en el set negro con luz cálida del programa digital"
+                : "54D ON coaches on the black, warm-lit set of the digital program"
+            }
+            loading="lazy"
+            style={{
+              margin:
+                "calc(-1 * clamp(2.4rem, 4.5vw, 4rem)) calc(-1 * clamp(2.4rem, 4.5vw, 4rem)) 1.8rem",
+              width: "calc(100% + 2 * clamp(2.4rem, 4.5vw, 4rem))",
+              maxWidth: "none",
+              height: "200px",
+              objectFit: "cover",
+              filter: "saturate(0.85) contrast(1.05)",
+            }}
+          />
           <div>
             <span className="split-label">
               {es ? "Online, donde estés" : "Online, wherever you are"}
@@ -692,6 +743,24 @@ export default function Method() {
           </div>
         </div>
         <div className="split-panel split-studios">
+          <img
+            src={asset("images/brand/group-photo-54d-mural.jpg")}
+            alt={
+              es
+                ? "Una Generación completa de 54D posando junta bajo el mural gigante 54D"
+                : "A full 54D Generation posing together under the giant 54D mural"
+            }
+            loading="lazy"
+            style={{
+              margin:
+                "calc(-1 * clamp(2.4rem, 4.5vw, 4rem)) calc(-1 * clamp(2.4rem, 4.5vw, 4rem)) 1.8rem",
+              width: "calc(100% + 2 * clamp(2.4rem, 4.5vw, 4rem))",
+              maxWidth: "none",
+              height: "200px",
+              objectFit: "cover",
+              filter: "saturate(0.85) contrast(1.05)",
+            }}
+          />
           <div>
             <span className="split-label">
               {es ? "La experiencia insignia" : "The flagship experience"}

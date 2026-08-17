@@ -124,6 +124,10 @@ export type ProgramLanding = {
   progression?: { fromLabel: Dict; from: Dict; toLabel: Dict; to: Dict };
   /** "Your 9 weeks": fases por ciclo de 18 días (solo flagship) */
   phases?: { label: Dict; title: Dict; desc: Dict }[];
+  /** Visual de la sección de estructura (timeline de ciclos / semana tipo):
+      still real del set ON (images/on/ex-*.jpg, QC 17/08). Opcional:
+      si existe, la plantilla lo renderiza en la columna derecha. */
+  cyclesImage?: { src: string; alt: Dict };
   faq: Record<Lang, { q: string; a: string }[]>;
 };
 
@@ -235,6 +239,13 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
   /* ============ FLAGSHIP $385/$400 ============ */
   "54d-on": {
     slug: "54d-on",
+    cyclesImage: {
+      src: "images/on/ex-press.jpg",
+      alt: {
+        en: "54D ON set coach pressing two dumbbells overhead in the black, warm-lit studio",
+        es: "Coach del set 54D ON empujando dos mancuernas por encima de la cabeza en el estudio negro con luz cálida",
+      },
+    },
     coaches: ["images/coaches/alexis.jpg", "images/coaches/alicia.jpg", "images/coaches/luis.jpg"],
     name: "54D ON",
     tier: "flagship",
@@ -402,6 +413,13 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
 
   "step-2": {
     slug: "step-2",
+    cyclesImage: {
+      src: "images/on/ex-lunge.jpg",
+      alt: {
+        en: "54D ON set coach stepping into a dumbbell lunge in the black, warm-lit studio",
+        es: "Coach del set 54D ON avanzando en zancada con mancuernas en el estudio negro con luz cálida",
+      },
+    },
     coaches: ["images/coaches/kevin.jpg", "images/coaches/cristian.jpg", "images/coaches/elliot.jpg"],
     name: "Step 2",
     tier: "flagship",
@@ -589,6 +607,13 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
   /* ============ STARTERS $19-$39 ============ */
   "emergency-kit": {
     slug: "emergency-kit",
+    cyclesImage: {
+      src: "images/on/ex-jumprope.jpg",
+      alt: {
+        en: "54D ON set coach jumping rope in the black, warm-lit studio",
+        es: "Coach del set 54D ON saltando la cuerda en el estudio negro con luz cálida",
+      },
+    },
     coaches: ["images/coaches/kevin.jpg", "images/coaches/cristian.jpg"],
     name: "Emergency Kit",
     tier: "starter",
@@ -711,6 +736,13 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
 
   "max-burn": {
     slug: "max-burn",
+    cyclesImage: {
+      src: "images/on/ex-burpee.jpg",
+      alt: {
+        en: "54D ON set coach mid burpee jump in the black, warm-lit studio",
+        es: "Coach del set 54D ON en pleno salto de burpee en el estudio negro con luz cálida",
+      },
+    },
     coaches: ["images/coaches/elliot.jpg", "images/coaches/luis.jpg"],
     name: "Max Burn",
     tier: "starter",
@@ -839,6 +871,13 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
 
   "reset-7": {
     slug: "reset-7",
+    cyclesImage: {
+      src: "images/on/ex-recovery.jpg",
+      alt: {
+        en: "54D ON set coach rehydrating seated on the mat in the black, warm-lit studio",
+        es: "Coach del set 54D ON hidratándose sentada en el mat, en el estudio negro con luz cálida",
+      },
+    },
     coaches: ["images/coaches/jennifer.jpg", "images/coaches/sasha.jpg"],
     name: "Reset 7",
     tier: "starter",
@@ -964,6 +1003,13 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
 
   "first-move": {
     slug: "first-move",
+    cyclesImage: {
+      src: "images/on/ex-stretch.jpg",
+      alt: {
+        en: "54D ON set coach stretching toward an extended leg in the black, warm-lit studio",
+        es: "Coach del set 54D ON estirando hacia la pierna extendida en el estudio negro con luz cálida",
+      },
+    },
     coaches: ["images/coaches/jennifer.jpg", "images/coaches/sasha.jpg"],
     name: "First Move",
     tier: "starter",
@@ -1102,6 +1148,13 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
 
   "booty-on-fire": {
     slug: "booty-on-fire",
+    cyclesImage: {
+      src: "images/on/ex-bridge.jpg",
+      alt: {
+        en: "54D ON set coach holding a glute bridge in the black, warm-lit studio",
+        es: "Coach del set 54D ON sosteniendo un puente de glúteo en el estudio negro con luz cálida",
+      },
+    },
     coaches: ["images/coaches/sol.jpg", "images/coaches/nati.jpg"],
     name: "Booty on Fire",
     tier: "starter",
@@ -1227,6 +1280,13 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
   /* ============ MIDS $95-$185 ============ */
   "full-body": {
     slug: "full-body",
+    cyclesImage: {
+      src: "images/on/ex-plank.jpg",
+      alt: {
+        en: "54D ON set coach holding a forearm plank in the black, warm-lit studio",
+        es: "Coach del set 54D ON sosteniendo una plancha de antebrazos en el estudio negro con luz cálida",
+      },
+    },
     coaches: ["images/coaches/victor.jpg", "images/coaches/april.jpg"],
     name: "Full Body",
     tier: "mid",
@@ -1384,6 +1444,13 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
 
   "lower-body": {
     slug: "lower-body",
+    cyclesImage: {
+      src: "images/on/ex-squat.jpg",
+      alt: {
+        en: "54D ON set coach in a goblet squat with a dumbbell in the black, warm-lit studio",
+        es: "Coach del set 54D ON en sentadilla goblet con mancuerna en el estudio negro con luz cálida",
+      },
+    },
     coaches: ["images/coaches/sol.jpg", "images/coaches/nati.jpg"],
     name: "Lower Body",
     tier: "mid",
@@ -1552,6 +1619,13 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
 
   "upper-body": {
     slug: "upper-body",
+    cyclesImage: {
+      src: "images/on/ex-pushup.jpg",
+      alt: {
+        en: "54D ON set coach lowering into a push-up in the black, warm-lit studio",
+        es: "Coach del set 54D ON bajando en una flexión de pecho en el estudio negro con luz cálida",
+      },
+    },
     coaches: ["images/coaches/april.jpg", "images/coaches/katia.jpg"],
     name: "Upper Body",
     tier: "mid",
@@ -1723,6 +1797,13 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
      con heroFocus distinto por slug (tres encuadres, un asset limpio). */
   "runners-5k": {
     slug: "runners-5k",
+    cyclesImage: {
+      src: "images/on/ex-stride.jpg",
+      alt: {
+        en: "54D ON set coach mid running stride in the black, warm-lit studio",
+        es: "Coach del set 54D ON en zancada de carrera en el estudio negro con luz cálida",
+      },
+    },
     coaches: ["images/coaches/cristian.jpg", "images/coaches/sasha.jpg"],
     name: "Runners 5K",
     tier: "runners",
@@ -1872,6 +1953,13 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
 
   "runners-10k": {
     slug: "runners-10k",
+    cyclesImage: {
+      src: "images/on/ex-stride.jpg",
+      alt: {
+        en: "54D ON set coach mid running stride in the black, warm-lit studio",
+        es: "Coach del set 54D ON en zancada de carrera en el estudio negro con luz cálida",
+      },
+    },
     coaches: ["images/coaches/victor.jpg", "images/coaches/april.jpg"],
     name: "Runners 10K",
     tier: "runners",
@@ -2015,6 +2103,13 @@ export const PROGRAM_LANDINGS: Record<ProgramSlug, ProgramLanding> = {
 
   "runners-21k": {
     slug: "runners-21k",
+    cyclesImage: {
+      src: "images/on/ex-stride.jpg",
+      alt: {
+        en: "54D ON set coach mid running stride in the black, warm-lit studio",
+        es: "Coach del set 54D ON en zancada de carrera en el estudio negro con luz cálida",
+      },
+    },
     coaches: ["images/coaches/alexis.jpg", "images/coaches/alicia.jpg"],
     name: "Runners 21K",
     tier: "runners",

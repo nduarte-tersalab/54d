@@ -48,7 +48,10 @@ export function meta({ loaderData }: Route.MetaArgs) {
 /* Thumbnail por sede para el chooser: SOLO sedes con galería curada
    propia. LATAM: fotos de los perfiles de Google de cada sede
    (pedido cliente 06/08). Verificadas sin bolsas/conos. */
-const SEDE_THUMBS: Record<string, { src: string; alt: string }> = {
+const SEDE_THUMBS: Record<
+  string,
+  { src: string; alt: string | Record<"en" | "es", string> }
+> = {
   "coral-gables": {
     src: "images/studios/coral-gables/mural-54d-editorial-wide.jpg",
     alt: "An athlete mid drill in front of the giant 54D mural at the Coral Gables studio",
@@ -58,8 +61,11 @@ const SEDE_THUMBS: Record<string, { src: string; alt: string }> = {
     alt: "Two 54D members standing under the giant 54D mural at the Hallandale studio",
   },
   "mexico-carso": {
-    src: "images/studios/mexico-carso/reception-54d.jpg",
-    alt: "Reception desk with the 54D logo at the Plaza Carso studio",
+    src: "images/studios/mexico-carso/reception-54d-wide.jpg",
+    alt: {
+      es: "Recepción del studio 54D en Plaza Carso",
+      en: "Reception at the 54D studio in Plaza Carso",
+    },
   },
   "mexico-santa-fe": {
     src: "images/studios/mexico-santa-fe/facade-generation.jpg",
@@ -277,10 +283,36 @@ export default function Studios() {
       {/* ============ HERO INTERIOR (foto real de marca) ============ */}
       <header className="hero hero-inner">
         <div className="hero-media">
-          <img
-            src={asset("images/brand/generation-line-54d-mural-wide.jpg")}
-            alt="A 54D Generation arm in arm with their coach under the 54D mural"
-          />
+          {/* Video ambiente (Higgsfield desde la foto real, QC frame a frame
+              17/08); la foto queda de poster y de fallback sin JS */}
+          <video
+            ref={(el) => {
+              if (!el) return;
+              el.muted = true;
+              let tries = 0;
+              const kick = () => {
+                if (!el.paused || tries++ > 8) return;
+                el.play().catch(() => setTimeout(kick, 350));
+              };
+              kick();
+              const onTouch = () => {
+                if (el.isConnected && el.paused) el.play().catch(() => {});
+              };
+              document.addEventListener("pointerdown", onTouch, {
+                once: true,
+                passive: true,
+              });
+            }}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster={asset("images/brand/generation-line-54d-mural-wide.jpg")}
+            aria-label="A 54D Generation arm in arm with their coach under the 54D mural"
+          >
+            <source src={asset("videos/studios-hero-v1.mp4")} type="video/mp4" />
+          </video>
         </div>
         <div className="hero-veil" />
         <div className="hero-content">
@@ -363,7 +395,15 @@ export default function Studios() {
                   >
                     {thumb && (
                       <span className="sede-thumb">
-                        <img src={asset(thumb.src)} alt={thumb.alt} loading="lazy" />
+                        <img
+                          src={asset(thumb.src)}
+                          alt={
+                            typeof thumb.alt === "string"
+                              ? thumb.alt
+                              : thumb.alt[lang]
+                          }
+                          loading="lazy"
+                        />
                       </span>
                     )}
                     <span className="sede-body">

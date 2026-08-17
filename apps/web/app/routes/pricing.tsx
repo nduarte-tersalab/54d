@@ -654,7 +654,7 @@ export default function Pricing() {
       {/* ============ AIDA · I: PHOTO-BAND SEPARADOR (emoción, descanso visual §1.3.2) ============ */}
       <section className="photo-band band-tight">
         <img
-          src={asset("images/programs/runners-10k.jpg")}
+          src={asset("images/programs/runners-10k-wide.jpg")}
           alt={
             es
               ? "Corredor avanzando en una sesión al aire libre"

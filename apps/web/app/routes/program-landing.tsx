@@ -844,6 +844,8 @@ export default function ProgramLandingPage({
         <section className="section section-tight">
           <div className="section-inner" ref={journey.ref}>
             <div className={journey.className}>
+              <div className={p.cyclesImage ? "gen-split" : undefined}>
+              <div>
               {p.progression && (
                 <>
                   <span className="day-marker">{t.progressionEyebrow}</span>
@@ -904,6 +906,31 @@ export default function ProgramLandingPage({
                   </div>
                 </>
               )}
+              </div>
+              {p.cyclesImage && (
+                <figure
+                  style={{
+                    position: "sticky",
+                    top: "6rem",
+                    alignSelf: "start",
+                    margin: "0.4rem 0 0",
+                  }}
+                >
+                  <img
+                    src={asset(p.cyclesImage.src)}
+                    alt={p.cyclesImage.alt[lang]}
+                    loading="lazy"
+                    style={{
+                      width: "100%",
+                      aspectRatio: "3 / 4",
+                      objectFit: "cover",
+                      borderRadius: "var(--r-media, 2px)",
+                      filter: "saturate(0.85) contrast(1.05)",
+                    }}
+                  />
+                </figure>
+              )}
+              </div>
               <InlineCta eyebrow={t.ctaStructure} position="inline_structure" />
             </div>
           </div>
