@@ -1755,3 +1755,300 @@ p.lead, .lead {
   .prog-stats .stat { min-width: 0; padding: 1.5rem 1.1rem; }
   .prog-stats .stat-value { font-size: 1.5rem; overflow-wrap: break-word; }
 }
+
+/* ==== DASHBOARD v7 (builder A) ==== */
+/* Solo para /admin (routes/admin.tsx). Todo va prefijado dash7- para no
+   pisar clases de otras pantallas del admin. Reusa .metric-card y los
+   tokens de altura / gap; el amarillo entra solo como acento. */
+.dash7-head {
+  display: flex; flex-wrap: wrap; align-items: center;
+  justify-content: space-between; gap: var(--gap-grid-tight);
+  margin-bottom: var(--gap-grid);
+}
+.dash7-head .admin-title { margin-bottom: 0; }
+.dash7-periods {
+  display: inline-flex; gap: 0.2rem; padding: 0.25rem;
+  background: var(--glass); border: 1px solid var(--hairline);
+  border-radius: var(--r-control);
+}
+.dash7-period {
+  min-height: var(--btn-h-nav); padding: 0 1rem;
+  display: inline-flex; align-items: center;
+  font-family: var(--font-body); font-size: 0.76rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: var(--track-label);
+  color: var(--c-faint); background: transparent; border: none;
+  border-radius: var(--r-control); cursor: pointer;
+  transition: color var(--transition), background var(--transition);
+}
+.dash7-period:hover { color: var(--c-white); background: var(--glass-hover); }
+.dash7-period[aria-pressed="true"] { color: var(--c-yellow); background: rgba(255, 210, 0, 0.07); }
+
+/* Línea de contexto bajo cada KPI: sin esto un cero no se explica solo. */
+.dash7-hint {
+  margin: 0.55rem 0 0; font-size: 0.74rem; line-height: 1.45;
+  color: var(--c-faint); max-width: 26rem;
+}
+
+/* Estado de la base (activas, vencidas, bajas): dato de apoyo, no KPI. */
+.dash7-substats {
+  display: flex; flex-wrap: wrap; gap: 0 2rem;
+  margin-top: var(--gap-grid-tight); padding: 0.8rem 1.4rem;
+  background: var(--glass); border: 1px solid var(--hairline);
+  border-radius: var(--r-card);
+}
+.dash7-substat {
+  display: flex; align-items: baseline; gap: 0.5rem; padding: 0.35rem 0;
+  font-size: 0.8rem; color: var(--c-faint);
+}
+.dash7-substat b { font-size: 0.98rem; font-weight: 700; color: var(--c-white); }
+
+.dash7-section { margin-top: 2.5rem; }
+.dash7-h2 {
+  font-family: var(--font-display); font-weight: 800; font-size: 1.05rem;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--c-white); margin: 0 0 0.4rem;
+}
+.dash7-sub { margin: 0 0 1rem; font-size: 0.82rem; line-height: 1.55; color: var(--c-faint); max-width: 62rem; }
+.dash7-sub code, .dash7-empty-note code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.78rem; color: var(--c-mist);
+}
+.dash7-panel {
+  background: var(--glass); border: 1px solid var(--hairline);
+  border-radius: var(--r-card); overflow-x: auto;
+}
+
+/* Estados vacíos: dicen qué significa el vacío y qué falta para llenarlo. */
+.dash7-empty { padding: 2rem 1.5rem; }
+.dash7-empty-title { margin: 0 0 0.45rem; font-size: 0.92rem; color: var(--c-mist); }
+.dash7-empty-note { margin: 0; font-size: 0.82rem; line-height: 1.6; color: var(--c-faint); max-width: 46rem; }
+
+.dash7-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; min-width: 760px; }
+.dash7-table th, .dash7-table td { padding: 0.85rem 1.2rem; white-space: nowrap; }
+.dash7-table th {
+  text-align: left; font-size: 0.68rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: var(--track-label); color: var(--c-faint);
+}
+.dash7-table td { color: var(--c-mist); }
+.dash7-table tbody tr { border-top: 1px solid var(--hairline); }
+.dash7-table tbody tr:hover { background: rgba(255, 255, 255, 0.02); }
+.dash7-table tfoot tr { border-top: 1px solid var(--line-accent); }
+.dash7-table tfoot td { color: var(--c-mist); }
+.dash7-table .dash7-num { text-align: right; }
+.dash7-table td.dash7-num { color: var(--c-white); }
+.dash7-chan { color: var(--c-white); font-weight: 600; }
+.dash7-money { color: var(--c-yellow); }
+.dash7-quiet { color: var(--c-faint); }
+
+/* Barra de participación: un div con width %, sin librería de charts. */
+.dash7-bar {
+  position: relative; display: block; width: 120px; height: 6px;
+  border-radius: 999px; background: rgba(255, 255, 255, 0.08); overflow: hidden;
+}
+.dash7-bar-fill {
+  position: absolute; top: 0; bottom: 0; left: 0;
+  background: var(--c-yellow); border-radius: 999px;
+}
+
+.dash7-chart-wrap { padding: 1.4rem 1.2rem 0.6rem; }
+.dash7-chart { display: block; width: 100%; height: auto; }
+
+/* Detalle por anuncio: plegado, es lectura secundaria. */
+.dash7-details {
+  background: var(--glass); border: 1px solid var(--hairline);
+  border-radius: var(--r-card);
+}
+.dash7-details > summary {
+  list-style: none; cursor: pointer;
+  display: flex; align-items: center; gap: 0.6rem;
+  min-height: var(--btn-h-sm); padding: 0 1.2rem;
+  font-size: 0.84rem; color: var(--c-mist);
+  transition: color var(--transition);
+}
+.dash7-details > summary::-webkit-details-marker { display: none; }
+.dash7-details > summary::before {
+  content: "+"; color: var(--c-yellow); font-weight: 700; font-size: 1rem; line-height: 1;
+}
+.dash7-details[open] > summary::before { content: "\2212"; }
+.dash7-details > summary:hover { color: var(--c-white); }
+.dash7-details-body { border-top: 1px solid var(--hairline); overflow-x: auto; }
+
+/* El grid del admin (240px + 1fr) deja crecer la columna con su contenido:
+   sin min-width:0 una tabla ancha empuja todo el layout en pantallas chicas
+   en vez de scrollear dentro de su panel. Acotado al dashboard. */
+.admin-main:has(.dash7-head) { min-width: 0; }
+
+@media (max-width: 720px) {
+  .dash7-head { align-items: flex-start; }
+  .dash7-periods { width: 100%; }
+  .dash7-period { flex: 1; justify-content: center; padding: 0 0.6rem; }
+  .dash7-bar { width: 72px; }
+}
+
+/* ==== LEADS v7 (builder B) ==== */
+/* Superficie interna del equipo comercial (/admin/leads). Todo en
+   español, igual que el resto del admin. Amarillo SOLO como acento
+   puntual (el conteo de leads sin contactar); el resto es blanco,
+   niebla y hairline. Alturas de control por token --btn-h-nav. */
+
+.leads-sectitle {
+  font-family: var(--font-display); font-weight: 800; font-size: 1rem;
+  text-transform: uppercase; letter-spacing: 0.05em; color: var(--c-white);
+}
+.leads-hint { font-size: 0.8rem; color: var(--c-faint); }
+
+/* ---------- Resumen por canal ---------- */
+.leads-chan-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: var(--gap-grid-tight);
+}
+.leads-chan-card {
+  display: grid; gap: 0.1rem; text-align: left;
+  background: var(--glass); border: 1px solid var(--hairline);
+  border-radius: var(--r-card); padding: 1.1rem 1.2rem;
+  color: var(--c-white); cursor: pointer; font: inherit;
+  transition: border-color var(--transition), background var(--transition);
+}
+.leads-chan-card:hover { border-color: var(--line-accent); background: var(--glass-hover); }
+.leads-chan-card.is-active { border-color: rgba(255, 255, 255, 0.45); background: var(--glass-hover); }
+.leads-chan-label {
+  font-size: 0.7rem; text-transform: uppercase;
+  letter-spacing: var(--track-label); color: var(--c-faint);
+}
+.leads-chan-total {
+  font-family: var(--font-display); font-weight: 800; font-size: 1.9rem;
+  line-height: 1.15; margin-top: 0.35rem;
+}
+.leads-chan-sub { margin-top: 0.3rem; font-size: 0.76rem; color: var(--c-mist); }
+.leads-chan-sub em { font-style: normal; font-weight: 700; color: var(--c-yellow); }
+
+/* ---------- Estado vacío digno ---------- */
+.leads-empty {
+  background: var(--glass); border: 1px solid var(--hairline);
+  border-radius: var(--r-card); padding: 2.6rem 1.8rem; text-align: center;
+}
+.leads-empty h3 {
+  font-family: var(--font-display); font-weight: 800; font-size: 1.05rem;
+  text-transform: uppercase; letter-spacing: 0.04em; color: var(--c-white);
+}
+.leads-empty p {
+  margin: 0.8rem auto 0; max-width: 52ch;
+  font-size: 0.9rem; line-height: 1.65; color: var(--c-mist);
+}
+
+/* ---------- Filtros ---------- */
+.leads-filters { display: flex; flex-wrap: wrap; gap: 0.7rem; align-items: center; }
+.leads-chips { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.leads-input, .leads-select, .leads-chip, .leads-status {
+  height: var(--btn-h-nav); font: inherit; font-size: 0.84rem;
+  background: var(--glass); color: var(--c-white);
+  border: 1px solid var(--hairline); border-radius: var(--r-control);
+  padding: 0 0.7rem;
+}
+.leads-input { min-width: 15rem; flex: 0 1 21rem; }
+.leads-input::placeholder { color: var(--c-faint); }
+.leads-input:focus-visible, .leads-select:focus-visible,
+.leads-textarea:focus-visible, .leads-status:focus-visible {
+  outline: none; border-color: var(--line-accent-strong);
+}
+.leads-chip {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: transparent; color: var(--c-mist); cursor: pointer;
+  padding: 0 0.85rem; white-space: nowrap;
+  transition: color var(--transition), border-color var(--transition), background var(--transition);
+}
+.leads-chip:hover { color: var(--c-white); border-color: rgba(255, 255, 255, 0.22); }
+.leads-chip.is-active {
+  color: var(--c-white); border-color: rgba(255, 255, 255, 0.45); background: var(--glass-hover);
+}
+.leads-chip b { font-weight: 700; font-variant-numeric: tabular-nums; }
+.leads-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+
+/* ---------- Alerta de error (carga o guardado) ---------- */
+.leads-alert {
+  border: 1px solid rgba(255, 59, 48, 0.45); background: rgba(255, 59, 48, 0.08);
+  border-radius: var(--r-card); padding: 0.85rem 1rem;
+  color: #FF6A60; font-size: 0.86rem; line-height: 1.5;
+}
+
+/* ---------- Tabla ---------- */
+/* El main del admin es un grid item: sin min-width 0 no se encoge y la
+   tabla ancha estira la grilla en vez de scrollear dentro de su panel
+   (con overflow-x clip del body, las columnas quedaban cortadas y sin
+   forma de llegar a ellas). Acotado a la pantalla de leads. */
+.admin-main:has(.leads-tablewrap) { min-width: 0; }
+.leads-tablewrap {
+  border: 1px solid var(--hairline); border-radius: var(--r-card);
+  background: var(--glass); overflow-x: auto;
+}
+.leads-table { width: 100%; border-collapse: collapse; min-width: 1020px; font-size: 0.88rem; }
+.leads-table th {
+  text-align: left; padding: 0.9rem 1.1rem;
+  font-size: 0.66rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.14em; color: var(--c-faint); white-space: nowrap;
+  border-bottom: 1px solid var(--hairline);
+}
+.leads-table td { padding: 0.85rem 1.1rem; color: var(--c-mist); vertical-align: top; }
+.leads-row:not(:first-child) > td { border-top: 1px solid var(--hairline); }
+.leads-row.is-saving { opacity: 0.45; }
+.leads-nowrap { white-space: nowrap; }
+.leads-num { font-variant-numeric: tabular-nums; }
+.leads-name { color: var(--c-white); font-weight: 600; display: block; }
+.leads-sub { display: block; margin-top: 0.2rem; font-size: 0.74rem; color: var(--c-faint); }
+
+.leads-wa {
+  display: inline-flex; align-items: center; gap: 0.45rem;
+  height: var(--btn-h-nav); padding: 0 0.85rem;
+  border: 1px solid rgba(62, 207, 142, 0.4); border-radius: var(--r-control);
+  color: #3ECF8E; text-decoration: none; font-size: 0.8rem; white-space: nowrap;
+  transition: background var(--transition), border-color var(--transition);
+}
+.leads-wa:hover { background: rgba(62, 207, 142, 0.1); border-color: #3ECF8E; }
+
+.leads-badge {
+  display: inline-block; padding: 0.22rem 0.6rem;
+  border: 1px solid var(--hairline); border-radius: var(--r-control);
+  font-size: 0.72rem; color: var(--c-mist); white-space: nowrap;
+}
+.leads-status { padding: 0 0.5rem; cursor: pointer; }
+.leads-toggle {
+  display: inline-flex; align-items: baseline; gap: 0.45rem;
+  background: none; border: 0; padding: 0; cursor: pointer;
+  color: var(--c-faint); font: inherit; font-size: 0.8rem; text-align: left;
+  transition: color var(--transition);
+}
+.leads-toggle:hover { color: var(--c-white); }
+.leads-caret { color: var(--c-mist); font-size: 0.7rem; }
+
+/* ---------- Detalle expandible por fila ---------- */
+.leads-drawer > td {
+  border-top: 1px solid var(--hairline);
+  padding: 1.2rem 1.1rem 1.5rem; background: rgba(255, 255, 255, 0.02);
+}
+.leads-drawer-inner { display: grid; gap: var(--gap-grid-tight); }
+.leads-drawer-title {
+  font-size: 0.68rem; text-transform: uppercase; letter-spacing: var(--track-label);
+  color: var(--c-faint); margin-bottom: 0.7rem;
+}
+.leads-qa {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 0.9rem 1.2rem;
+}
+.leads-qa-item { border-left: 2px solid var(--hairline); padding-left: 0.85rem; }
+.leads-qa-cat {
+  display: block; font-size: 0.62rem; text-transform: uppercase;
+  letter-spacing: 0.14em; color: var(--c-faint);
+}
+.leads-qa-q { display: block; margin-top: 0.2rem; font-size: 0.78rem; line-height: 1.45; color: var(--c-mist); }
+.leads-qa-a { display: block; margin-top: 0.25rem; font-size: 0.9rem; line-height: 1.45; color: var(--c-white); }
+.leads-note { white-space: pre-wrap; font-size: 0.86rem; line-height: 1.6; color: var(--c-mist); }
+.leads-textarea {
+  width: 100%; resize: vertical; padding: 0.65rem 0.75rem;
+  background: var(--glass); color: var(--c-white); font: inherit; font-size: 0.86rem;
+  line-height: 1.55; border: 1px solid var(--hairline); border-radius: var(--r-control);
+}
+
+@media (max-width: 700px) {
+  .leads-input { min-width: 0; flex: 1 1 100%; }
+  .leads-chan-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+}

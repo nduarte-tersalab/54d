@@ -50,7 +50,7 @@ This is **not tech debt**: the code is written and waiting for data.
 | **Stripe keys** | The site being able to charge | See [STRIPE.md](STRIPE.md). Every CTA returns `503 payments_not_configured` today |
 | **Real price IDs** | Same | 30 `PENDING_*` placeholders across 3 files |
 | **Mindbody go-live** | Live schedules per location | `usertoken/issue` returns `DeniedAccess`. The UI already falls back to static schedules without breaking |
-| **FitBudd decision** | The payment → app-access bridge | See [INTEGRATIONS.md](INTEGRATIONS.md): who charges has to be decided |
+| **FitBudd answers** | Rebuilding attribution once FitBudd charges | Direction is decided (FitBudd charges natively). What is missing is whether it supports metadata pass-through: see [INTEGRATIONS.md](INTEGRATIONS.md) |
 | **Allumi / Helvetica Neue Condensed fonts** | Final typography | Running on Archivo / Archivo Narrow as stand-ins; the swap is one `@font-face` change |
 | **META_PIXEL_ID, CAPI token, GA4** | Real measurement | The code reads them from env and activates itself when they exist |
 | **Full weekly schedules per location** | Publishing the complete grid | There is a base table today; the detailed one would come from Mindbody |

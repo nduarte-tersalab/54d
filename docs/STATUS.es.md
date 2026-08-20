@@ -50,7 +50,7 @@ Esto **no es deuda técnica**: el código está listo y esperando datos.
 | **Claves de Stripe** | Que el sitio pueda cobrar | Ver [STRIPE.md](STRIPE.es.md). Hoy todo CTA responde `503 payments_not_configured` |
 | **Price IDs reales** | Lo mismo | 30 placeholders `PENDING_*` en 3 archivos |
 | **Go-live de Mindbody** | Horarios en vivo por sede | `usertoken/issue` devuelve `DeniedAccess`. La UI ya cae a horarios estáticos sin romperse |
-| **Decisión sobre FitBudd** | El puente pago → acceso a la app | Ver [INTEGRATIONS.md](INTEGRATIONS.es.md): hay que definir quién cobra |
+| **Respuestas de FitBudd** | Reconstruir la atribución cuando FitBudd cobre | La dirección ya está decidida (cobra FitBudd nativo). Falta saber si soporta metadata pass-through: ver [INTEGRATIONS.md](INTEGRATIONS.es.md) |
 | **Fuentes Allumi / Helvetica Neue Condensed** | Tipografía definitiva | Corre con Archivo / Archivo Narrow como sustitutos; el swap es cambiar el `@font-face` |
 | **META_PIXEL_ID, CAPI token, GA4** | Medición real | El código los lee del env y se activa solo cuando existen |
 | **Horarios semanales por sede** | Publicar la grilla completa | Hoy hay una tabla base; la fina llegaría por Mindbody |

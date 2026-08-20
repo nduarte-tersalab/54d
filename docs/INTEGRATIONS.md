@@ -4,7 +4,7 @@
 
 Three third-party platforms show up in this project and they are easy to
 confuse. This document clarifies what each one does, what is wired, and what
-is still undecided.
+the chosen direction means for measurement.
 
 ---
 
@@ -13,8 +13,8 @@ is still undecided.
 | Platform | For which product | Status | Who charges |
 |---|---|---|---|
 | **Mindbody** | 54D Studios (in person) | Partially integrated | Mindbody, with its own integration |
-| **Trainerize** | current "54D On" app (white-label) | In use by the client, not wired to the site | — |
-| **FitBudd** | evaluated replacement for the ON app | **Undecided** | Undecided (brings its own Stripe) |
+| **Trainerize** | current "54D On" app (white-label) | In use by the client, not wired to the site | nobody, through us |
+| **FitBudd** | replacement for the ON app | **Decided**: FitBudd, with its native Stripe integration | **FitBudd**, on the client's Stripe account |
 
 The rule that runs through everything: **Studios and ON do not mix.** They are
 products 90x apart in price. The apps are different too, which is why the 54D
@@ -23,7 +23,7 @@ ON app badges never appear on studio pages
 
 ---
 
-## Mindbody — Studios
+## Mindbody: Studios
 
 The system the client uses to run the in-person studios: classes, schedules,
 clients.
@@ -47,83 +47,109 @@ returns `DeniedAccess`. Until then live schedules stay off, but the code is
 ready: nothing needs changing, the API just has to start answering.
 
 **Careful with Stripe**: Mindbody may be charging on the same Stripe account.
-That is why the webhook provenance filter exists — see [STRIPE.md](STRIPE.md).
+This is the reason the webhook keeps a provenance check even now that FitBudd
+charges are meant to come in. Studio memberships cost roughly 90x an app
+subscription, so a single studio charge counted as an app sale skews revenue by
+an order of magnitude. See [STRIPE.md](STRIPE.md), part 3.
 
 ---
 
-## Trainerize — the current ON app
+## Trainerize: the current ON app
 
 The published "54D On" app is a Trainerize white-label. You can tell from the
 Android package: `com.trainerize.fiftyfourdays`.
 
 **It is not integrated with the site.** The site links to it (App Store and
-Google Play badges) and shows its rating, nothing more. Subscriptions sold
-through our Stripe checkout **do not currently provision anyone in the app**:
-that bridge does not exist yet, and it is exactly the problem FitBudd is meant
-to solve or replace.
+Google Play badges) and shows its rating, nothing more. Nothing sold on the site
+provisions anyone in the app: that bridge does not exist, and it is exactly the
+problem FitBudd is meant to replace.
 
 The testimonials shown on the site are real reviews of this app, harvested from
 the public iTunes RSS feed.
 
 ---
 
-## FitBudd — the open decision
+## FitBudd: the chosen direction
 
 FitBudd is a white-label fitness app platform for trainers and gyms: a direct
 competitor to Trainerize. It offers a client-branded app, training plans, coach
-chat, and **payments via Stripe, PayPal and in-app purchases**, with no platform
+chat, and payments via Stripe, PayPal and in-app purchases, with no platform
 commission on top.
 
-### What to decide before writing code
+**The client has decided.** FitBudd is already connected to Stripe and the app
+will charge through **FitBudd's native Stripe integration**. This is no longer
+an open architectural question, and the earlier framing of this document as
+"option A versus option B" is obsolete.
 
-The question is not technical, it is business architecture: **who charges?**
+### What that decision costs, and what it does not
 
-**Option A — our checkout charges, FitBudd only grants access**
+What it buys: less code, less to maintain, and a payment flow the vendor
+supports. That is real value and it is why the decision is reasonable.
 
-```
-Meta Ad → landing → our Stripe checkout → webhook
-        → provision the user in FitBudd via their API
-```
+What it costs: the ad-to-sale link does not survive on its own. Our checkout
+wrote it by construction, because we created the Stripe session and stamped our
+own `attribution_id` on it. A FitBudd checkout writes nothing of ours. The
+Stripe event arrives with a customer who paid and no trace of the Meta ad they
+clicked eleven days earlier.
 
-- Keeps **all** the per-ad attribution already built.
-- Keeps control of the funnel, pricing and Meta CAPI events.
-- Requires FitBudd to have a user-provisioning API and the webhook to call it.
-- This is the option that **does not throw away** what is already built.
+What it does **not** cost, contrary to the previous version of this document:
+the measurement is not simply lost. It can be rebuilt with an attribution
+handoff, at a precision that depends on one answer from FitBudd. The full
+pattern, the three match strategies and their honest reliability are in
+[STRIPE.md](STRIPE.md), part 2. The short version:
 
-**Option B — FitBudd charges with its own integration**
+| Strategy | Precision | Depends on |
+|---|---|---|
+| Our `attribution_id` passed through FitBudd | deterministic | FitBudd supporting metadata pass-through (unconfirmed) |
+| Normalized customer email | high precision, partial coverage | capturing the email before the redirect |
+| Time window plus landing | approximate, degrades with volume | nothing, and that is the problem |
 
-- Less code on our side; FitBudd handles subscriptions and access.
-- **Measurement breaks** unless FitBudd lets us pass our own metadata through
-  to Stripe and returns it in its webhooks. Without that, there is no way to
-  know which ad produced which sale, which is the central goal of this project.
-- The site stops selling and starts referring.
+### What we have to build on our side
 
-**Option C — hybrid**: the site charges the membership (where attribution
-matters, because that is what gets advertised) and FitBudd handles access and
-the experience. In practice this is option A with clearer division of labor.
+1. **The handoff.** The CTA that sends someone to FitBudd cannot be a plain
+   link. It has to record the touch first (utm, fbclid, referrer, and whatever
+   correlation key we can carry) and redirect after. Without this step there is
+   nothing to match against later, and no webhook code recovers it.
+2. **Let FitBudd events in.** They already reach our webhook, since it is the
+   same Stripe account, and today the provenance filter discards them. That
+   filter becomes a three-way classifier: ours, FitBudd's, foreign.
+3. **Keep Mindbody out.** Non negotiable, for the 90x reason above.
+4. **Mark the origin in the mirror.** A column that separates what the site sold
+   from what the app sold, so both can be read separately and added up
+   deliberately.
 
-### Questions to put to FitBudd before deciding
+### Questions for FitBudd, in priority order
 
-1. Is there a public API to **create users and assign programs** from outside?
-   What authentication?
-2. If we charge, how is access granted? Is creating the account enough, or must
-   the subscription live in their system?
-3. If FitBudd charges, can it pass **arbitrary metadata** (our
-   `attribution_id`) into checkout and return it by webhook?
-4. Does it use **the client's same Stripe account** or its own? If the same,
-   our provenance filter already stops its charges from polluting metrics, but
-   confirm it.
-5. What happens to current Trainerize members? Is there a migration?
+1. **Metadata pass-through**: can we attach an arbitrary value to the checkout
+   FitBudd creates, and does it survive to the Stripe object? This is the one
+   that decides everything else.
+2. **Its own webhooks**: does FitBudd emit purchase, trial and cancellation
+   events of its own? What is in the payload?
+3. **The Stripe account**: same account as the studios, confirmed? Connected via
+   Stripe Connect, OAuth, or a pasted key?
+4. **Read API**: can we list subscriptions and members to reconcile nightly?
+5. **In-app purchases**: does an App Store or Google Play subscription show up in
+   Stripe at all? If not, that revenue never reaches this pipeline.
+6. **Catalog ownership**: whose products and prices, ours or theirs?
+7. **Trainerize migration**: do migrated members produce Stripe events that look
+   like new sales?
 
-### What is already on our side, whichever way it goes
+### What is already on our side, whichever way the answers land
 
-- The **provenance filter** protects the metrics if the Stripe account is shared.
+- The **provenance check** protects the metrics on a shared Stripe account. It
+  changes shape, it does not go away.
+- The **channel infrastructure is built**: `channel_of()` plus three views
+  classify any touch into meta_ads, newsletter, seo, direct and the rest. See
+  [ANALYTICS.md](ANALYTICS.md) *(Spanish)*. It works the moment sales start
+  reaching the mirror with an attribution behind them.
 - The `/leads` endpoint and the best-effort sync pattern used with Mindbody
   (save first, sync after, log the failure without breaking the flow) is the
-  same pattern to use for provisioning in FitBudd.
+  same pattern to use for anything we push into FitBudd.
 - The `program_prices` table already maps program → `stripe_price_id` →
   `interval`, so adding a FitBudd identifier per program is one more column.
 
-> **Note for whoever makes the call:** this project exists to answer "how many
-> free trials come from each ad, how many buy, and how many cancel". Any
-> architecture that breaks that link must be rejected or explicitly compensated.
+> **Note for whoever reviews this:** this project exists to answer "how many free
+> trials come from each channel, how many buy, and how many cancel". The
+> architecture chosen does not answer that by itself. It can, with the handoff.
+> Shipping the FitBudd integration without the handoff means shipping a
+> dashboard that will show zero forever.
