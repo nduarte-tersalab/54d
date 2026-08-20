@@ -1,99 +1,102 @@
-# Estado del proyecto
+**English** · [Español](STATUS.es.md)
 
-Foto al **18 de agosto de 2026**. Lo que está terminado, lo que falta y —lo más
-importante— **qué está bloqueado esperando algo de afuera**.
+# Project status
 
-Mantené este archivo al día: es lo primero que lee quien se suma.
+Snapshot as of **18 August 2026**. What is done, what is missing, and most
+importantly **what is blocked waiting on something external**.
+
+Keep this file current: it is the first thing a new joiner reads.
 
 ---
 
-## Listo y en producción
+## Done and in production
 
-**Sitio público** — 24 rutas, todas bilingües EN/ES con detección por navegador
-y selector manual (cookie `54d_lang`).
+**Public site** — 24 routes, all bilingual EN/ES with browser detection and a
+manual switcher (`54d_lang` cookie).
 
-| Ruta | Qué es |
+| Route | What it is |
 |---|---|
-| `/` | Gate: video + dos puertas (Studios / ON). Sin header ni footer, a propósito. |
-| `/on`, `/pricing` | Venta del producto online: membresía, 13 programas, la app |
-| `/programs/:slug` | 13 landings de pauta, un template + data |
-| `/studios`, `/studios/:slug` | Index con carrusel + 5 sedes |
-| `/method`, `/blog`, `/contact` | Contenido y contacto |
-| `/assessment` | Lead magnet: 12 preguntas → nombre + WhatsApp → `/leads` |
-| `/privacy`, `/terms` | Legales (`routes/legal.tsx`, una ruta con dos ids) |
-| `/admin/*` | Dashboard: login, métricas, leads, ABM de blog y programas |
+| `/` | The gate: video + two doors (Studios / ON). No header or footer, deliberately. |
+| `/on`, `/pricing` | Online product sales: membership, 13 programs, the app |
+| `/programs/:slug` | 13 ad landing pages, one template + data |
+| `/studios`, `/studios/:slug` | Index with carousel + 5 locations |
+| `/method`, `/blog`, `/contact` | Content and contact |
+| `/assessment` | Lead magnet: 12 questions → name + WhatsApp → `/leads` |
+| `/privacy`, `/terms` | Legal (`routes/legal.tsx`, one route with two ids) |
+| `/admin/*` | Dashboard: login, metrics, leads, blog and program CRUD |
 
 **API** (`apps/api/src/index.ts`): `/health`, `/checkout`, `/webhooks/stripe`,
 `/mindbody/classes`, `/leads`.
 
-**Datos**: schema aplicado en Supabase con catálogo seedeado (15 programas, 13
-precios), atribución, espejo de suscripciones, webhook events y la vista
-`v_campaign_funnel` para el funnel por anuncio.
+**Data**: schema applied in Supabase with a seeded catalog (15 programs, 13
+prices), attribution, subscription mirror, webhook events and the
+`v_campaign_funnel` view for the per-ad funnel.
 
-**SEO local**: NAP verificado contra los perfiles reales de Google Business de
-las 5 sedes, JSON-LD `ExerciseGym` con teléfono, geo y `hasMap`, sitemap y robots.
+**Local SEO**: NAP verified against the real Google Business profiles of all 5
+locations, `ExerciseGym` JSON-LD with phone, geo and `hasMap`, sitemap and robots.
 
-**Contenido verificado**: testimonios reales del App Store (cosechados del RSS
-público de iTunes), antes/después oficiales del cliente, 17 coaches con nombre,
-covers oficiales de los 10 programas.
+**Verified content**: real App Store testimonials (harvested from the public
+iTunes RSS), official client before/afters, 17 named coaches, official covers
+for the 10 programs.
 
 ---
 
-## Bloqueado esperando al cliente
+## Blocked, waiting on the client
 
-Esto **no es deuda técnica**: el código está listo y esperando datos.
+This is **not tech debt**: the code is written and waiting for data.
 
-| Qué falta | Bloquea | Detalle |
+| What is missing | Blocks | Detail |
 |---|---|---|
-| **Claves de Stripe** | Que el sitio pueda cobrar | Ver [STRIPE.md](STRIPE.md). Hoy todo CTA responde `503 payments_not_configured` |
-| **Price IDs reales** | Lo mismo | 30 placeholders `PENDING_*` en 3 archivos |
-| **Go-live de Mindbody** | Horarios en vivo por sede | `usertoken/issue` devuelve `DeniedAccess`. La UI ya cae a horarios estáticos sin romperse |
-| **Decisión sobre FitBudd** | El puente pago → acceso a la app | Ver [INTEGRATIONS.md](INTEGRATIONS.md): hay que definir quién cobra |
-| **Fuentes Allumi / Helvetica Neue Condensed** | Tipografía definitiva | Corre con Archivo / Archivo Narrow como sustitutos; el swap es cambiar el `@font-face` |
-| **META_PIXEL_ID, CAPI token, GA4** | Medición real | El código los lee del env y se activa solo cuando existen |
-| **Horarios semanales por sede** | Publicar la grilla completa | Hoy hay una tabla base; la fina llegaría por Mindbody |
-| **NAP de MX y CO** | SEO local de esas 3 sedes | Las 2 de US están verificadas; las de CDMX y Bogotá vienen de perfiles sin reclamar |
+| **Stripe keys** | The site being able to charge | See [STRIPE.md](STRIPE.md). Every CTA returns `503 payments_not_configured` today |
+| **Real price IDs** | Same | 30 `PENDING_*` placeholders across 3 files |
+| **Mindbody go-live** | Live schedules per location | `usertoken/issue` returns `DeniedAccess`. The UI already falls back to static schedules without breaking |
+| **FitBudd decision** | The payment → app-access bridge | See [INTEGRATIONS.md](INTEGRATIONS.md): who charges has to be decided |
+| **Allumi / Helvetica Neue Condensed fonts** | Final typography | Running on Archivo / Archivo Narrow as stand-ins; the swap is one `@font-face` change |
+| **META_PIXEL_ID, CAPI token, GA4** | Real measurement | The code reads them from env and activates itself when they exist |
+| **Full weekly schedules per location** | Publishing the complete grid | There is a base table today; the detailed one would come from Mindbody |
+| **NAP for MX and CO** | Local SEO for those 3 locations | The 2 US ones are verified; CDMX and Bogotá come from unclaimed profiles |
 
 ---
 
-## Deuda conocida
+## Known debt
 
-Cosas nuestras, priorizadas:
+Ours, in priority order:
 
-1. **Purchase de pago único no dispara** — el bug más caro. Las compras de
-   programa (`mode: 'payment'`) no generan evento de conversión, así que Meta
-   no puede optimizar por valor. Detalle y arreglo en [STRIPE.md](STRIPE.md#3-arreglar-el-bug-de-conversión-en-pagos-únicos).
-2. **No hay página `/thanks`** — el `success_url` vuelve a `/pricing`. Hace falta
-   para los eventos browser-side de conversión.
-3. **Blog sin CMS** — `apps/web/app/routes/blog.tsx` tiene 3 posts hardcodeados
-   y las cards linkean a `#`. La tabla existe en Supabase y el ABM está en
-   `/admin/blog`: falta la ruta pública `/blog/:slug` y conectar el índice.
-4. **Sin test suite** — la verificación es visual y medida (Playwright contra el
-   DOM real). Si el equipo crece, esto es lo primero que conviene agregar.
-5. **Autores del blog son placeholder** — "Head Coach, 54D" y credenciales
-   genéricas. E-E-A-T pide nombres reales.
-6. **Sitemap estático** — se actualiza a mano; cuando el blog sea dinámico
-   conviene generarlo.
+1. **One-time Purchase does not fire** — the most expensive bug. Program
+   purchases (`mode: 'payment'`) produce no conversion event, so Meta cannot
+   optimize for value. Detail and fix in
+   [STRIPE.md](STRIPE.md#3-fix-the-one-time-payment-conversion-bug).
+2. **No `/thanks` page** — `success_url` returns to `/pricing`. Needed for
+   browser-side conversion events.
+3. **Blog without CMS** — `apps/web/app/routes/blog.tsx` has 3 hardcoded posts
+   and the cards link to `#`. The table exists in Supabase and the CRUD is at
+   `/admin/blog`: the public `/blog/:slug` route and the index wiring are missing.
+4. **No test suite** — verification is visual and measured (Playwright against
+   the real DOM). If the team grows, this is the first thing worth adding.
+5. **Blog authors are placeholders** — "Head Coach, 54D" and generic
+   credentials. E-E-A-T wants real names.
+6. **Static sitemap** — updated by hand; worth generating once the blog is dynamic.
 
 ---
 
-## Historia útil para entender decisiones raras
+## History that explains odd decisions
 
-Cosas que parecen arbitrarias y no lo son:
+Things that look arbitrary and are not:
 
-- **El gate del home no tiene header ni footer.** Es deliberado: el visitante
-  elige entre dos productos de precio muy distinto antes de ver nada más.
-- **`/studios*` no menciona nunca a ON** (ni nav, ni footer, ni banner de app).
-  Es la regla dura de separación de marca: un comprador de USD 60.000 no debe
-  encontrarse con la versión de USD 54.
-- **Las alturas de botón son tokens.** Hubo 6 alturas distintas conviviendo por
-  derivarlas de padding; ahora se declaran (`--btn-h`, `--btn-h-sm`, `--btn-h-nav`).
-- **Hay una lista de imágenes vetadas** en los comentarios de
-  `program-landings.ts`: bolsas de boxeo (el cliente las retiró de los studios)
-  y conos naranjas. Se colaron tres veces en rondas distintas.
-- **Los assets prohibidos están en cuarentena** fuera de `public/`, en
-  `apps/web/design-assets/prohibited-studios/`, para que no puedan volver por
-  accidente.
-- **En unos meses Studios deja el modelo de programas** y pasa a studio
-  tradicional (aviso del cliente, sin fecha firme). Cuando pase, todo el
-  contenido de Generaciones, admisión y graduación necesita reposicionarse.
+- **The home gate has no header or footer.** Deliberate: the visitor chooses
+  between two products of very different price before seeing anything else.
+- **`/studios*` never mentions ON** (not in nav, footer or app banner). It is
+  the hard brand-separation rule: a USD 60,000 buyer should not run into the
+  USD 54 version.
+- **Button heights are tokens.** Six different heights coexisted because they
+  were derived from padding; now they are declared (`--btn-h`, `--btn-h-sm`,
+  `--btn-h-nav`).
+- **There is a banned-image list** in the comments of `program-landings.ts`:
+  boxing bags (the client removed them from the studios) and orange cones. They
+  slipped in three separate times.
+- **Banned assets are quarantined** outside `public/`, in
+  `apps/web/design-assets/prohibited-studios/`, so they cannot come back by
+  accident.
+- **In a few months Studios drops the program model** and becomes a traditional
+  studio (client heads-up, no firm date). When that happens, all the Generation,
+  admission and graduation content needs repositioning.

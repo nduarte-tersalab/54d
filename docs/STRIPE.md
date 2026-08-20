@@ -1,60 +1,63 @@
-# Pagos con Stripe
+**English** · [Español](STRIPE.es.md)
 
-Estado, cómo funciona hoy, qué falta y los tres problemas conocidos.
-Si venís a conectar pagos, este es tu documento.
+# Stripe payments
+
+Status, how it works today, what is missing, and the three known problems.
+If you are here to wire payments, this is your document.
 
 ---
 
-## TL;DR del estado
+## Status at a glance
 
-| | Estado |
+| | Status |
 |---|---|
-| Código de checkout | **Listo** (`apps/api/src/index.ts`, `POST /checkout`) |
-| Webhook de Stripe | **Listo**, con filtro de procedencia e idempotencia |
-| Atribución por anuncio | **Lista** (captura en el front → tabla → espejo → vista SQL) |
-| Claves de Stripe | **FALTAN** (nunca se configuraron) |
-| Price IDs reales | **FALTAN**: hay 30 placeholders `PENDING_*` |
-| Purchase de pago único | **BUG conocido**, no dispara conversión (ver abajo) |
-| Página `/thanks` | **No existe** |
+| Checkout code | **Done** (`apps/api/src/index.ts`, `POST /checkout`) |
+| Stripe webhook | **Done**, with provenance filter and idempotency |
+| Per-ad attribution | **Done** (front-end capture → table → mirror → SQL view) |
+| Stripe keys | **MISSING** (never configured) |
+| Real price IDs | **MISSING**: 30 `PENDING_*` placeholders |
+| One-time Purchase event | **KNOWN BUG**, no conversion fires (see below) |
+| `/thanks` page | **Does not exist** |
 
-**Nada puede cobrar todavía.** Cada CTA de compra responde `503
-payments_not_configured` a propósito, para no mostrar un error de red falso.
+**Nothing can charge yet.** Every buy CTA returns `503
+payments_not_configured` on purpose, so the front end does not show a fake
+network error.
 
 ---
 
-## Cómo funciona el flujo hoy
+## How the flow works today
 
 ```
 Meta Ad
-  → landing (captura utm_*, fbclid, _fbp/_fbc, gclid, ga_client_id, landing_path)
+  → landing (captures utm_*, fbclid, _fbp/_fbc, gclid, ga_client_id, landing_path)
   → POST /checkout { priceId, attribution }
-      1. INSERT en checkout_attributions   ← se guarda ANTES de crear la sesión
-      2. lee program_prices para saber interval y trial_days
-      3. crea Checkout Session en Stripe:
-         - mode: 'payment'       si interval = one_time   (programas sueltos)
-         - mode: 'subscription'  si month/quarter/year     (membresía)
-         - metadata.source = '54d-web'  ← marca de procedencia
-         - client_reference_id = id de la atribución
-      4. guarda checkout_session_id en la atribución
-  → Stripe Checkout (hospedado por Stripe)
+      1. INSERT into checkout_attributions   ← saved BEFORE creating the session
+      2. reads program_prices for interval and trial_days
+      3. creates a Stripe Checkout Session:
+         - mode: 'payment'       if interval = one_time   (single programs)
+         - mode: 'subscription'  if month/quarter/year     (membership)
+         - metadata.source = '54d-web'  ← provenance marker
+         - client_reference_id = attribution id
+      4. stores checkout_session_id on the attribution
+  → Stripe Checkout (Stripe-hosted)
   → POST /webhooks/stripe
-      · checkout.session.completed  → espeja customer + subscription, enlaza atribución,
-                                      dispara StartTrial (Meta CAPI) y GA4
-      · invoice.paid                → first_paid_at: ESTA es la conversión real
-      · customer.subscription.*     → estado, cancelaciones, bajas en trial
+      · checkout.session.completed  → mirrors customer + subscription, links attribution,
+                                      fires StartTrial (Meta CAPI) and GA4
+      · invoice.paid                → first_paid_at: THIS is the real conversion
+      · customer.subscription.*     → status, cancellations, trial drop-offs
 ```
 
-La vista `v_campaign_funnel` (en `supabase/migrations/20260725190000_ad_level_funnel.sql`)
-cruza todo eso para responder, por anuncio: cuántos trials, cuántas compras,
-cuántas cancelaciones.
+The `v_campaign_funnel` view (in
+`supabase/migrations/20260725190000_ad_level_funnel.sql`) joins all of that to
+answer, per ad: how many trials, how many purchases, how many cancellations.
 
-### El filtro de procedencia (no lo quites)
+### The provenance filter (do not remove it)
 
-La cuenta de Stripe **puede estar compartida** con otras plataformas (hoy
-Mindbody cobra los studios; mañana quizá FitBudd cobre la app). Sus cobros
-llegarían a nuestro webhook y contaminarían las métricas de ads.
+The Stripe account **may be shared** with other platforms (today Mindbody
+charges the studios; tomorrow FitBudd might charge the app). Their charges
+would hit our webhook and pollute the ad metrics.
 
-Por eso todo evento pasa por un gate:
+So every event passes a gate:
 
 ```ts
 // checkout.session.completed
@@ -67,20 +70,20 @@ const isOurs = sub.metadata?.source === '54d-web' || await subscriptionExists(su
 if (await invoiceIsOurs(supabase, inv)) { ... }
 ```
 
-Detalle que cuesta caro descubrir solo: **la metadata de la Session NO se
-propaga a la Subscription**. Por eso se setea dos veces, una en `metadata` y
-otra en `subscription_data.metadata`.
+A detail that is expensive to discover on your own: **Session metadata does NOT
+propagate to the Subscription.** That is why it is set twice, once in
+`metadata` and once in `subscription_data.metadata`.
 
 ---
 
-## Lo que falta hacer
+## What is left to do
 
-### 1. Cargar las claves
+### 1. Load the keys
 
-En Cloudflare (producción) y en `apps/api/.dev.vars` (local):
+In Cloudflare (production) and in `apps/api/.dev.vars` (local):
 
 ```
-STRIPE_SECRET_KEY=sk_live_...      # o sk_test_ para probar
+STRIPE_SECRET_KEY=sk_live_...      # or sk_test_ to test
 STRIPE_WEBHOOK_SECRET=whsec_...
 ```
 
@@ -90,102 +93,101 @@ npx wrangler secret put STRIPE_SECRET_KEY
 npx wrangler secret put STRIPE_WEBHOOK_SECRET
 ```
 
-Endpoint del webhook a registrar en Stripe:
+Webhook endpoint to register in Stripe:
 `https://54d-api.54d.workers.dev/webhooks/stripe`
 
-Eventos a suscribir: `checkout.session.completed`, `invoice.paid`,
+Events to subscribe: `checkout.session.completed`, `invoice.paid`,
 `invoice.payment_failed`, `customer.subscription.created|updated|deleted`.
 
-### 2. Crear productos y precios, y reemplazar los 30 placeholders
+### 2. Create products and prices, and replace the 30 placeholders
 
-Hoy hay `PENDING_*` en tres lugares:
+`PENDING_*` currently lives in three places:
 
-| Archivo | Cuántos | Qué son |
+| File | How many | What they are |
 |---|---|---|
-| `apps/web/app/data/program-landings.ts` | 14 | los 13 programas (+1 repetido) |
-| `apps/web/app/routes/on.tsx` | 13 | la vitrina de programas |
-| `apps/web/app/routes/pricing.tsx` | 3 | los planes de membresía |
+| `apps/web/app/data/program-landings.ts` | 14 | the 13 programs (+1 repeated) |
+| `apps/web/app/routes/on.tsx` | 13 | the program showcase |
+| `apps/web/app/routes/pricing.tsx` | 3 | the membership plans |
 
-Precios reales (verificados contra store.54d.com/packs el 25/07/2026):
+Real prices (verified against store.54d.com/packs on 2026-07-25):
 
-- **Membresía**: USD 54/mes · 156/trimestre · 588/año. Trial de 7 días.
-- **Programas de un pago**: Reset 7 USD 19 · Emergency Kit / Max Burn / First Move / Booty on Fire USD 39 · Full Body 95 · Lower/Upper Body 185 · 54D ON 385 · Step 2 400.
-- **Runners (5K/10K/21K)**: solo por membresía, no se venden sueltos.
+- **Membership**: USD 54/month · 156/quarter · 588/year. 7-day trial.
+- **One-time programs**: Reset 7 USD 19 · Emergency Kit / Max Burn / First Move / Booty on Fire USD 39 · Full Body 95 · Lower/Upper Body 185 · 54D ON 385 · Step 2 400.
+- **Runners (5K/10K/21K)**: membership only, not sold separately.
 
-Hay un **espejo en Supabase**: la tabla `program_prices` guarda
-`stripe_price_id`, `interval` y `trial_days`. El endpoint la lee para decidir
-`mode` y trial. **Actualizala junto con el código**, o el checkout va a crear
-sesiones con el modo equivocado.
+There is a **mirror in Supabase**: the `program_prices` table stores
+`stripe_price_id`, `interval` and `trial_days`. The endpoint reads it to decide
+`mode` and trial. **Update it alongside the code**, or checkout will create
+sessions in the wrong mode.
 
-### 3. Arreglar el bug de conversión en pagos únicos
+### 3. Fix the one-time-payment conversion bug
 
-`onCheckoutCompleted` (línea ~297 de `apps/api/src/index.ts`) empieza así:
+`onCheckoutCompleted` (around line 297 of `apps/api/src/index.ts`) opens with:
 
 ```ts
 if (!session.subscription) return;
 ```
 
-Las compras de programa se crean con `mode: 'payment'`, así que **no tienen
-subscription y se ignoran**. Como tampoco se emite factura (no hay
-`invoice_creation`), tampoco entra por `invoice.paid`.
+Program purchases are created with `mode: 'payment'`, so they **have no
+subscription and get ignored**. No invoice is created either (there is no
+`invoice_creation`), so they do not come through `invoice.paid` either.
 
-Consecuencia concreta: **ninguna compra de programa llega a Meta**. Sin evento
-Purchase no hay optimización por valor ni ROAS; solo se pueden correr campañas
-de tráfico. Los 3 programas de runners (que son membresía) sí funcionan, lo que
-disimula el problema en las pruebas.
+Concrete consequence: **no program purchase ever reaches Meta.** Without a
+Purchase event there is no value optimization and no ROAS; only traffic
+campaigns are possible. The 3 runners programs (which are membership) do work,
+which hides the problem during testing.
 
-Qué hay que hacer:
+What to do:
 
-1. En `onCheckoutCompleted`, ramificar por `session.mode`: si es `payment`,
-   espejar la compra y disparar `Purchase` a Meta CAPI + `purchase` a GA4,
-   usando `session.amount_total` y la atribución enlazada.
-2. Crear la página `/thanks` y usarla como `success_url` (hoy vuelve a
-   `/pricing?checkout=success`). Sirve además para los eventos browser-side.
-3. Mientras estés ahí: sumar `external_id` y el fallback de `fbc` desde `fbclid`
-   en `user_data` de CAPI, que mejora el match quality.
+1. In `onCheckoutCompleted`, branch on `session.mode`: if it is `payment`,
+   mirror the purchase and fire `Purchase` to Meta CAPI + `purchase` to GA4,
+   using `session.amount_total` and the linked attribution.
+2. Create the `/thanks` page and use it as `success_url` (today it returns to
+   `/pricing?checkout=success`). It also gives you a home for browser-side events.
+3. While you are in there: add `external_id` and the `fbc`-from-`fbclid`
+   fallback in CAPI `user_data`, which improves match quality.
 
-### 4. Probar de punta a punta
+### 4. Test end to end
 
 ```bash
 stripe listen --forward-to localhost:8788/webhooks/stripe
 ```
 
-Casos mínimos: suscripción con trial, cancelación durante el trial, primer
-cobro real, compra de un pago, y un cobro **ajeno** (creado a mano en Stripe
-sin `metadata.source`) para confirmar que el filtro lo ignora.
+Minimum cases: subscription with trial, cancellation during trial, first real
+charge, one-time purchase, and a **foreign** charge (created by hand in Stripe
+without `metadata.source`) to confirm the filter ignores it.
 
-Comprobá en Supabase que se llenaron `checkout_attributions`,
-`subscriptions`/compras y `webhook_events`, y que `v_campaign_funnel`
-devuelve la fila con el `utm_content` del anuncio.
+Check in Supabase that `checkout_attributions`, `subscriptions`/purchases and
+`webhook_events` filled in, and that `v_campaign_funnel` returns the row with
+the ad's `utm_content`.
 
 ---
 
 ## FitBudd
 
-Está en [INTEGRATIONS.md](INTEGRATIONS.md), pero lo que importa acá:
+Covered in [INTEGRATIONS.md](INTEGRATIONS.md), but what matters here:
 
-FitBudd trae **su propia integración con Stripe**. Antes de escribir código hay
-que decidir **quién cobra**, porque de eso depende si conservamos la atribución
-por anuncio:
+FitBudd brings **its own Stripe integration**. Before writing any code, decide
+**who charges**, because per-ad attribution depends on it:
 
-- **Si cobra nuestro checkout** y damos de alta al usuario en FitBudd por su
-  API tras el webhook → conservamos toda la medición. Es la opción que preserva
-  lo que ya está construido.
-- **Si cobra FitBudd** → perdemos el vínculo anuncio → venta, salvo que se
-  reconstruya con la metadata que FitBudd permita pasar.
+- **If our checkout charges** and we provision the user in FitBudd through
+  their API after the webhook → we keep all measurement. This is the option
+  that preserves what is already built.
+- **If FitBudd charges** → we lose the ad → sale link, unless it can be rebuilt
+  from whatever metadata FitBudd lets us pass through.
 
-En cualquiera de los dos casos, si comparten la misma cuenta de Stripe, **el
-filtro de procedencia ya te cubre**: los cobros de FitBudd no van a ensuciar
-las métricas mientras no lleven `metadata.source = '54d-web'`.
+Either way, if they share the same Stripe account, **the provenance filter
+already covers you**: FitBudd charges will not pollute the metrics as long as
+they do not carry `metadata.source = '54d-web'`.
 
 ---
 
-## Archivos relevantes
+## Relevant files
 
-| Archivo | Qué tiene |
+| File | What is in it |
 |---|---|
-| `apps/api/src/index.ts` | `/checkout`, `/webhooks/stripe` y todos los helpers |
-| `apps/web/app/lib/attribution.ts` | captura de atribución, `startCheckout()`, eventos del pixel |
-| `supabase/migrations/00000000000001_init.sql` | tablas: `checkout_attributions`, `subscriptions`, `program_prices`, `webhook_events` |
-| `supabase/migrations/20260725190000_ad_level_funnel.sql` | vista `v_campaign_funnel` |
-| [ANALYTICS.md](ANALYTICS.md) | contrato de medición y los UTM que deben usar los anuncios |
+| `apps/api/src/index.ts` | `/checkout`, `/webhooks/stripe` and all helpers |
+| `apps/web/app/lib/attribution.ts` | attribution capture, `startCheckout()`, pixel events |
+| `supabase/migrations/00000000000001_init.sql` | tables: `checkout_attributions`, `subscriptions`, `program_prices`, `webhook_events` |
+| `supabase/migrations/20260725190000_ad_level_funnel.sql` | `v_campaign_funnel` view |
+| [ANALYTICS.md](ANALYTICS.md) *(Spanish)* | measurement contract and the UTMs ads must use |

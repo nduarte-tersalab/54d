@@ -1,123 +1,129 @@
+**English** · [Español](README.es.md)
+
 # 54D
 
-Sitio y plataforma de 54D: el método de transformación de 54 días.
-Dos productos con públicos y precios muy distintos, en un solo código base:
+Website and platform for 54D: the 54-day transformation method.
+Two products with very different audiences and price points, in one codebase:
 
-| Producto | Qué es | Precio | Funnel |
+| Product | What it is | Price | Funnel |
 |---|---|---|---|
-| **54D ON** | Programa online en app propia | desde USD 54/mes | Meta Ads → checkout self-service |
-| **54D Studios** | Presencial, 5 sedes | ~USD 60.000/año | SEO local → solicitud de consulta |
+| **54D ON** | Online program in its own app | from USD 54/month | Meta Ads → self-service checkout |
+| **54D Studios** | In person, 5 locations | ~USD 60,000/year | Local SEO → consultation request |
 
-> La separación entre los dos es una **regla de negocio, no una preferencia de diseño**.
-> Ver [docs/marketing/BRAND_SEPARATION.md](docs/marketing/BRAND_SEPARATION.md) antes de
-> mover copy o imágenes entre secciones.
+> Keeping the two apart is a **business rule, not a design preference**.
+> Read [docs/marketing/BRAND_SEPARATION.md](docs/marketing/BRAND_SEPARATION.md)
+> before moving copy or imagery between sections.
 
-**Producción:** https://54d-web.54d.workers.dev · **API:** https://54d-api.54d.workers.dev
+**Production:** https://54d-web.54d.workers.dev · **API:** https://54d-api.54d.workers.dev
 
 ---
 
-## Empezar (15 minutos)
+## Getting started (15 minutes)
 
-Si es tu primer día en el proyecto, seguí **[docs/ONBOARDING.md](docs/ONBOARDING.md)**:
-tiene el setup paso a paso, cómo pedir las credenciales y cómo verificar que
-todo quedó andando.
+If this is your first day, follow **[docs/ONBOARDING.md](docs/ONBOARDING.md)**:
+step-by-step setup, which credentials to request, and how to verify everything
+works.
 
-Resumen para quien ya tiene el entorno:
+Short version, if your environment is already set up:
 
 ```bash
 npm install --prefix apps/web && npm install --prefix apps/api
-npm run dev --prefix apps/web   # sitio en http://localhost:5173
-npm run dev --prefix apps/api   # API en  http://localhost:8788
+npm run dev --prefix apps/web   # site at http://localhost:5173
+npm run dev --prefix apps/api   # API at  http://localhost:8788
 ```
 
-Requiere Node 20+ (se desarrolla con 24) y archivos de entorno que **no están
-en el repo**: `apps/web/.env` y `apps/api/.dev.vars`. Copiá los `.example` y
-pedí los valores reales.
+Needs Node 20+ (developed on 24) and env files that are **not in the repo**:
+`apps/web/.env` and `apps/api/.dev.vars`. Copy the `.example` files and ask for
+the real values.
 
 ---
 
 ## Stack
 
-- **Web** — React Router v7 (framework mode) sobre Cloudflare Workers, SSR.
-  Bilingüe EN/ES con detección por navegador.
-- **API** — Worker con Hono: checkout de Stripe, webhooks, leads, proxy de Mindbody,
-  eventos server-side a Meta CAPI y GA4.
-- **Datos** — Supabase (Postgres + Auth). Migraciones versionadas en `supabase/migrations/`.
-- **Pagos** — Stripe directo. *(Shopify, WordPress y Hotmart quedaron atrás.)*
+- **Web** — React Router v7 (framework mode) on Cloudflare Workers, SSR.
+  Bilingual EN/ES with browser detection.
+- **API** — Hono Worker: Stripe checkout, webhooks, leads, Mindbody proxy,
+  server-side events to Meta CAPI and GA4.
+- **Data** — Supabase (Postgres + Auth). Versioned migrations in `supabase/migrations/`.
+- **Payments** — Stripe direct. *(Shopify, WordPress and Hotmart are gone.)*
 
 ```
 54d/
 ├── apps/
-│   ├── web/            # sitio público + /admin
-│   │   ├── app/routes/         # una ruta por página
-│   │   ├── app/data/           # catálogo de programas y sedes
-│   │   ├── app/lib/            # i18n, atribución, helpers de assets
-│   │   └── public/images/      # media aprobada por el cliente
-│   └── api/            # Worker Hono (src/index.ts es casi todo)
-├── packages/design/    # tokens y fuentes
+│   ├── web/            # public site + /admin
+│   │   ├── app/routes/         # one route per page
+│   │   ├── app/data/           # program and location catalogs
+│   │   ├── app/lib/            # i18n, attribution, asset helpers
+│   │   └── public/images/      # client-approved media
+│   └── api/            # Hono Worker (src/index.ts is nearly all of it)
+├── packages/design/    # tokens and fonts
 ├── supabase/migrations/
-└── docs/               # esta documentación
+└── docs/               # this documentation
 ```
 
 ---
 
-## Documentación
+## Documentation
 
-**Empezá acá**
+**Start here**
 
-| Documento | Para qué |
+| Document | For what |
 |---|---|
-| [ONBOARDING.md](docs/ONBOARDING.md) | Setup local, credenciales, primera verificación |
-| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | Cómo encajan las piezas y por qué |
-| [STATUS.md](docs/STATUS.md) | Qué está listo, qué falta, qué está bloqueado |
+| [ONBOARDING.md](docs/ONBOARDING.md) | Local setup, credentials, first verification |
+| [ARCHITECTURE.md](docs/ARCHITECTURE.md) | How the pieces fit and why *(Spanish)* |
+| [STATUS.md](docs/STATUS.md) | What ships, what is missing, what is blocked |
 
-**Trabajo en curso**
+**Work in progress**
 
-| Documento | Para qué |
+| Document | For what |
 |---|---|
-| [STRIPE.md](docs/STRIPE.md) | Estado de pagos, qué falta conectar, bugs conocidos |
-| [INTEGRATIONS.md](docs/INTEGRATIONS.md) | Mindbody, Trainerize y **FitBudd**: qué hace cada uno |
-| [ANALYTICS.md](docs/ANALYTICS.md) | Contrato de medición y atribución por anuncio |
-| [DEPLOY.md](docs/DEPLOY.md) | Cómo se publica |
+| [STRIPE.md](docs/STRIPE.md) | Payment status, what is left to wire, known bugs |
+| [INTEGRATIONS.md](docs/INTEGRATIONS.md) | Mindbody, Trainerize and **FitBudd**: what each one does |
+| [ANALYTICS.md](docs/ANALYTICS.md) | Measurement contract and per-ad attribution *(Spanish)* |
+| [DEPLOY.md](docs/DEPLOY.md) | How it ships *(Spanish)* |
 
-**Contexto de producto** (leer antes de cambiar contenido)
+**Product context** (read before changing content)
 
-- [marketing/BRAND_SEPARATION.md](docs/marketing/BRAND_SEPARATION.md) — la regla dura ON vs Studios
-- [marketing/SITE_STRATEGY.md](docs/marketing/SITE_STRATEGY.md) — qué hace cada página
-- [marketing/PROGRAM_LANDINGS.md](docs/marketing/PROGRAM_LANDINGS.md) — las 13 landings de pauta
-- [design/](docs/design/) — historial de las rondas de diseño y sus reglas
+- [marketing/BRAND_SEPARATION.md](docs/marketing/BRAND_SEPARATION.md) — the hard ON vs Studios rule
+- [marketing/SITE_STRATEGY.md](docs/marketing/SITE_STRATEGY.md) — what each page does
+- [marketing/PROGRAM_LANDINGS.md](docs/marketing/PROGRAM_LANDINGS.md) — the 13 ad landing pages
+- [design/](docs/design/) — history of the design rounds and their rules
+
+> The five documents above (README, ONBOARDING, STRIPE, INTEGRATIONS, STATUS)
+> exist in English and Spanish, switchable from the header of each file. The
+> older design and marketing docs are Spanish-only: they are historical
+> context, not required reading to work on the code.
 
 ---
 
-## Reglas del proyecto
+## Project rules
 
-Estas se rompen seguido por descuido. Valen para código, copy e imágenes:
+These get broken by accident all the time. They apply to code, copy and images:
 
-1. **No inventar datos.** Testimonios, cifras de resultados, direcciones y
-   teléfonos salen de fuentes verificadas (reseñas reales del App Store, perfiles
-   de Google Business). Si no hay dato, no se publica.
-2. **Nada de boxeo ni conos naranjas** en imágenes. El cliente retiró las bolsas
-   de los studios; hay una lista de assets vetados en los comentarios de
+1. **Never invent data.** Testimonials, result figures, addresses and phone
+   numbers come from verified sources (real App Store reviews, Google Business
+   profiles). No data, no publishing.
+2. **No boxing gear, no orange cones** in imagery. The client removed the heavy
+   bags from the studios; there is a banned-asset list in the comments of
    `apps/web/app/data/program-landings.ts`.
-3. **Cero fotos de gimnasio presencial en contexto ON** (`/on`, `/pricing`,
-   `/programs/*`). Ese producto es online: las fotos son de set, app o resultados.
-4. **Bilingüe siempre.** Todo string visible necesita variante EN y ES.
-   Español neutro con tuteo, nunca voseo.
-5. **Sin em dashes** en copy visible (hay un grep de CI que los caza).
-6. **Un solo botón primario amarillo por vista** (los secundarios son *ghost*).
-7. **Los secretos nunca se commitean.** `.env*` y `.dev.vars*` están en
-   `.gitignore`; si tocás uno, verificá `git status` antes de commitear.
+3. **No in-person gym photos in ON context** (`/on`, `/pricing`, `/programs/*`).
+   That product is online: photos are set, app or results.
+4. **Always bilingual.** Every visible string needs EN and ES. Neutral Spanish
+   with *tuteo*, never *voseo*.
+5. **No em dashes** in visible copy (CI greps for them).
+6. **One yellow primary button per view** (secondaries are ghost).
+7. **Never commit secrets.** `.env*` and `.dev.vars*` are gitignored; if you
+   touch one, check `git status` before committing.
 
 ---
 
-## Verificación antes de commitear
+## Verify before committing
 
 ```bash
-npm run typecheck --prefix apps/web   # debe terminar en 0 errores
+npm run typecheck --prefix apps/web   # must exit with 0 errors
 ```
 
-El proyecto no tiene test suite automatizada: la verificación es **visual y
-medida**. Muchos cambios de layout se validaron con Playwright midiendo el DOM
-real (alturas de botón, overflow, alineación). Si tocás layout, mirá la página
-en las dos resoluciones (1440 y 390) y en los dos idiomas antes de dar por
-terminado.
+There is no automated test suite: verification is **visual and measured**. Many
+layout changes were validated with Playwright measuring the real DOM (button
+heights, overflow, alignment). If you touch layout, look at the page at both
+1440 and 390 and in both languages before calling it done.

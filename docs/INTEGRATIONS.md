@@ -1,129 +1,129 @@
-# Integraciones: Mindbody, Trainerize y FitBudd
+**English** · [Español](INTEGRATIONS.es.md)
 
-Hay tres plataformas de terceros dando vueltas en este proyecto y es fácil
-confundirlas. Este documento aclara qué hace cada una, qué está conectado y
-qué está por decidirse.
+# Integrations: Mindbody, Trainerize and FitBudd
+
+Three third-party platforms show up in this project and they are easy to
+confuse. This document clarifies what each one does, what is wired, and what
+is still undecided.
 
 ---
 
-## El mapa en una tabla
+## The map, in one table
 
-| Plataforma | Para qué producto | Estado | Quién cobra |
+| Platform | For which product | Status | Who charges |
 |---|---|---|---|
-| **Mindbody** | 54D Studios (presencial) | Integrado parcialmente | Mindbody, con su propia integración |
-| **Trainerize** | app "54D On" actual (white-label) | En uso por el cliente, sin integrar al sitio | — |
-| **FitBudd** | reemplazo evaluado para la app ON | **Por definir** | Por definir (trae Stripe propio) |
+| **Mindbody** | 54D Studios (in person) | Partially integrated | Mindbody, with its own integration |
+| **Trainerize** | current "54D On" app (white-label) | In use by the client, not wired to the site | — |
+| **FitBudd** | evaluated replacement for the ON app | **Undecided** | Undecided (brings its own Stripe) |
 
-Regla que atraviesa todo: **Studios y ON no se cruzan.** Son productos con 90x
-de diferencia de precio. Las apps también son distintas, y por eso los badges
-de la app 54D ON no aparecen en páginas de studios
-(ver [marketing/BRAND_SEPARATION.md](marketing/BRAND_SEPARATION.md)).
+The rule that runs through everything: **Studios and ON do not mix.** They are
+products 90x apart in price. The apps are different too, which is why the 54D
+ON app badges never appear on studio pages
+(see [marketing/BRAND_SEPARATION.md](marketing/BRAND_SEPARATION.md) *(Spanish)*).
 
 ---
 
 ## Mindbody — Studios
 
-Es el sistema con el que el cliente gestiona los studios presenciales: clases,
-horarios, clientes.
+The system the client uses to run the in-person studios: classes, schedules,
+clients.
 
-**Qué está conectado hoy**
+**What is wired today**
 
-- `GET /mindbody/classes` (en `apps/api/src/index.ts`) trae los horarios reales
-  por sede, cacheados 10 minutos en el edge. Las páginas de sede lo consumen y
-  **fallan de forma suave**: si no hay respuesta, muestran los horarios estáticos.
-  Eso significa que podés desarrollar sin Mindbody sin romper nada.
-- `POST /leads` empuja el lead a Mindbody con `addclient` (best-effort: si falla,
-  el lead igual queda guardado en Supabase y se registra `mindbody_sync_error`).
+- `GET /mindbody/classes` (in `apps/api/src/index.ts`) pulls real schedules per
+  location, cached 10 minutes at the edge. Location pages consume it and **fail
+  soft**: with no response, they fall back to static schedules. That means you
+  can develop without Mindbody and nothing breaks.
+- `POST /leads` pushes the lead into Mindbody via `addclient` (best effort: if
+  it fails, the lead is still saved in Supabase and `mindbody_sync_error` is
+  recorded).
 
-**Estado del acceso**
+**Access status**
 
-La API key funciona para `addclient` con `Api-Key` + `SiteId`. Lo que **no**
-está habilitado es `usertoken/issue`, que requiere la aprobación de *go-live*
-del portal de developers de Mindbody. Se pidió y al momento de escribir esto
-seguía devolviendo `DeniedAccess`. Mientras tanto los horarios en vivo no se
-encienden, pero el código ya está listo para cuando pase: no hay que tocar nada,
-solo que la API empiece a responder.
+The API key works for `addclient` with `Api-Key` + `SiteId`. What is **not**
+enabled is `usertoken/issue`, which requires *go-live* approval from the
+Mindbody developer portal. It was requested and, at the time of writing, still
+returns `DeniedAccess`. Until then live schedules stay off, but the code is
+ready: nothing needs changing, the API just has to start answering.
 
-**Ojo con Stripe**: Mindbody puede estar cobrando en la misma cuenta de Stripe.
-Por eso existe el filtro de procedencia del webhook — ver [STRIPE.md](STRIPE.md).
-
----
-
-## Trainerize — la app ON actual
-
-La app "54D On" que hoy está publicada es un white-label de Trainerize. Se nota
-en el package de Android: `com.trainerize.fiftyfourdays`.
-
-**No está integrada al sitio.** El sitio la enlaza (badges de App Store y Google
-Play) y muestra su rating, nada más. Las suscripciones que vendería nuestro
-checkout de Stripe **hoy no dan de alta a nadie en la app automáticamente**: ese
-puente no existe todavía, y es justamente el problema que FitBudd viene a
-resolver o a reemplazar.
-
-Los testimonios que se muestran en el sitio son reseñas reales de esta app,
-cosechadas del RSS público de iTunes.
+**Careful with Stripe**: Mindbody may be charging on the same Stripe account.
+That is why the webhook provenance filter exists — see [STRIPE.md](STRIPE.md).
 
 ---
 
-## FitBudd — la decisión abierta
+## Trainerize — the current ON app
 
-FitBudd es una plataforma de apps de fitness white-label para entrenadores y
-gimnasios: compite directamente con Trainerize. Ofrece app propia con la marca
-del cliente, planes de entrenamiento, chat con el coach y **cobros con Stripe,
-PayPal e in-app purchases**, sin comisión propia sobre el pago.
+The published "54D On" app is a Trainerize white-label. You can tell from the
+Android package: `com.trainerize.fiftyfourdays`.
 
-### Lo que hay que decidir antes de escribir código
+**It is not integrated with the site.** The site links to it (App Store and
+Google Play badges) and shows its rating, nothing more. Subscriptions sold
+through our Stripe checkout **do not currently provision anyone in the app**:
+that bridge does not exist yet, and it is exactly the problem FitBudd is meant
+to solve or replace.
 
-La pregunta no es técnica, es de arquitectura de negocio: **¿quién cobra?**
+The testimonials shown on the site are real reviews of this app, harvested from
+the public iTunes RSS feed.
 
-**Opción A — cobra nuestro checkout, FitBudd solo da acceso**
+---
+
+## FitBudd — the open decision
+
+FitBudd is a white-label fitness app platform for trainers and gyms: a direct
+competitor to Trainerize. It offers a client-branded app, training plans, coach
+chat, and **payments via Stripe, PayPal and in-app purchases**, with no platform
+commission on top.
+
+### What to decide before writing code
+
+The question is not technical, it is business architecture: **who charges?**
+
+**Option A — our checkout charges, FitBudd only grants access**
 
 ```
-Meta Ad → landing → nuestro checkout de Stripe → webhook
-        → alta del usuario en FitBudd vía su API
+Meta Ad → landing → our Stripe checkout → webhook
+        → provision the user in FitBudd via their API
 ```
 
-- Conserva **toda** la atribución por anuncio que ya está construida.
-- Conserva el control del funnel, los precios y los eventos a Meta CAPI.
-- Requiere que FitBudd tenga API de alta de usuarios y que el webhook la llame.
-- Es la opción que **no tira a la basura** lo que ya está hecho.
+- Keeps **all** the per-ad attribution already built.
+- Keeps control of the funnel, pricing and Meta CAPI events.
+- Requires FitBudd to have a user-provisioning API and the webhook to call it.
+- This is the option that **does not throw away** what is already built.
 
-**Opción B — cobra FitBudd con su propia integración**
+**Option B — FitBudd charges with its own integration**
 
-- Menos código nuestro; FitBudd gestiona suscripciones y accesos.
-- **Se rompe la medición por anuncio** salvo que FitBudd permita pasar metadata
-  propia hasta Stripe y devolverla en sus webhooks. Sin eso, no se puede saber
-  qué anuncio generó qué venta, que es el objetivo central del proyecto.
-- El sitio pasa de vender a derivar.
+- Less code on our side; FitBudd handles subscriptions and access.
+- **Measurement breaks** unless FitBudd lets us pass our own metadata through
+  to Stripe and returns it in its webhooks. Without that, there is no way to
+  know which ad produced which sale, which is the central goal of this project.
+- The site stops selling and starts referring.
 
-**Opción C — híbrido**: el sitio cobra la membresía (donde la atribución
-importa, porque es lo que se pauta) y FitBudd gestiona el acceso y la
-experiencia. En la práctica es la opción A con reparto de responsabilidades claro.
+**Option C — hybrid**: the site charges the membership (where attribution
+matters, because that is what gets advertised) and FitBudd handles access and
+the experience. In practice this is option A with clearer division of labor.
 
-### Preguntas para responder con FitBudd antes de decidir
+### Questions to put to FitBudd before deciding
 
-1. ¿Tiene API pública para **crear usuarios y asignar programas** desde afuera?
-   ¿Con qué autenticación?
-2. Si cobramos nosotros, ¿cómo se le da el acceso al usuario? ¿Alcanza con crear
-   la cuenta, o requiere que la suscripción viva en su sistema?
-3. Si cobra FitBudd, ¿permite pasar **metadata arbitraria** (nuestro
-   `attribution_id`) al checkout y recuperarla por webhook?
-4. ¿Usa **la misma cuenta de Stripe** del cliente o una propia? Si es la misma,
-   nuestro filtro de procedencia ya evita que sus cobros contaminen las métricas,
-   pero conviene confirmarlo.
-5. ¿Qué pasa con los miembros actuales de Trainerize? ¿Hay migración?
+1. Is there a public API to **create users and assign programs** from outside?
+   What authentication?
+2. If we charge, how is access granted? Is creating the account enough, or must
+   the subscription live in their system?
+3. If FitBudd charges, can it pass **arbitrary metadata** (our
+   `attribution_id`) into checkout and return it by webhook?
+4. Does it use **the client's same Stripe account** or its own? If the same,
+   our provenance filter already stops its charges from polluting metrics, but
+   confirm it.
+5. What happens to current Trainerize members? Is there a migration?
 
-### Lo que ya está de nuestro lado, sea cual sea la decisión
+### What is already on our side, whichever way it goes
 
-- El **filtro de procedencia** del webhook protege las métricas si comparten
-  cuenta de Stripe.
-- El endpoint `/leads` y el patrón de *sync best-effort* usado con Mindbody
-  (guardar primero, sincronizar después, registrar el error sin romper el flujo)
-  es el mismo patrón que conviene usar para dar de alta en FitBudd.
-- La tabla `program_prices` ya mapea programa → `stripe_price_id` → `interval`,
-  así que agregar un identificador de FitBudd por programa es una columna más.
+- The **provenance filter** protects the metrics if the Stripe account is shared.
+- The `/leads` endpoint and the best-effort sync pattern used with Mindbody
+  (save first, sync after, log the failure without breaking the flow) is the
+  same pattern to use for provisioning in FitBudd.
+- The `program_prices` table already maps program → `stripe_price_id` →
+  `interval`, so adding a FitBudd identifier per program is one more column.
 
-> **Nota para quien tome la decisión:** la razón de ser de este proyecto es poder
-> responder "cuántos free trials vienen de cada anuncio, cuántos compran y
-> cuántos cancelan". Cualquier arquitectura que rompa ese vínculo hay que
-> descartarla o compensarla explícitamente.
+> **Note for whoever makes the call:** this project exists to answer "how many
+> free trials come from each ad, how many buy, and how many cancel". Any
+> architecture that breaks that link must be rejected or explicitly compensated.

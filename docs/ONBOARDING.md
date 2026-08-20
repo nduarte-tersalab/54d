@@ -1,41 +1,43 @@
+**English** · [Español](ONBOARDING.es.md)
+
 # Onboarding
 
-Objetivo: tener el sitio y la API corriendo en tu máquina, y entender qué
-mirar primero. Toma unos 15 minutos si ya tenés las credenciales.
+Goal: get the site and the API running on your machine, and know what to look
+at first. About 15 minutes if you already have the credentials.
 
-## 0. Antes de empezar: pedí los accesos
+## 0. Before you start: request access
 
-Nada de esto está en el repo (ni debe estarlo). Pedíselos a Nicolás:
+None of this is in the repo (nor should it be). Ask Nicolás for:
 
-| Qué | Para qué | Sin esto |
+| What | For what | Without it |
 |---|---|---|
-| `apps/web/.env` | Clave publicable de Supabase, URL de la API | El sitio arranca igual |
-| `apps/api/.dev.vars` | Supabase (secret), Mindbody, Stripe, Meta, GA4 | La API arranca, pero los endpoints que tocan datos fallan |
-| Acceso al proyecto de Supabase | Ver datos, correr migraciones | Podés leer el schema en `supabase/migrations/` |
-| Acceso a Cloudflare | Deploy | Podés desarrollar sin esto |
-| Acceso a Stripe | El trabajo de pagos | Ver [STRIPE.md](STRIPE.md) |
+| `apps/web/.env` | Supabase publishable key, API URL | The site still starts |
+| `apps/api/.dev.vars` | Supabase (secret), Mindbody, Stripe, Meta, GA4 | The API starts, but endpoints that touch data fail |
+| Supabase project access | See data, run migrations | You can read the schema in `supabase/migrations/` |
+| Cloudflare access | Deploy | You can develop without it |
+| Stripe access | The payments work | See [STRIPE.md](STRIPE.md) |
 
-Ambos archivos tienen un `.example` versionado que muestra qué variables van.
-Copialos y completá:
+Both env files have a versioned `.example` showing which variables go in.
+Copy them and fill in:
 
 ```bash
 cp apps/api/.dev.vars.example apps/api/.dev.vars
 cp apps/web/.env.example apps/web/.env
 ```
 
-## 1. Instalar
+## 1. Install
 
-Node 20 o superior (el equipo usa 24). No hay workspaces configurados: cada app
-instala por separado.
+Node 20 or higher (the team runs 24). There are no workspaces configured: each
+app installs separately.
 
 ```bash
 npm install --prefix apps/web
 npm install --prefix apps/api
 ```
 
-## 2. Levantar
+## 2. Run
 
-Dos terminales:
+Two terminals:
 
 ```bash
 npm run dev --prefix apps/web   # http://localhost:5173
@@ -45,78 +47,78 @@ npm run dev --prefix apps/web   # http://localhost:5173
 npm run dev --prefix apps/api   # http://localhost:8788
 ```
 
-El sitio funciona sin la API: los formularios y el checkout fallan de forma
-controlada (mensaje al usuario, no pantalla rota). Para trabajar en frontend
-alcanza con levantar `web`.
+The site works without the API: forms and checkout fail gracefully (a message
+to the user, not a broken screen). For frontend work, running `web` is enough.
 
-## 3. Verificar que quedó bien
+## 3. Verify it worked
 
 ```bash
 curl -s -o /dev/null -w "web:%{http_code}\n" http://localhost:5173/
 curl -s http://localhost:8788/health          # {"ok":true}
-npm run typecheck --prefix apps/web           # 0 errores
+npm run typecheck --prefix apps/web           # 0 errors
 ```
 
-Abrí estas páginas y contrastá con producción (https://54d-web.54d.workers.dev):
+Open these pages and compare against production (https://54d-web.54d.workers.dev):
 
-- `/` — el gate: video, dos puertas (Studios / ON)
-- `/on` — la página de venta del producto online
-- `/programs/max-burn` — una de las 13 landings de pauta
-- `/studios/coral-gables` — una sede, con su formulario de leads
-- `/assessment` — el lead magnet
+- `/` — the gate: video, two doors (Studios / ON)
+- `/on` — the sales page for the online product
+- `/programs/max-burn` — one of the 13 ad landing pages
+- `/studios/coral-gables` — a location, with its lead form
+- `/assessment` — the lead magnet
 
-Probá el cambio de idioma con el selector EN/ES del header. El idioma se
-detecta del navegador y se recuerda en la cookie `54d_lang`.
+Try the language switch in the header. Language is detected from the browser
+and remembered in the `54d_lang` cookie.
 
-## 4. Cómo está organizado el código
+## 4. How the code is organized
 
-**Una ruta = un archivo** en `apps/web/app/routes/`. Las rutas se registran en
+**One route = one file** in `apps/web/app/routes/`. Routes are registered in
 `apps/web/app/routes.ts`.
 
-Los dos archivos que más vas a tocar:
+The two files you will touch most:
 
-- `apps/web/app/data/program-landings.ts` — el catálogo de los 13 programas.
-  Cada uno tiene hook, bullets, FAQ, precios, fotos y quick wins, todo en EN y ES.
-  **Cambiar contenido de una landing casi siempre es editar este archivo, no el template.**
-- `apps/web/app/routes/program-landing.tsx` — el template único que renderiza
-  las 13. Un cambio acá impacta a todas.
+- `apps/web/app/data/program-landings.ts` — the catalog for all 13 programs.
+  Each has hook, bullets, FAQ, pricing, photos and quick wins, in EN and ES.
+  **Changing a landing page's content is almost always editing this file, not
+  the template.**
+- `apps/web/app/routes/program-landing.tsx` — the single template that renders
+  all 13. A change here hits every one of them.
 
-Lo mismo para sedes: `apps/web/app/data/studios.ts` (datos) y
+Same split for locations: `apps/web/app/data/studios.ts` (data) and
 `apps/web/app/routes/studio-detail.tsx` (template).
 
-**La API es prácticamente un solo archivo**: `apps/api/src/index.ts`.
+**The API is basically one file**: `apps/api/src/index.ts`.
 Endpoints: `/health`, `/checkout`, `/webhooks/stripe`, `/mindbody/classes`, `/leads`.
 
-**Estilos**: `apps/web/app/app.css` tiene el sistema (tokens de color, tipografía,
-espaciado, alturas de control). Los estilos muy locales a una página viven
-inline o en un bloque `<style>` dentro de esa ruta.
+**Styles**: `apps/web/app/app.css` holds the system (color, type, spacing and
+control-height tokens). Styles local to one page live inline or in a `<style>`
+block inside that route.
 
-## 5. Convenciones que importan
+## 5. Conventions that matter
 
-Están en el [README](../README.md#reglas-del-proyecto). Las tres que más se
-rompen sin querer:
+They are in the [README](../README.md#project-rules). The three most often
+broken by accident:
 
-- Todo texto nuevo necesita **EN y ES**. El patrón es `Record<Lang, string>` en
-  data, o `es ? "..." : "..."` en JSX.
-- **Sin em dashes** en copy visible.
-- Las **alturas de botón salen de tokens** (`--btn-h`, `--btn-h-sm`,
-  `--btn-h-nav`), nunca de padding a ojo. Hubo una ronda entera para arreglar
-  eso; si agregás un botón con altura propia, volvés a romperlo.
+- Every new string needs **EN and ES**. The pattern is `Record<Lang, string>`
+  in data, or `es ? "..." : "..."` in JSX.
+- **No em dashes** in visible copy.
+- **Button heights come from tokens** (`--btn-h`, `--btn-h-sm`, `--btn-h-nav`),
+  never from eyeballed padding. There was a whole round to fix this; adding a
+  button with its own height breaks it again.
 
-## 6. Publicar
+## 6. Ship
 
-Ver [DEPLOY.md](DEPLOY.md). En corto:
+See [DEPLOY.md](DEPLOY.md) *(Spanish)*. In short:
 
 ```bash
 source .env.cloudflare
 cd apps/web && VITE_API_URL=https://54d-api.54d.workers.dev npm run build && npx wrangler deploy
 ```
 
-El build toma un *snapshot* de la configuración: si cambiás `wrangler.toml`,
-tenés que reconstruir antes de deployar o publicás la versión vieja.
+The build takes a config **snapshot**: if you change `wrangler.toml`, rebuild
+before deploying or you ship the old version.
 
-## 7. Por dónde seguir
+## 7. Where to go next
 
-1. [STATUS.md](STATUS.md) — el estado real: qué está terminado y qué está esperando datos del cliente.
-2. [STRIPE.md](STRIPE.md) — si venís a conectar pagos, ese es tu documento.
-3. [ARCHITECTURE.md](ARCHITECTURE.md) — el flujo de dinero y atribución, que es el corazón del proyecto.
+1. [STATUS.md](STATUS.md) — the real state: what is done and what is waiting on client data.
+2. [STRIPE.md](STRIPE.md) — if you are here to wire payments, that is your document.
+3. [ARCHITECTURE.md](ARCHITECTURE.md) *(Spanish)* — the money and attribution flow, the heart of the project.
